@@ -12,7 +12,6 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
   
-  <!-- Scripts do Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -161,7 +160,6 @@
 </head>
 <body class="antialiased">
 
-  <!-- Main App Content -->
   <div id="app" class="min-h-screen flex flex-col">
     <header class="bg-white/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-gray-200">
       <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,11 +191,9 @@
     </header>
 
     <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
-      <!-- TELA DE LOGIN / CADASTRO -->
       <div id="auth-view" class="hidden">
         <div class="max-w-md mx-auto mt-10">
             <div class="card p-8">
-                <!-- Formulário de Login -->
                 <form id="login-form">
                     <h2 class="text-2xl font-bold text-center mb-6">Entrar</h2>
                     <div class="space-y-4">
@@ -209,7 +205,12 @@
                             <label for="login-password" class="block text-sm font-medium text-gray-700">Senha</label>
                             <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
-                        <p id="login-error" class="text-sm text-red-600"></p>
+                        <div class="flex items-center justify-end">
+                            <div class="text-sm">
+                                <a href="#" id="forgot-password-link" class="font-medium text-[color:var(--c2)] hover:underline">Esqueceu a senha?</a>
+                            </div>
+                        </div>
+                        <p id="login-error" class="text-sm text-red-600 h-5"></p>
                         <div>
                             <button type="submit" class="w-full btn btn-primary py-2">Entrar</button>
                         </div>
@@ -217,12 +218,8 @@
                     <p class="mt-4 text-center text-sm">
                         Não tem uma conta? <a href="#" id="show-register" class="font-medium text-[color:var(--c2)] hover:underline">Cadastre-se</a>
                     </p>
-                    <p class="mt-2 text-center text-sm">
-                        <a href="#" id="forgot-password" class="font-medium text-gray-500 hover:text-[color:var(--c2)] hover:underline">Esqueci a senha</a>
-                    </p>
                 </form>
 
-                <!-- Formulário de Cadastro -->
                 <form id="register-form" class="hidden">
                     <h2 class="text-2xl font-bold text-center mb-6">Criar Conta</h2>
                     <div class="space-y-4">
@@ -234,7 +231,7 @@
                             <label for="register-password" class="block text-sm font-medium text-gray-700">Senha (mínimo 6 caracteres)</label>
                             <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
-                        <p id="register-error" class="text-sm text-red-600"></p>
+                        <p id="register-error" class="text-sm text-red-600 h-5"></p>
                         <div>
                             <button type="submit" class="w-full btn btn-primary py-2">Criar conta</button>
                         </div>
@@ -254,7 +251,6 @@
       <div id="main-content" class="hidden">
         <section id="dashboard-view" class="space-y-8">
           
-          <!-- SEÇÃO CONCURSO -->
           <div>
               <div class="card p-4 sm:p-6">
                   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-end">
@@ -280,7 +276,6 @@
           </div>
 
 
-          <!-- SEÇÃO DE FILTROS E CONTROLES -->
           <div>
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -294,7 +289,7 @@
                   <button id="save-all-btn" class="btn btn-primary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar na Nuvem</button>
                 </div>
               </div>
-      
+          
               <div class="card p-4 sm:p-6 mt-4">
                 <h3 class="text-lg font-semibold text-center mb-4">Filtros de análise</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
@@ -323,7 +318,6 @@
               </div>
           </div>
 
-          <!-- SEÇÃO DE INDICADORES CHAVE -->
           <div>
               <h2 class="text-xl font-bold text-gray-800 mb-4">Indicadores</h2>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -346,21 +340,18 @@
               </div>
           </div>
 
-          <!-- SEÇÃO DE METAS E CONSTÂNCIA -->
           <div>
               <h2 class="text-xl font-bold text-gray-800 mb-4">Metas</h2>
               <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
                 <div class="card p-4 sm:p-6 lg:col-span-2 flex flex-col">
                   <h3 class="text-lg font-semibold text-center">Constância de estudos</h3>
                   <div id="consistency-tracker" class="mt-4 flex-grow flex flex-col items-center justify-center w-full overflow-x-auto">
-                    <!-- Heatmap será gerado aqui -->
                   </div>
                 </div>
                 <div class="card p-4 sm:p-6 flex flex-col">
                   <h3 id="weekly-goals-title" class="text-lg font-semibold text-center">Metas da semana</h3>
                   <div id="weekly-days-tracker" class="flex justify-around items-center my-4"></div>
                   <div id="goals-display-view" class="space-y-3 mt-2 flex-grow flex flex-col justify-center">
-                    <!-- Metas geradas por JS -->
                   </div>
                   <div id="goals-edit-view" class="hidden mt-4 space-y-3">
                     <div>
@@ -392,7 +383,6 @@
               </div>
           </div>
 
-          <!-- SEÇÃO DE ANÁLISE DE DESEMPENHO -->
           <div>
             <h2 class="text-xl font-bold text-gray-800 mb-4">Análise de desempenho</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -427,20 +417,19 @@
                           <canvas id="strengthsWeaknessesChart"></canvas>
                       </div>
                       <div id="strengths-weaknesses-details" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                          <!-- Detalhes gerados aqui -->
                       </div>
                   </div>
               </div>
               <div class="card p-4 sm:p-6 lg:col-span-2">
-                <div class="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4">
-                    <h3 class="text-lg font-semibold text-center">Evolução das questões</h3>
-                    <div id="questions-evolution-toggle" class="flex items-center text-sm p-1 bg-gray-100 rounded-lg">
-                        <input type="radio" name="questions-view" id="q-view-relative" value="relative" class="sr-only chart-toggle-input" checked>
-                        <label for="q-view-relative" class="chart-toggle-label">Desempenho relativo (%)</label>
-                        <input type="radio" name="questions-view" id="q-view-absolute" value="absolute" class="sr-only chart-toggle-input">
-                        <label for="q-view-absolute" class="chart-toggle-label">Número de resoluções</label>
-                    </div>
-                </div>
+                  <div class="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4">
+                      <h3 class="text-lg font-semibold text-center">Evolução das questões</h3>
+                      <div id="questions-evolution-toggle" class="flex items-center text-sm p-1 bg-gray-100 rounded-lg">
+                          <input type="radio" name="questions-view" id="q-view-relative" value="relative" class="sr-only chart-toggle-input" checked>
+                          <label for="q-view-relative" class="chart-toggle-label">Desempenho relativo (%)</label>
+                          <input type="radio" name="questions-view" id="q-view-absolute" value="absolute" class="sr-only chart-toggle-input">
+                          <label for="q-view-absolute" class="chart-toggle-label">Número de resoluções</label>
+                      </div>
+                  </div>
                 <div class="chart-container" style="height: 360px;">
                     <canvas id="questionsEvolutionChart"></canvas>
                 </div>
@@ -483,7 +472,6 @@
             </div>
           </div>
 
-          <!-- SEÇÃO DE RECORDES PESSOAIS -->
           <div>
               <h2 class="text-xl font-bold text-gray-800 mb-4">Recordes</h2>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -506,17 +494,14 @@
               </div>
           </div>
           
-          <!-- INSIGHTS -->
           <div>
               <div class="card p-4 sm:p-6">
                   <h3 class="text-lg font-semibold text-center mb-4">Insights rápidos</h3>
                   <div id="insights-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
-                      <!-- Insights gerados por JS -->
                   </div>
               </div>
           </div>
 
-          <!-- TABELA DE LOG DETALHADO -->
           <div>
               <h2 class="text-xl font-bold text-gray-800 mb-4">Histórico detalhado do período</h2>
               <div class="card p-4 sm:p-6">
@@ -524,12 +509,10 @@
                       <input type="text" id="log-search-input" placeholder="Buscar por disciplina ou assunto..." class="block w-full md:w-1/3 border-gray-300 rounded-md shadow-sm">
                   </div>
                   <div id="detailed-log-table-container" class="overflow-x-auto max-h-56">
-                      <!-- Tabela gerada por JS -->
                   </div>
               </div>
           </div>
 
-          <!-- SEÇÃO DE BACKUPS -->
           <div id="backup-section">
               <div class="flex justify-between items-center mb-4">
                   <h2 class="text-xl font-bold text-gray-800">Backups salvos (Local)</h2>
@@ -538,20 +521,16 @@
               <div class="card p-4 sm:p-6">
                   <p class="text-sm text-gray-600 mb-4">Seus backups são salvos localmente no navegador. Você pode baixá-los a qualquer momento. Um backup automático é criado diariamente.</p>
                   <div id="backup-list" class="space-y-2">
-                      <!-- Lista de backups será renderizada aqui -->
                   </div>
               </div>
           </div>
         </section>
 
-        <!-- #################### TELA DE FOCO E REGISTRO #################### -->
         <section id="foco-view" class="hidden space-y-8">
           <div class="max-w-5xl mx-auto">
             
-            <!-- Timer Pomodoro -->
             <div class="card p-6 mt-6">
               <h3 class="text-lg font-semibold text-center mb-6">Timer pomodoro</h3>
-              <!-- Top row: Subject, Subtopic, Cycles -->
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
                   <div>
                       <label for="pomodoro-subject" class="block text-sm font-medium text-gray-600">Matéria</label>
@@ -567,7 +546,6 @@
                   </div>
               </div>
 
-              <!-- Timer Display -->
               <div class="flex flex-col items-center gap-2">
                   <div id="pomodoro-timer-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">25:00</div>
                   <div id="pomodoro-status" class="text-lg font-medium text-gray-600">Pronto para focar?</div>
@@ -575,7 +553,6 @@
                   <div class="flex gap-1.5 items-center mt-2" id="pomodoro-cycle-dots"></div>
               </div>
 
-              <!-- Buttons -->
               <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
                   <button id="pomodoro-start-pause" class="btn btn-primary py-2 px-6">Iniciar</button>
                   <button id="pomodoro-skip" class="btn btn-secondary py-2 px-6">Pular</button>
@@ -583,7 +560,6 @@
                   <button id="pomodoro-open-mini" class="btn btn-secondary py-2 px-4" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button>
               </div>
 
-              <!-- Settings -->
               <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t">
                   <div>
                       <label for="pomodoro-work-duration" class="block text-sm font-medium text-gray-600">Foco (min)</label>
@@ -616,7 +592,6 @@
               </div>
             </div>
             
-            <!-- Cronômetro Contínuo -->
             <div class="card p-6">
               <h3 class="text-lg font-semibold text-center">Cronômetro contínuo</h3>
               <p class="text-sm text-gray-500 text-center">Use para sessões de estudo com tempo livre.</p>
@@ -624,14 +599,14 @@
               <div class="text-center my-6">
                 <div id="stopwatch-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">00:00:00</div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-lg mx-auto mt-4">
-                  <div>
-                      <label for="stopwatch-subject" class="sr-only">Matéria do cronômetro</label>
-                      <select id="stopwatch-subject" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
-                  </div>
-                  <div>
-                      <label for="stopwatch-subtopic" class="sr-only">Assunto do cronômetro</label>
-                      <select id="stopwatch-subtopic" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
-                  </div>
+                    <div>
+                        <label for="stopwatch-subject" class="sr-only">Matéria do cronômetro</label>
+                        <select id="stopwatch-subject" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+                    </div>
+                    <div>
+                        <label for="stopwatch-subtopic" class="sr-only">Assunto do cronômetro</label>
+                        <select id="stopwatch-subtopic" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+                    </div>
                 </div>
               </div>
 
@@ -661,7 +636,6 @@
               </div>
             </div>
 
-            <!-- Registro Manual -->
             <div class="card p-6" id="registration-card">
               <h3 class="text-lg font-semibold text-center">Registrar sessão manual</h3>
               <p class="text-sm text-gray-500 text-center">Preencha os detalhes da sua sessão de estudo.</p>
@@ -719,15 +693,15 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                      <label for="activity-type" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
-                      <select id="activity-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                    <label for="activity-type" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
+                    <select id="activity-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
                   </div>
                   <div>
-                      <label for="session-type" class="block text-sm font-medium text-gray-600">Tipo de sessão</label>
-                      <select id="session-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="focada">Focada (deep work)</option>
-                        <option value="superficial">Superficial</option>
-                      </select>
+                    <label for="session-type" class="block text-sm font-medium text-gray-600">Tipo de sessão</label>
+                    <select id="session-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <option value="focada">Focada (deep work)</option>
+                      <option value="superficial">Superficial</option>
+                    </select>
                   </div>
                 </div>
 
@@ -801,7 +775,6 @@
               </div>
             </div>
             
-            <!-- GERENCIAR MATÉRIAS E ASSUNTOS -->
             <div class="card p-6">
               <h3 class="text-lg font-semibold text-center">Gerenciar matérias e assuntos</h3>
               <div class="mt-4 flex items-center gap-3">
@@ -809,7 +782,6 @@
                   <button id="add-subject-btn" class="btn btn-primary py-2 px-3">Adicionar matéria</button>
               </div>
               <div id="subjects-management-container" class="mt-4 space-y-4">
-                  <!-- Lista de matérias e assuntos será renderizada aqui -->
               </div>
             </div>
 
@@ -928,7 +900,6 @@
   
   <input type="file" id="backup-file-input" class="hidden" accept=".json">
 
-  <!-- Elements for Picture-in-Picture Timer -->
   <video id="pip-video" class="hidden" muted playsinline></video>
   <canvas id="pip-canvas" width="300" height="200" class="hidden"></canvas>
 
@@ -1102,13 +1073,18 @@
         const showLoginBtn = document.getElementById('show-login');
         const logoutBtn = document.getElementById('logout-btn');
         const logoutBtnMobile = document.getElementById('logout-btn-mobile');
-        const forgotPasswordLink = document.getElementById('forgot-password');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
 
         loginForm.addEventListener('submit', e => {
             e.preventDefault();
             const email = loginForm['login-email'].value;
             const password = loginForm['login-password'].value;
             this.handleLogin(email, password);
+        });
+        
+        forgotPasswordLink.addEventListener('click', e => {
+            e.preventDefault();
+            this.handleForgotPassword();
         });
 
         registerForm.addEventListener('submit', e => {
@@ -1132,11 +1108,6 @@
         
         logoutBtn.addEventListener('click', () => this.handleLogout());
         logoutBtnMobile.addEventListener('click', () => this.handleLogout());
-
-        forgotPasswordLink.addEventListener('click', e => {
-            e.preventDefault();
-            this.handlePasswordReset();
-        });
       },
 
       handleLogin(email, password) {
@@ -1146,6 +1117,27 @@
             .catch(error => {
                 console.error("Erro de login:", error.message);
                 errorP.textContent = "Email ou senha inválidos.";
+            });
+      },
+      
+      handleForgotPassword() {
+        const emailInput = document.getElementById('login-email');
+        const email = emailInput.value;
+        const errorP = document.getElementById('login-error');
+        errorP.textContent = '';
+
+        if (!email) {
+            errorP.textContent = 'Por favor, insira seu email para redefinir a senha.';
+            return;
+        }
+
+        this.state.auth.sendPasswordResetEmail(email)
+            .then(() => {
+                this.toast('Email de redefinição de senha enviado!');
+            })
+            .catch(error => {
+                console.error("Erro ao enviar email de redefinição:", error);
+                errorP.textContent = 'Falha ao enviar. Verifique o email digitado.';
             });
       },
 
@@ -1162,20 +1154,6 @@
                 } else {
                     errorP.textContent = 'Ocorreu um erro ao criar a conta.';
                 }
-            });
-      },
-
-      handlePasswordReset() {
-        const email = prompt("Por favor, insira seu email para redefinir a senha:");
-        if (!email) return;
-
-        this.state.auth.sendPasswordResetEmail(email)
-            .then(() => {
-                this.toast('Email de redefinição de senha enviado!');
-            })
-            .catch(error => {
-                console.error("Erro ao enviar email de redefinição:", error);
-                this.toast('Não foi possível enviar o email. Verifique o endereço.', false);
             });
       },
 
@@ -1428,7 +1406,7 @@
         setTimeout(() => {
             this.createBackup('Automático Diário', false);
             setInterval(() => {
-                  this.createBackup('Automático Diário', false);
+                this.createBackup('Automático Diário', false);
             }, 24 * 60 * 60 * 1000);
         }, timeToNoon);
       },
@@ -1501,11 +1479,11 @@
                 const data = JSON.parse(e.target.result);
                 if (data.studyData && data.parameters) {
                     if (confirm('Isso irá substituir seus dados na nuvem pelos dados do arquivo. Deseja continuar?')) {
-                      this.state.studyData = data.studyData;
-                      this.state.parameters = data.parameters;
-                      this.saveData();
-                      this.toast('Backup importado com sucesso! Seus dados na nuvem foram atualizados.');
-                      this.updateDashboard();
+                        this.state.studyData = data.studyData;
+                        this.state.parameters = data.parameters;
+                        this.saveData();
+                        this.toast('Backup importado com sucesso! Seus dados na nuvem foram atualizados.');
+                        this.updateDashboard();
                     }
                 } else {
                     this.toast('Arquivo de backup inválido.', false);
@@ -1821,13 +1799,14 @@
                 const input = container.querySelector(`input[data-subtopic-input-for="${subjectName}"]`);
                 const subtopicName = input.value.trim();
                 const subject = this.state.parameters.subjects.find(s => s.name === subjectName);
-                if (subtopicName && !subject.subtopics.includes(subtopicName)) {
+                if (subtopicName && subject && !subject.subtopics.includes(subtopicName)) {
                     subject.subtopics.push(subtopicName);
                     subject.subtopics.sort();
                     this.saveData();
                     this.renderSubjectsManagement();
                     this.updateAllSubjectDropdowns();
                     input.value = '';
+                    this.toast(`Assunto "${subtopicName}" adicionado.`);
                 } else {
                     this.toast('Assunto já existe ou é inválido.', false);
                 }
@@ -1837,10 +1816,12 @@
             if (e.target.classList.contains('remove-subtopic-btn')) {
                 const subtopicName = e.target.dataset.subtopicName;
                 const subject = this.state.parameters.subjects.find(s => s.name === subjectName);
-                subject.subtopics = subject.subtopics.filter(st => st !== subtopicName);
-                this.saveData();
-                this.renderSubjectsManagement();
-                this.updateAllSubjectDropdowns();
+                if (subject) {
+                    subject.subtopics = subject.subtopics.filter(st => st !== subtopicName);
+                    this.saveData();
+                    this.renderSubjectsManagement();
+                    this.updateAllSubjectDropdowns();
+                }
             }
         });
         
@@ -2446,8 +2427,7 @@
             return;
         }
 
-        // A linha abaixo garante que apenas as 10 sessões mais recentes sejam exibidas.
-        // Todos os dados históricos são mantidos salvos.
+        // Slice(0, 10) ensures only the last 10 sessions are rendered.
         sortedData.slice(0, 10).forEach(session => {
             const el = document.createElement('div');
             el.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-md text-sm transition-all hover:bg-gray-100';
@@ -2552,11 +2532,10 @@
       precomputeMetrics(data, allData) {
         const totalSec = data.reduce((s,i)=>s+i.duration,0);
         
-        // **ALTERADO**: Calcula a média de acertos ponderada (total de acertos / total de questões)
-        // para um valor mais preciso, em vez de uma média de percentuais.
-        const totalQ = data.reduce((s, i) => s + (i.totalQuestions || 0), 0);
-        const correctQ = data.reduce((s, i) => s + (i.correctQuestions || 0), 0);
-        const accAvg = totalQ > 0 ? (correctQ / totalQ) : 0;
+        // CORREÇÃO: Garantir que apenas sessões com 'accuracy' numérico sejam consideradas.
+        const sessionsWithAcc = data.filter(i => typeof i.accuracy === 'number');
+        const totalAccuracySum = sessionsWithAcc.reduce((sum, item) => sum + item.accuracy, 0);
+        const accAvg = sessionsWithAcc.length > 0 ? totalAccuracySum / sessionsWithAcc.length : 0;
 
         const avgSessSec = data.length? totalSec/data.length : 0;
         const deepSec = data.filter(s=> s.sessionType==='focada').reduce((x,y)=>x+y.duration,0);
@@ -2668,7 +2647,7 @@
             hours: weekData.reduce((a, b) => a + b.duration, 0) / 3600,
             questions: weekData.reduce((a, b) => a + (b.totalQuestions || 0), 0),
             accuracy: (() => {
-                const sessionsWithAcc = weekData.filter(s => s.accuracy !== null);
+                const sessionsWithAcc = weekData.filter(s => typeof s.accuracy === 'number');
                 return sessionsWithAcc.length > 0 ? (sessionsWithAcc.reduce((sum, s) => sum + s.accuracy, 0) / sessionsWithAcc.length * 100) : 0;
             })(),
             days: studiedDays.size
@@ -2858,7 +2837,7 @@
         const paceHours = daysRemaining > 0 ? Math.max(0, (goals.hours - currentHours) / daysRemaining) : 0;
         const paceQuestions = daysRemaining > 0 ? Math.max(0, (goals.questions - currentQuestions) / daysRemaining) : 0;
 
-        const sessionsWithAccuracy = weekData.filter(s => s.accuracy !== null);
+        const sessionsWithAccuracy = weekData.filter(s => typeof s.accuracy === 'number');
         const currentAccuracy = sessionsWithAccuracy.length > 0 ? (sessionsWithAccuracy.reduce((sum, s) => sum + s.accuracy, 0) / sessionsWithAccuracy.length * 100) : 0;
         
         const daysStudiedThisWeek = new Set(weekData.map(s => s.date)).size;
@@ -2892,7 +2871,7 @@
           scales:{y:{beginAtZero:true,ticks:{font:{family:'Inter'}}},x:{ticks:{font:{family:'Inter'}}}}
         };
         this.state.charts.hoursBySubject = new Chart(document.getElementById('hoursBySubjectChart'), { type:'pie', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
-        this.state.charts.performanceBySubject = new Chart(document.getElementById('performanceBySubjectChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:true}}} });
+        this.state.charts.performanceBySubject = new Chart(document.getElementById('performanceBySubjectChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
         this.state.charts.studyEvolution = new Chart(document.getElementById('studyEvolutionChart'), { type:'line', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, elements:{line:{tension:.1}}} });
         this.state.charts.productivityByDay = new Chart(document.getElementById('productivityByDayChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
         this.state.charts.moodVsPerformance = new Chart(document.getElementById('moodVsPerformanceChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, scales:{y:{beginAtZero:true, max:1, ticks:{callback: v => `${(v*100)}%`}}}} });
@@ -2903,32 +2882,18 @@
         
         this.state.charts.activityDistribution = new Chart(document.getElementById('activityDistributionChart'), { type:'doughnut', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
         
-        // **ALTERADO**: Gráfico Flow vs. Performance alterado para 'bar'
+        // ALTERAÇÃO: Mudar o tipo de gráfico e as opções para barra
         this.state.charts.flowVsPerformance = new Chart(document.getElementById('flowVsPerformanceChart'), { 
-            type:'bar',
-            data:{labels:[],datasets:[]}, 
-            options:{
-                ...base, 
-                plugins: {
-                    ...base.plugins, 
-                    legend:{display:false}, 
-                    tooltip: { 
-                        callbacks: { 
-                            label: (ctx) => `Média de Acertos: ${(ctx.raw*100).toFixed(0)}%` 
-                        }
-                    }
-                }, 
-                scales:{
-                    x:{title:{display:true, text:'Nível de Flow'}}, 
-                    y:{
-                        beginAtZero: true,
-                        max: 1,
-                        ticks:{callback: v => `${(v*100)}%`}
-                    }
-                }
-            } 
+          type:'bar', 
+          data:{labels:[],datasets:[]}, 
+          options:{...base, 
+            plugins: {...base.plugins, legend:{display:false}}, 
+            scales:{
+              x:{title:{display:true, text:'Nível de Flow'}}, 
+              y:{beginAtZero: true, max: 1, ticks:{callback: v => `${(v*100)}%`}, title: {display: true, text: 'Desempenho Médio'}}
+            }
+          } 
         });
-
 
         document.getElementById('questions-evolution-toggle').addEventListener('change', e => {
             this.state.questionsEvolutionView = e.target.value;
@@ -2957,11 +2922,11 @@
         if (filterSubject && filterSubject !== 'all') {
             document.getElementById('hours-by-subject-title').textContent = `Distribuição de horas por assunto (${filterSubject})`;
             map = data.filter(i => i.subject === filterSubject)
-                      .reduce((acc, i) => { 
-                          const key = i.subtopic || 'Geral';
-                          acc[key] = (acc[key] || 0) + (i.duration / 3600); 
-                          return acc; 
-                      }, {});
+                        .reduce((acc, i) => { 
+                            const key = i.subtopic || 'Geral';
+                            acc[key] = (acc[key] || 0) + (i.duration / 3600); 
+                            return acc; 
+                        }, {});
             labels = Object.keys(map);
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
         } else {
@@ -2984,59 +2949,30 @@
 
         if (filterSubject && filterSubject !== 'all') {
             document.getElementById('performance-by-subject-title').textContent = `Desempenho por assunto (${filterSubject})`;
-            data.filter(d => d.subject === filterSubject && d.accuracy !== null).forEach(i => {
+            data.filter(d => d.subject === filterSubject && typeof d.accuracy === 'number').forEach(i => {
                 const key = i.subtopic || 'Geral';
                 if (!perf[key]) perf[key] = { sum: 0, cnt: 0 };
                 perf[key].sum += i.accuracy;
                 perf[key].cnt += 1;
             });
             labels = Object.keys(perf);
-            values = labels.map(s=> perf[s].sum / perf[s].cnt);
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
-            ch.data.datasets = [{
-                type: 'bar',
-                label:'% de acertos', 
-                data:values, 
-                backgroundColor: bgColors
-            }];
         } else {
             document.getElementById('performance-by-subject-title').textContent = 'Desempenho médio por disciplina';
-            data.filter(d=> d.accuracy!==null).forEach(i=>{
-                if(!perf[i.subject]) perf[i.subject]={sum:0,cnt:0};
-                perf[i.subject].sum += i.accuracy;
-                perf[i.subject].cnt += 1;
+            // CORREÇÃO: Usar 'typeof d.accuracy === "number"' para filtrar corretamente.
+            data.filter(d => typeof d.accuracy === "number").forEach(i=>{
+              if(!perf[i.subject]) perf[i.subject]={sum:0,cnt:0};
+              perf[i.subject].sum += i.accuracy;
+              perf[i.subject].cnt += 1;
             });
             labels = Object.keys(perf);
-            values = labels.map(s=> perf[s].cnt > 0 ? perf[s].sum / perf[s].cnt : 0);
             bgColors = labels.map(label => this.state.parameters.subjectColors[label] || '#cccccc');
-
-            // **NOVO**: Calcula a média geral ponderada para a linha de referência
-            const totalQ = data.reduce((s, i) => s + (i.totalQuestions || 0), 0);
-            const correctQ = data.reduce((s, i) => s + (i.correctQuestions || 0), 0);
-            const overallAverage = totalQ > 0 ? (correctQ / totalQ) : 0;
-
-            ch.data.datasets = [
-                {
-                    type: 'bar',
-                    label:'% de acertos', 
-                    data:values, 
-                    backgroundColor: bgColors
-                },
-                {
-                    type: 'line',
-                    label: 'Média Geral',
-                    data: labels.map(() => overallAverage),
-                    borderColor: '#E07A5F',
-                    backgroundColor: '#E07A5F',
-                    fill: false,
-                    pointRadius: 0,
-                    borderWidth: 2,
-                    borderDash: [5, 5]
-                }
-            ];
         }
         
+        values = labels.map(s=> perf[s] && perf[s].cnt > 0 ? perf[s].sum / perf[s].cnt : 0);
         ch.data.labels = labels;
+        ch.data.datasets = [{label:'% de acertos', data:values, backgroundColor: bgColors}];
+        ch.options.scales.y.max = 1;
         ch.options.scales.y.ticks.callback = v=> `${(v*100).toFixed(0)}%`;
         ch.update();
       },
@@ -3052,7 +2988,7 @@
         });
 
         const accuracyData = labels.map(subject => {
-            const subjectSessions = allData.filter(s => s.subject === subject && s.accuracy !== null);
+            const subjectSessions = allData.filter(s => s.subject === subject && typeof s.accuracy === 'number');
             if (subjectSessions.length === 0) return 0;
             const avgAccuracy = subjectSessions.reduce((sum, s) => sum + s.accuracy, 0) / subjectSessions.length;
             return avgAccuracy * 100;
@@ -3115,7 +3051,7 @@
         if (container.innerHTML === '') {
             container.innerHTML = `<p class="text-sm text-gray-500 text-center">Sem dados de exercícios ou simulados para exibir.</p>`;
         }
-    },
+      },
       updateStudyEvolutionChart(data){
         const map = data.reduce((acc,i)=>{ acc[i.date]=(acc[i.date]||0)+(i.duration); return acc; },{});
         const dates = Object.keys(map).sort((a,b)=> new Date(a)-new Date(b));
@@ -3186,7 +3122,7 @@
       },
       updateMoodVsPerformanceChart(data){
         const perf = { ruim: { sum: 0, cnt: 0 }, medio: { sum: 0, cnt: 0 }, bom: { sum: 0, cnt: 0 }};
-        data.filter(s => s.mood && s.accuracy !== null).forEach(s => {
+        data.filter(s => s.mood && typeof s.accuracy === 'number').forEach(s => {
             perf[s.mood].sum += s.accuracy;
             perf[s.mood].cnt++;
         });
@@ -3220,7 +3156,7 @@
       },
       updatePerformanceByTimeOfDayChart(data) {
         const periods = { 'madrugada': { sum: 0, cnt: 0 }, 'manha': { sum: 0, cnt: 0 }, 'tarde': { sum: 0, cnt: 0 }, 'noite': { sum: 0, cnt: 0 } };
-        data.filter(d => d.accuracy !== null && d.timeOfDay).forEach(s => {
+        data.filter(d => typeof d.accuracy === 'number' && d.timeOfDay).forEach(s => {
             periods[s.timeOfDay].sum += s.accuracy;
             periods[s.timeOfDay].cnt++;
         });
@@ -3229,6 +3165,7 @@
         const ch = this.state.charts.performanceByTimeOfDay;
         ch.data.labels = labels;
         ch.data.datasets = [{ label: '% de Acertos', data: values, backgroundColor: '#F2CC8F' }];
+        ch.options.scales.y.max = 1;
         ch.options.scales.y.ticks.callback = v => `${(v * 100).toFixed(0)}%`;
         ch.update();
       },
@@ -3302,35 +3239,32 @@
         ch.update();
       },
 
-      // **ALTERADO**: Lógica para agregar dados para o gráfico de barras
       updateFlowVsPerformanceChart(data) {
+        // ALTERAÇÃO: Lógica para agrupar dados por flow e calcular a média
         const ch = this.state.charts.flowVsPerformance;
-        
-        const flowData = {
-            1: { sum: 0, cnt: 0 }, 2: { sum: 0, cnt: 0 }, 3: { sum: 0, cnt: 0 },
-            4: { sum: 0, cnt: 0 }, 5: { sum: 0, cnt: 0 },
-        };
+        const perfByFlow = {}; // { '1': { sum: 0, cnt: 0 }, '2': ..., etc. }
 
-        data.filter(s => s.flowScore && s.accuracy !== null)
-            .forEach(s => {
-                if (flowData[s.flowScore]) {
-                    flowData[s.flowScore].sum += s.accuracy;
-                    flowData[s.flowScore].cnt++;
-                }
-            });
-
-        const labels = Object.keys(flowData);
-        const averages = labels.map(key => {
-            const d = flowData[key];
-            return d.cnt > 0 ? d.sum / d.cnt : 0;
+        data.filter(s => s.flowScore && typeof s.accuracy === 'number').forEach(s => {
+            const score = s.flowScore;
+            if (!perfByFlow[score]) {
+                perfByFlow[score] = { sum: 0, cnt: 0 };
+            }
+            perfByFlow[score].sum += s.accuracy;
+            perfByFlow[score].cnt++;
         });
 
-        ch.data.labels = labels.map(l => `Flow ${l}`);
+        const labels = ['1', '2', '3', '4', '5'];
+        const values = labels.map(score => {
+            const stats = perfByFlow[score];
+            return (stats && stats.cnt > 0) ? (stats.sum / stats.cnt) : 0;
+        });
+        
+        ch.data.labels = labels;
         ch.data.datasets = [{
-            label: 'Média de Acertos',
-            data: averages,
-            backgroundColor: ['#E07A5F', '#F2CC8F', '#81B29A', '#3D405B', '#555B6E'],
-            borderColor: '#fff',
+            label: 'Desempenho Médio',
+            data: values,
+            backgroundColor: '#81B29A',
+            borderColor: '#6A947E',
             borderWidth: 1
         }];
         ch.update();
@@ -3357,7 +3291,7 @@
             }
             
             const perfBySubject = {};
-            data.filter(d => d.accuracy !== null && d.totalQuestions >= 10).forEach(i => {
+            data.filter(d => typeof d.accuracy === 'number' && d.totalQuestions >= 10).forEach(i => {
                 if (!perfBySubject[i.subject]) perfBySubject[i.subject] = { sum: 0, cnt: 0 };
                 perfBySubject[i.subject].sum += i.accuracy;
                 perfBySubject[i.subject].cnt++;
@@ -3372,7 +3306,7 @@
             }
             
             const perfByTime = { 'madrugada': { sum: 0, cnt: 0 }, 'manha': { sum: 0, cnt: 0 }, 'tarde': { sum: 0, cnt: 0 }, 'noite': { sum: 0, cnt: 0 } };
-            data.filter(d => d.accuracy !== null && d.timeOfDay).forEach(s => {
+            data.filter(d => typeof d.accuracy === 'number' && d.timeOfDay).forEach(s => {
                 perfByTime[s.timeOfDay].sum += s.accuracy;
                 perfByTime[s.timeOfDay].cnt++;
             });
@@ -3459,7 +3393,7 @@
                 <td class="px-4 py-3">${this.fmtHM(s.duration)}</td>
                 <td class="px-4 py-3">${s.activity}</td>
                 <td class="px-4 py-3">${s.totalQuestions > 0 ? `${s.correctQuestions}/${s.totalQuestions}` : '-'}</td>
-                <td class="px-4 py-3">${s.accuracy !== null ? `${(s.accuracy*100).toFixed(0)}%` : '-'}</td>
+                <td class="px-4 py-3">${typeof s.accuracy === 'number' ? `${(s.accuracy*100).toFixed(0)}%` : '-'}</td>
             `;
             fragment.appendChild(row);
         });
@@ -3495,7 +3429,7 @@
 
         addTitle('Indicadores chave do período');
         const totalSec = data.reduce((s,i)=>s+i.duration,0);
-        const sessionsWithAcc = data.filter(i=> i.accuracy!==null);
+        const sessionsWithAcc = data.filter(i => typeof i.accuracy === 'number');
         const accAvg = sessionsWithAcc.length ? (sessionsWithAcc.reduce((s,i)=>s+i.accuracy,0)/sessionsWithAcc.length) : 0;
         const avgSessSec = data.length ? totalSec/data.length : 0;
         
@@ -3566,3 +3500,4 @@
   </script>
 </body>
 </html>
+
