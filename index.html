@@ -11,16 +11,16 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  
+  <!-- Scripts do Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <!-- Adicionar os SDKs do Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  
   <style>
     :root{
       --c1:#3D405B;
@@ -191,586 +191,592 @@
     </header>
 
     <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
-      <section id="dashboard-view" class="space-y-8">
-        
-        <!-- SEÇÃO CONCURSO -->
-        <div>
-            <div class="card p-4 sm:p-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-end">
-                    <div class="md:col-span-1 lg:col-span-2">
-                        <label for="concurso-nome" class="block text-sm font-medium text-gray-600">Concurso</label>
-                        <input type="text" id="concurso-nome" placeholder="Ex: Jurídicos (Geral)" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    </div>
-                    <div>
-                        <label for="concurso-cargo" class="block text-sm font-medium text-gray-600">Cargo</label>
-                        <input type="text" id="concurso-cargo" placeholder="Ex: Em aberto" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    </div>
-                    <div>
-                        <label for="concurso-inicio" class="block text-sm font-medium text-gray-600">Início dos estudos</label>
-                        <input type="date" id="concurso-inicio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    </div>
-                    <div>
-                        <label for="concurso-prova" class="block text-sm font-medium text-gray-600">Data da prova</label>
-                        <input type="date" id="concurso-prova" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    </div>
-                </div>
-                <div id="concurso-countdown" class="text-center mt-4 font-bold text-lg text-[color:var(--c1)]"></div>
-            </div>
-        </div>
+      <div id="loading-view" class="text-center py-20">
+        <p class="text-lg font-semibold text-gray-600">Carregando dados do Firebase...</p>
+      </div>
 
-
-        <!-- SEÇÃO DE FILTROS E CONTROLES -->
-        <div>
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h2 class="text-xl font-bold text-gray-800">Visão geral</h2>
-                <p id="dashboard-period-display" class="text-sm text-gray-500">Exibindo dados para o período selecionado.</p>
-              </div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <button id="import-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-upload mr-2"></i>Importar</button>
-                <button id="export-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-download mr-2"></i>Backup</button>
-                <button id="export-pdf-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-file-pdf mr-2"></i>Exportar PDF</button>
-                <button id="save-all-btn" class="btn btn-primary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar tudo</button>
-              </div>
-            </div>
-    
-            <div class="card p-4 sm:p-6 mt-4">
-              <h3 class="text-lg font-semibold text-center mb-4">Filtros de análise</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                <div>
-                  <label for="filter-subject" class="block text-sm font-medium text-gray-600">Disciplina</label>
-                  <select id="filter-subject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
-                </div>
-                <div>
-                  <label for="filter-activity" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
-                  <select id="filter-activity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
-                </div>
-                <div class="lg:col-span-2">
-                  <label class="block text-sm font-medium text-gray-600">Período</label>
-                  <div class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="date" id="filter-start-date" class="block w-full border-gray-300 rounded-md shadow-sm">
-                    <input type="date" id="filter-end-date" class="block w-full border-gray-300 rounded-md shadow-sm">
-                  </div>
-                  <div id="period-pills" class="mt-2 flex flex-wrap gap-2">
-                    <button data-period="today" class="pill">Hoje</button>
-                    <button data-period="week" class="pill">Esta semana</button>
-                    <button data-period="month" class="pill">Este mês</button>
-                    <button data-period="all" class="pill">Todo o período</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO DE INDICADORES CHAVE -->
-        <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Indicadores</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div class="card p-4 kpi text-center">
-                <h3>Horas no período</h3>
-                <p id="total-hours">00h00m</p>
-              </div>
-              <div class="card p-4 kpi text-center">
-                <h3>Média de acertos</h3>
-                <p id="avg-accuracy">0%</p>
-              </div>
-              <div class="card p-4 kpi text-center">
-                <h3>Sessão média</h3>
-                <p id="avg-session-duration">0h00m</p>
-              </div>
-              <div class="card p-4 kpi text-center">
-                <h3>% Horas focadas</h3>
-                <p id="deep-work-ratio">0%</p>
-              </div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO DE METAS E CONSTÂNCIA -->
-        <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Metas</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-              <div class="card p-4 sm:p-6 lg:col-span-2 flex flex-col">
-                <h3 class="text-lg font-semibold text-center">Constância de estudos</h3>
-                <div id="consistency-tracker" class="mt-4 flex-grow flex flex-col items-center justify-center w-full overflow-x-auto">
-                   <!-- Heatmap será gerado aqui -->
-                </div>
-              </div>
-              <div class="card p-4 sm:p-6 flex flex-col">
-                <h3 id="weekly-goals-title" class="text-lg font-semibold text-center">Metas da semana</h3>
-                <div id="weekly-days-tracker" class="flex justify-around items-center my-4"></div>
-                <div id="goals-display-view" class="space-y-3 mt-2 flex-grow flex flex-col justify-center">
-                  <!-- Metas geradas por JS -->
-                </div>
-                <div id="goals-edit-view" class="hidden mt-4 space-y-3">
-                  <div>
-                    <label for="goal-hours-input" class="block text-sm text-gray-600">Meta de horas</label>
-                    <input type="number" id="goal-hours-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                  </div>
-                  <div>
-                    <label for="goal-questions-input" class="block text-sm font-medium text-gray-600">Meta de questões</label>
-                    <input type="number" id="goal-questions-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                  </div>
-                   <div>
-                    <label for="goal-accuracy-input" class="block text-sm font-medium text-gray-600">Meta de acertos (%)</label>
-                    <input type="number" id="goal-accuracy-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                  </div>
-                   <div>
-                    <label for="goal-days-input" class="block text-sm font-medium text-gray-600">Meta de dias/semana</label>
-                    <input type="number" id="goal-days-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                  </div>
-                  <button id="save-goals-btn" class="btn btn-primary py-2 px-3 w-full">Salvar Metas</button>
-                </div>
-              </div>
-            </div>
-        </div>
-        
-        <div class="space-y-6">
-            <div class="card p-4 sm:p-6">
-                <h3 id="progress-goals-title" class="text-lg font-semibold text-center">Progresso em relação às metas semanais</h3>
-                <div id="progress-goals-table-container" class="overflow-x-auto mt-4"></div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO DE ANÁLISE DE DESEMPENHO -->
-        <div>
-          <h2 class="text-xl font-bold text-gray-800 mb-4">Análise de desempenho</h2>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="card p-4 sm:p-6">
-              <h3 class="text-lg font-semibold text-center" id="hours-by-subject-title">Distribuição de horas por disciplina</h3>
-              <div class="chart-container mx-auto max-w-sm">
-                <canvas id="hoursBySubjectChart"></canvas>
-              </div>
-            </div>
-            <div class="card p-4 sm:p-6">
-              <h3 class="text-lg font-semibold text-center" id="performance-by-subject-title">Desempenho médio por disciplina</h3>
-              <div class="chart-container">
-                <canvas id="performanceBySubjectChart"></canvas>
-              </div>
-            </div>
-            <div class="card p-4 sm:p-6">
-              <h3 class="text-lg font-semibold text-center">Distribuição de tempo por atividade</h3>
-              <div class="chart-container mx-auto max-w-sm">
-                <canvas id="activityDistributionChart"></canvas>
-              </div>
-            </div>
-            <div class="card p-4 sm:p-6">
-              <h3 class="text-lg font-semibold text-center">Flow vs. desempenho</h3>
-              <div class="chart-container">
-                <canvas id="flowVsPerformanceChart"></canvas>
-              </div>
-            </div>
-             <div class="card p-4 sm:p-6 lg:col-span-2">
-                <h3 class="text-lg font-semibold text-center mb-4">Forças e fraquezas por disciplina</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                    <div class="chart-container" style="height: 400px;">
-                        <canvas id="strengthsWeaknessesChart"></canvas>
-                    </div>
-                    <div id="strengths-weaknesses-details" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                        <!-- Detalhes gerados aqui -->
-                    </div>
-                </div>
-            </div>
-            <div class="card p-4 sm:p-6 lg:col-span-2">
-              <div class="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4">
-                  <h3 class="text-lg font-semibold text-center">Evolução das questões</h3>
-                  <div id="questions-evolution-toggle" class="flex items-center text-sm p-1 bg-gray-100 rounded-lg">
-                      <input type="radio" name="questions-view" id="q-view-relative" value="relative" class="sr-only chart-toggle-input" checked>
-                      <label for="q-view-relative" class="chart-toggle-label">Desempenho relativo (%)</label>
-                      <input type="radio" name="questions-view" id="q-view-absolute" value="absolute" class="sr-only chart-toggle-input">
-                      <label for="q-view-absolute" class="chart-toggle-label">Número de resoluções</label>
-                  </div>
-              </div>
-              <div class="chart-container" style="height: 360px;">
-                  <canvas id="questionsEvolutionChart"></canvas>
-              </div>
-            </div>
-            <div class="card p-4 sm:p-6 lg:col-span-2">
-              <h3 class="text-lg font-semibold text-center">Evolução das horas de estudo (diário)</h3>
-              <p class="text-sm text-gray-500 text-center">Média diária no período: <span id="average-time-display" class="font-semibold">00h00m</span></p>
-              <div class="chart-container" style="height: 360px;">
-                <canvas id="studyEvolutionChart"></canvas>
-              </div>
-            </div>
-             <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center">Evolução das horas de estudo (mensal)</h3>
-                <div class="chart-container">
-                    <canvas id="monthlyStudyEvolutionChart"></canvas>
-                </div>
-            </div>
-            <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center">Rendimento por horário do dia</h3>
-                <div class="chart-container">
-                    <canvas id="performanceByTimeOfDayChart"></canvas>
-                </div>
-            </div>
-             <div class="card p-4 sm:p-6">
-              <h3 class="text-lg font-semibold text-center">Produtividade por dia da semana</h3>
-              <div class="chart-container">
-                <canvas id="productivityByDayChart"></canvas>
-              </div>
-            </div>
-            <div class="card p-4 sm:p-6">
-              <h3 class="text-lg font-semibold text-center">Humor vs. desempenho</h3>
-              <div class="chart-container">
-                <canvas id="moodVsPerformanceChart"></canvas>
-              </div>
-            </div>
-            <div class="card p-4 sm:p-6 lg:col-span-2">
-                <h3 class="text-lg font-semibold text-center">Evolução semanal (últimas 4 semanas)</h3>
-                <div id="weekly-evolution-table" class="overflow-x-auto mt-4"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SEÇÃO DE RECORDES PESSOAIS -->
-        <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Recordes</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div class="card p-4 kpi text-center">
-                <h3>Horas (dia)</h3>
-                <p id="record-hours-day">00h00m</p>
-              </div>
-               <div class="card p-4 kpi text-center">
-                <h3>Acertos (%)</h3>
-                <p id="record-accuracy">0%</p>
-              </div>
-               <div class="card p-4 kpi text-center">
-                <h3>Maior sequência</h3>
-                <p id="record-streak">0 dias</p>
-              </div>
-              <div class="card p-4 kpi text-center">
-                <h3>Horas (mês)</h3>
-                <p id="record-hours-month">00h00m</p>
-              </div>
-            </div>
-        </div>
-        
-        <!-- INSIGHTS -->
-        <div>
-            <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center mb-4">Insights rápidos</h3>
-                <div id="insights-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
-                    <!-- Insights gerados por JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- TABELA DE LOG DETALHADO -->
-        <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Histórico detalhado do período</h2>
-            <div class="card p-4 sm:p-6">
-                <div class="flex justify-end mb-4">
-                    <input type="text" id="log-search-input" placeholder="Buscar por disciplina ou assunto..." class="block w-full md:w-1/3 border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div id="detailed-log-table-container" class="overflow-x-auto max-h-56">
-                    <!-- Tabela gerada por JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO DE BACKUPS -->
-        <div id="backup-section">
-            <div class="flex justify-between items-center mb-4">
-                 <h2 class="text-xl font-bold text-gray-800">Backups salvos</h2>
-                 <button id="create-backup-now-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar backup agora</button>
-            </div>
-            <div class="card p-4 sm:p-6">
-                <p class="text-sm text-gray-600 mb-4">Seus backups são salvos localmente no navegador. Você pode baixá-los a qualquer momento. Um backup automático é criado diariamente.</p>
-                <div id="backup-list" class="space-y-2">
-                    <!-- Lista de backups será renderizada aqui -->
-                </div>
-            </div>
-        </div>
-      </section>
-
-      <!-- #################### TELA DE FOCO E REGISTRO #################### -->
-      <section id="foco-view" class="hidden space-y-8">
-        <div class="max-w-5xl mx-auto">
+      <div id="main-content" class="hidden">
+        <section id="dashboard-view" class="space-y-8">
           
-          <!-- Timer Pomodoro -->
-          <div class="card p-6 mt-6">
-            <h3 class="text-lg font-semibold text-center mb-6">Timer pomodoro</h3>
-            <!-- Top row: Subject, Subtopic, Cycles -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-                <div>
-                    <label for="pomodoro-subject" class="block text-sm font-medium text-gray-600">Matéria</label>
-                    <select id="pomodoro-subject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
-                </div>
-                <div>
-                    <label for="pomodoro-subtopic" class="block text-sm font-medium text-gray-600">Assunto (opcional)</label>
-                    <select id="pomodoro-subtopic" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
-                </div>
-                <div>
-                    <label for="pomodoro-cycles" class="block text-sm font-medium text-gray-600">Ciclos (p/ pausa longa)</label>
-                    <input type="number" id="pomodoro-cycles" value="4" min="1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-            </div>
+          <!-- SEÇÃO CONCURSO -->
+          <div>
+              <div class="card p-4 sm:p-6">
+                  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-end">
+                      <div class="md:col-span-1 lg:col-span-2">
+                          <label for="concurso-nome" class="block text-sm font-medium text-gray-600">Concurso</label>
+                          <input type="text" id="concurso-nome" placeholder="Ex: Jurídicos (Geral)" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      </div>
+                      <div>
+                          <label for="concurso-cargo" class="block text-sm font-medium text-gray-600">Cargo</label>
+                          <input type="text" id="concurso-cargo" placeholder="Ex: Em aberto" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      </div>
+                      <div>
+                          <label for="concurso-inicio" class="block text-sm font-medium text-gray-600">Início dos estudos</label>
+                          <input type="date" id="concurso-inicio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      </div>
+                      <div>
+                          <label for="concurso-prova" class="block text-sm font-medium text-gray-600">Data da prova</label>
+                          <input type="date" id="concurso-prova" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      </div>
+                  </div>
+                  <div id="concurso-countdown" class="text-center mt-4 font-bold text-lg text-[color:var(--c1)]"></div>
+              </div>
+          </div>
 
-            <!-- Timer Display -->
-            <div class="flex flex-col items-center gap-2">
-                <div id="pomodoro-timer-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">25:00</div>
-                <div id="pomodoro-status" class="text-lg font-medium text-gray-600">Pronto para focar?</div>
-                <div id="pomodoro-end-time" class="text-sm text-gray-400 h-5"></div>
-                <div class="flex gap-1.5 items-center mt-2" id="pomodoro-cycle-dots"></div>
-            </div>
 
-            <!-- Buttons -->
-            <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
-                <button id="pomodoro-start-pause" class="btn btn-primary py-2 px-6">Iniciar</button>
-                <button id="pomodoro-skip" class="btn btn-secondary py-2 px-6">Pular</button>
-                <button id="pomodoro-reset" class="btn btn-secondary py-2 px-6">Resetar</button>
-                <button id="pomodoro-open-mini" class="btn btn-secondary py-2 px-4" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button>
-            </div>
+          <!-- SEÇÃO DE FILTROS E CONTROLES -->
+          <div>
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h2 class="text-xl font-bold text-gray-800">Visão geral</h2>
+                  <p id="dashboard-period-display" class="text-sm text-gray-500">Exibindo dados para o período selecionado.</p>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button id="import-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-upload mr-2"></i>Importar</button>
+                  <button id="export-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-download mr-2"></i>Backup</button>
+                  <button id="export-pdf-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-file-pdf mr-2"></i>Exportar PDF</button>
+                  <button id="save-all-btn" class="btn btn-primary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar na Nuvem</button>
+                </div>
+              </div>
+      
+              <div class="card p-4 sm:p-6 mt-4">
+                <h3 class="text-lg font-semibold text-center mb-4">Filtros de análise</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                  <div>
+                    <label for="filter-subject" class="block text-sm font-medium text-gray-600">Disciplina</label>
+                    <select id="filter-subject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                  </div>
+                  <div>
+                    <label for="filter-activity" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
+                    <select id="filter-activity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                  </div>
+                  <div class="lg:col-span-2">
+                    <label class="block text-sm font-medium text-gray-600">Período</label>
+                    <div class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input type="date" id="filter-start-date" class="block w-full border-gray-300 rounded-md shadow-sm">
+                      <input type="date" id="filter-end-date" class="block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div id="period-pills" class="mt-2 flex flex-wrap gap-2">
+                      <button data-period="today" class="pill">Hoje</button>
+                      <button data-period="week" class="pill">Esta semana</button>
+                      <button data-period="month" class="pill">Este mês</button>
+                      <button data-period="all" class="pill">Todo o período</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
 
-            <!-- Settings -->
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t">
-                <div>
-                    <label for="pomodoro-work-duration" class="block text-sm font-medium text-gray-600">Foco (min)</label>
-                    <input type="number" id="pomodoro-work-duration" value="25" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+          <!-- SEÇÃO DE INDICADORES CHAVE -->
+          <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Indicadores</h2>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="card p-4 kpi text-center">
+                  <h3>Horas no período</h3>
+                  <p id="total-hours">00h00m</p>
                 </div>
-                <div>
-                    <label for="pomodoro-short-break-duration" class="block text-sm font-medium text-gray-600">Pausa curta</label>
-                    <input type="number" id="pomodoro-short-break-duration" value="5" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="card p-4 kpi text-center">
+                  <h3>Média de acertos</h3>
+                  <p id="avg-accuracy">0%</p>
                 </div>
-                <div>
-                    <label for="pomodoro-long-break-duration" class="block text-sm font-medium text-gray-600">Pausa longa</label>
-                    <input type="number" id="pomodoro-long-break-duration" value="15" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="card p-4 kpi text-center">
+                  <h3>Sessão média</h3>
+                  <p id="avg-session-duration">0h00m</p>
                 </div>
-                <div>
-                    <label for="pomodoro-alert-time" class="block text-sm font-medium text-gray-600">Alerta (min)</label>
-                    <input type="number" id="pomodoro-alert-time" placeholder="Opcional" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="card p-4 kpi text-center">
+                  <h3>% Horas focadas</h3>
+                  <p id="deep-work-ratio">0%</p>
                 </div>
-                <div>
-                    <label for="pomodoro-sound-select" class="block text-sm font-medium text-gray-600">Som do alerta</label>
-                    <select id="pomodoro-sound-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="notification">Notificação</option>
-                        <option value="chime">Sino</option>
-                        <option value="simple">Simples</option>
-                    </select>
+              </div>
+          </div>
+
+          <!-- SEÇÃO DE METAS E CONSTÂNCIA -->
+          <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Metas</h2>
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                <div class="card p-4 sm:p-6 lg:col-span-2 flex flex-col">
+                  <h3 class="text-lg font-semibold text-center">Constância de estudos</h3>
+                  <div id="consistency-tracker" class="mt-4 flex-grow flex flex-col items-center justify-center w-full overflow-x-auto">
+                    <!-- Heatmap será gerado aqui -->
+                  </div>
                 </div>
-            </div>
-            <div class="mt-4 flex items-center justify-center gap-2">
-                <input id="pomodoro-auto-start" type="checkbox" class="h-4 w-4 text-[color:var(--c2)] rounded border-gray-300 focus:ring-[color:var(--c2)]">
-                <label for="pomodoro-auto-start" class="text-sm text-gray-900">Iniciar próximo ciclo automaticamente</label>
-            </div>
+                <div class="card p-4 sm:p-6 flex flex-col">
+                  <h3 id="weekly-goals-title" class="text-lg font-semibold text-center">Metas da semana</h3>
+                  <div id="weekly-days-tracker" class="flex justify-around items-center my-4"></div>
+                  <div id="goals-display-view" class="space-y-3 mt-2 flex-grow flex flex-col justify-center">
+                    <!-- Metas geradas por JS -->
+                  </div>
+                  <div id="goals-edit-view" class="hidden mt-4 space-y-3">
+                    <div>
+                      <label for="goal-hours-input" class="block text-sm text-gray-600">Meta de horas</label>
+                      <input type="number" id="goal-hours-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                      <label for="goal-questions-input" class="block text-sm text-gray-600">Meta de questões</label>
+                      <input type="number" id="goal-questions-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                      <label for="goal-accuracy-input" class="block text-sm text-gray-600">Meta de acertos (%)</label>
+                      <input type="number" id="goal-accuracy-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                      <label for="goal-days-input" class="block text-sm text-gray-600">Meta de dias/semana</label>
+                      <input type="number" id="goal-days-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <button id="save-goals-btn" class="btn btn-primary py-2 px-3 w-full">Salvar Metas</button>
+                  </div>
+                </div>
+              </div>
           </div>
           
-          <!-- Cronômetro Contínuo -->
-          <div class="card p-6">
-            <h3 class="text-lg font-semibold text-center">Cronômetro contínuo</h3>
-            <p class="text-sm text-gray-500 text-center">Use para sessões de estudo com tempo livre.</p>
-            
-            <div class="text-center my-6">
-              <div id="stopwatch-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">00:00:00</div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-lg mx-auto mt-4">
-                 <div>
-                    <label for="stopwatch-subject" class="sr-only">Matéria do cronômetro</label>
-                    <select id="stopwatch-subject" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
-                 </div>
-                 <div>
-                    <label for="stopwatch-subtopic" class="sr-only">Assunto do cronômetro</label>
-                    <select id="stopwatch-subtopic" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
-                 </div>
+          <div class="space-y-6">
+              <div class="card p-4 sm:p-6">
+                  <h3 id="progress-goals-title" class="text-lg font-semibold text-center">Progresso em relação às metas semanais</h3>
+                  <div id="progress-goals-table-container" class="overflow-x-auto mt-4"></div>
               </div>
-            </div>
+          </div>
 
-            <div class="max-w-md mx-auto my-4 grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">Alerta (opcional)</label>
-                    <div class="flex items-center gap-2 mt-1">
-                        <input type="number" id="stopwatch-alert-hours" min="0" placeholder="h" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
-                        <input type="number" id="stopwatch-alert-minutes" min="0" max="59" placeholder="m" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+          <!-- SEÇÃO DE ANÁLISE DE DESEMPENHO -->
+          <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Análise de desempenho</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center" id="hours-by-subject-title">Distribuição de horas por disciplina</h3>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="hoursBySubjectChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center" id="performance-by-subject-title">Desempenho médio por disciplina</h3>
+                <div class="chart-container">
+                  <canvas id="performanceBySubjectChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center">Distribuição de tempo por atividade</h3>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="activityDistributionChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center">Flow vs. desempenho</h3>
+                <div class="chart-container">
+                  <canvas id="flowVsPerformanceChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6 lg:col-span-2">
+                  <h3 class="text-lg font-semibold text-center mb-4">Forças e fraquezas por disciplina</h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                      <div class="chart-container" style="height: 400px;">
+                          <canvas id="strengthsWeaknessesChart"></canvas>
+                      </div>
+                      <div id="strengths-weaknesses-details" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                          <!-- Detalhes gerados aqui -->
+                      </div>
+                  </div>
+              </div>
+              <div class="card p-4 sm:p-6 lg:col-span-2">
+                <div class="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4">
+                    <h3 class="text-lg font-semibold text-center">Evolução das questões</h3>
+                    <div id="questions-evolution-toggle" class="flex items-center text-sm p-1 bg-gray-100 rounded-lg">
+                        <input type="radio" name="questions-view" id="q-view-relative" value="relative" class="sr-only chart-toggle-input" checked>
+                        <label for="q-view-relative" class="chart-toggle-label">Desempenho relativo (%)</label>
+                        <input type="radio" name="questions-view" id="q-view-absolute" value="absolute" class="sr-only chart-toggle-input">
+                        <label for="q-view-absolute" class="chart-toggle-label">Número de resoluções</label>
                     </div>
                 </div>
-                <div>
-                    <label for="stopwatch-sound-select" class="block text-sm font-medium text-gray-600">Som do alerta</label>
-                    <select id="stopwatch-sound-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="notification">Notificação</option>
-                        <option value="chime">Sino</option>
-                        <option value="simple">Simples</option>
-                    </select>
+                <div class="chart-container" style="height: 360px;">
+                    <canvas id="questionsEvolutionChart"></canvas>
                 </div>
-            </div>
-            
-            <div class="mt-8 flex flex-wrap justify-center gap-4">
-              <button id="stopwatch-start-pause" class="btn btn-primary py-2 px-5">Iniciar</button>
-              <button id="stopwatch-log" class="btn btn-secondary py-2 px-5">Registrar</button>
-              <button id="stopwatch-reset" class="btn btn-secondary py-2 px-5">Resetar</button>
-              <button id="stopwatch-open-mini" class="btn btn-secondary py-2 px-3" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button>
+              </div>
+              <div class="card p-4 sm:p-6 lg:col-span-2">
+                <h3 class="text-lg font-semibold text-center">Evolução das horas de estudo (diário)</h3>
+                <p class="text-sm text-gray-500 text-center">Média diária no período: <span id="average-time-display" class="font-semibold">00h00m</span></p>
+                <div class="chart-container" style="height: 360px;">
+                  <canvas id="studyEvolutionChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                  <h3 class="text-lg font-semibold text-center">Evolução das horas de estudo (mensal)</h3>
+                  <div class="chart-container">
+                      <canvas id="monthlyStudyEvolutionChart"></canvas>
+                  </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                  <h3 class="text-lg font-semibold text-center">Rendimento por horário do dia</h3>
+                  <div class="chart-container">
+                      <canvas id="performanceByTimeOfDayChart"></canvas>
+                  </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center">Produtividade por dia da semana</h3>
+                <div class="chart-container">
+                  <canvas id="productivityByDayChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center">Humor vs. desempenho</h3>
+                <div class="chart-container">
+                  <canvas id="moodVsPerformanceChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6 lg:col-span-2">
+                  <h3 class="text-lg font-semibold text-center">Evolução semanal (últimas 4 semanas)</h3>
+                  <div id="weekly-evolution-table" class="overflow-x-auto mt-4"></div>
+              </div>
             </div>
           </div>
 
-          <!-- Registro Manual -->
-          <div class="card p-6" id="registration-card">
-            <h3 class="text-lg font-semibold text-center">Registrar sessão manual</h3>
-            <p class="text-sm text-gray-500 text-center">Preencha os detalhes da sua sessão de estudo.</p>
-            <form id="study-form" class="mt-6 space-y-6">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label for="date" class="block text-sm font-medium text-gray-600">Data</label>
-                  <input type="date" id="date" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+          <!-- SEÇÃO DE RECORDES PESSOAIS -->
+          <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Recordes</h2>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="card p-4 kpi text-center">
+                  <h3>Horas (dia)</h3>
+                  <p id="record-hours-day">00h00m</p>
                 </div>
-                <div>
-                    <label for="time-of-day" class="block text-sm font-medium text-gray-600">Período do dia</label>
-                    <select id="time-of-day" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="madrugada">Madrugada (00-06)</option>
-                        <option value="manha">Manhã (06-12)</option>
-                        <option value="tarde">Tarde (12-18)</option>
-                        <option value="noite">Noite (18-00)</option>
-                    </select>
+                <div class="card p-4 kpi text-center">
+                  <h3>Acertos (%)</h3>
+                  <p id="record-accuracy">0%</p>
+                </div>
+                <div class="card p-4 kpi text-center">
+                  <h3>Maior sequência</h3>
+                  <p id="record-streak">0 dias</p>
+                </div>
+                <div class="card p-4 kpi text-center">
+                  <h3>Horas (mês)</h3>
+                  <p id="record-hours-month">00h00m</p>
+                </div>
+              </div>
+          </div>
+          
+          <!-- INSIGHTS -->
+          <div>
+              <div class="card p-4 sm:p-6">
+                  <h3 class="text-lg font-semibold text-center mb-4">Insights rápidos</h3>
+                  <div id="insights-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
+                      <!-- Insights gerados por JS -->
+                  </div>
+              </div>
+          </div>
+
+          <!-- TABELA DE LOG DETALHADO -->
+          <div>
+              <h2 class="text-xl font-bold text-gray-800 mb-4">Histórico detalhado do período</h2>
+              <div class="card p-4 sm:p-6">
+                  <div class="flex justify-end mb-4">
+                      <input type="text" id="log-search-input" placeholder="Buscar por disciplina ou assunto..." class="block w-full md:w-1/3 border-gray-300 rounded-md shadow-sm">
+                  </div>
+                  <div id="detailed-log-table-container" class="overflow-x-auto max-h-56">
+                      <!-- Tabela gerada por JS -->
+                  </div>
+              </div>
+          </div>
+
+          <!-- SEÇÃO DE BACKUPS -->
+          <div id="backup-section">
+              <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-xl font-bold text-gray-800">Backups salvos (Local)</h2>
+                  <button id="create-backup-now-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar backup local</button>
+              </div>
+              <div class="card p-4 sm:p-6">
+                  <p class="text-sm text-gray-600 mb-4">Seus backups são salvos localmente no navegador. Você pode baixá-los a qualquer momento. Um backup automático é criado diariamente.</p>
+                  <div id="backup-list" class="space-y-2">
+                      <!-- Lista de backups será renderizada aqui -->
+                  </div>
+              </div>
+          </div>
+        </section>
+
+        <!-- #################### TELA DE FOCO E REGISTRO #################### -->
+        <section id="foco-view" class="hidden space-y-8">
+          <div class="max-w-5xl mx-auto">
+            
+            <!-- Timer Pomodoro -->
+            <div class="card p-6 mt-6">
+              <h3 class="text-lg font-semibold text-center mb-6">Timer pomodoro</h3>
+              <!-- Top row: Subject, Subtopic, Cycles -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                  <div>
+                      <label for="pomodoro-subject" class="block text-sm font-medium text-gray-600">Matéria</label>
+                      <select id="pomodoro-subject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                  </div>
+                  <div>
+                      <label for="pomodoro-subtopic" class="block text-sm font-medium text-gray-600">Assunto (opcional)</label>
+                      <select id="pomodoro-subtopic" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                  </div>
+                  <div>
+                      <label for="pomodoro-cycles" class="block text-sm font-medium text-gray-600">Ciclos (p/ pausa longa)</label>
+                      <input type="number" id="pomodoro-cycles" value="4" min="1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  </div>
+              </div>
+
+              <!-- Timer Display -->
+              <div class="flex flex-col items-center gap-2">
+                  <div id="pomodoro-timer-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">25:00</div>
+                  <div id="pomodoro-status" class="text-lg font-medium text-gray-600">Pronto para focar?</div>
+                  <div id="pomodoro-end-time" class="text-sm text-gray-400 h-5"></div>
+                  <div class="flex gap-1.5 items-center mt-2" id="pomodoro-cycle-dots"></div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+                  <button id="pomodoro-start-pause" class="btn btn-primary py-2 px-6">Iniciar</button>
+                  <button id="pomodoro-skip" class="btn btn-secondary py-2 px-6">Pular</button>
+                  <button id="pomodoro-reset" class="btn btn-secondary py-2 px-6">Resetar</button>
+                  <button id="pomodoro-open-mini" class="btn btn-secondary py-2 px-4" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button>
+              </div>
+
+              <!-- Settings -->
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t">
+                  <div>
+                      <label for="pomodoro-work-duration" class="block text-sm font-medium text-gray-600">Foco (min)</label>
+                      <input type="number" id="pomodoro-work-duration" value="25" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  </div>
+                  <div>
+                      <label for="pomodoro-short-break-duration" class="block text-sm font-medium text-gray-600">Pausa curta</label>
+                      <input type="number" id="pomodoro-short-break-duration" value="5" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  </div>
+                  <div>
+                      <label for="pomodoro-long-break-duration" class="block text-sm font-medium text-gray-600">Pausa longa</label>
+                      <input type="number" id="pomodoro-long-break-duration" value="15" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  </div>
+                  <div>
+                      <label for="pomodoro-alert-time" class="block text-sm font-medium text-gray-600">Alerta (min)</label>
+                      <input type="number" id="pomodoro-alert-time" placeholder="Opcional" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  </div>
+                  <div>
+                      <label for="pomodoro-sound-select" class="block text-sm font-medium text-gray-600">Som do alerta</label>
+                      <select id="pomodoro-sound-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <option value="notification">Notificação</option>
+                          <option value="chime">Sino</option>
+                          <option value="simple">Simples</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="mt-4 flex items-center justify-center gap-2">
+                  <input id="pomodoro-auto-start" type="checkbox" class="h-4 w-4 text-[color:var(--c2)] rounded border-gray-300 focus:ring-[color:var(--c2)]">
+                  <label for="pomodoro-auto-start" class="text-sm text-gray-900">Iniciar próximo ciclo automaticamente</label>
+              </div>
+            </div>
+            
+            <!-- Cronômetro Contínuo -->
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold text-center">Cronômetro contínuo</h3>
+              <p class="text-sm text-gray-500 text-center">Use para sessões de estudo com tempo livre.</p>
+              
+              <div class="text-center my-6">
+                <div id="stopwatch-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">00:00:00</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-lg mx-auto mt-4">
+                  <div>
+                      <label for="stopwatch-subject" class="sr-only">Matéria do cronômetro</label>
+                      <select id="stopwatch-subject" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+                  </div>
+                  <div>
+                      <label for="stopwatch-subtopic" class="sr-only">Assunto do cronômetro</label>
+                      <select id="stopwatch-subtopic" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+                  </div>
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="max-w-md mx-auto my-4 grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                   <div>
-                    <label for="subject" class="block text-sm font-medium text-gray-600">Disciplina</label>
-                    <select id="subject" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                      <label class="block text-sm font-medium text-gray-600">Alerta (opcional)</label>
+                      <div class="flex items-center gap-2 mt-1">
+                          <input type="number" id="stopwatch-alert-hours" min="0" placeholder="h" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                          <input type="number" id="stopwatch-alert-minutes" min="0" max="59" placeholder="m" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                      </div>
                   </div>
                   <div>
-                    <label for="subtopic" class="block text-sm font-medium text-gray-600">Assunto (opcional)</label>
-                    <select id="subtopic" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                      <label for="stopwatch-sound-select" class="block text-sm font-medium text-gray-600">Som do alerta</label>
+                      <select id="stopwatch-sound-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <option value="notification">Notificação</option>
+                          <option value="chime">Sino</option>
+                          <option value="simple">Simples</option>
+                      </select>
                   </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-600">Duração</label>
-                <div class="flex items-center gap-2 mt-1">
-                  <input type="number" id="manual-duration-hours" min="0" placeholder="0" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
-                  <span class="text-sm text-gray-500">horas</span>
-                  <input type="number" id="manual-duration-minutes" min="0" max="59" placeholder="0" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
-                  <span class="text-sm text-gray-500">min</span>
-                </div>
-                <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs">
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="5">5m</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="10">10m</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="15">15m</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="20">20m</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="30">30m</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="45">45m</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="1">1h</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="2">2h</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="3">3h</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="4">4h</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="5">5h</button>
-                    <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="6">6h</button>
-                </div>
               </div>
               
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                    <label for="activity-type" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
-                    <select id="activity-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
-                </div>
-                <div>
-                    <label for="session-type" class="block text-sm font-medium text-gray-600">Tipo de sessão</label>
-                    <select id="session-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                      <option value="focada">Focada (deep work)</option>
-                      <option value="superficial">Superficial</option>
-                    </select>
-                </div>
+              <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <button id="stopwatch-start-pause" class="btn btn-primary py-2 px-5">Iniciar</button>
+                <button id="stopwatch-log" class="btn btn-secondary py-2 px-5">Registrar</button>
+                <button id="stopwatch-reset" class="btn btn-secondary py-2 px-5">Resetar</button>
+                <button id="stopwatch-open-mini" class="btn btn-secondary py-2 px-3" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button>
               </div>
+            </div>
 
-              <div id="questions-section" class="hidden space-y-4">
+            <!-- Registro Manual -->
+            <div class="card p-6" id="registration-card">
+              <h3 class="text-lg font-semibold text-center">Registrar sessão manual</h3>
+              <p class="text-sm text-gray-500 text-center">Preencha os detalhes da sua sessão de estudo.</p>
+              <form id="study-form" class="mt-6 space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label for="date" class="block text-sm font-medium text-gray-600">Data</label>
+                    <input type="date" id="date" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  </div>
+                  <div>
+                      <label for="time-of-day" class="block text-sm font-medium text-gray-600">Período do dia</label>
+                      <select id="time-of-day" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <option value="madrugada">Madrugada (00-06)</option>
+                          <option value="manha">Manhã (06-12)</option>
+                          <option value="tarde">Tarde (12-18)</option>
+                          <option value="noite">Noite (18-00)</option>
+                      </select>
+                  </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label for="questions-total" class="block text-sm font-medium text-gray-600">Nº de questões</label>
-                      <input type="number" id="questions-total" min="0" class="question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                       <div class="flex flex-wrap justify-center gap-1 mt-1">
-                          <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
-                          <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
-                          <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button>
-                          <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button>
-                          <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button>
-                       </div>
+                      <label for="subject" class="block text-sm font-medium text-gray-600">Disciplina</label>
+                      <select id="subject" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
                     </div>
                     <div>
-                      <label for="questions-correct" class="block text-sm font-medium text-gray-600">Nº de acertos</label>
-                      <input type="number" id="questions-correct" min="0" class="question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                       <div class="flex flex-wrap justify-center gap-1 mt-1">
-                          <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
-                          <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
-                          <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button>
-                          <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button>
-                          <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button>
-                       </div>
+                      <label for="subtopic" class="block text-sm font-medium text-gray-600">Assunto (opcional)</label>
+                      <select id="subtopic" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
                     </div>
                 </div>
-              </div>
 
-              <div class="flex justify-between items-center">
+                <div>
+                  <label class="block text-sm font-medium text-gray-600">Duração</label>
+                  <div class="flex items-center gap-2 mt-1">
+                    <input type="number" id="manual-duration-hours" min="0" placeholder="0" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                    <span class="text-sm text-gray-500">horas</span>
+                    <input type="number" id="manual-duration-minutes" min="0" max="59" placeholder="0" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                    <span class="text-sm text-gray-500">min</span>
+                  </div>
+                  <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs">
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="5">5m</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="10">10m</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="15">15m</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="20">20m</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="30">30m</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-m="45">45m</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="1">1h</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="2">2h</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="3">3h</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="4">4h</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="5">5h</button>
+                      <button type="button" class="duration-btn btn btn-secondary py-1 px-2" data-h="6">6h</button>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <span class="block text-sm text-center mb-2">Como foi seu estudo?</span>
-                    <div id="mood-tracker" class="flex items-start gap-4">
-                        <div class="mood-square-wrapper">
-                            <button type="button" class="mood-square mood-red" data-mood="ruim"></button>
-                            <span class="text-xs mt-1">Ruim</span>
-                        </div>
-                        <div class="mood-square-wrapper">
-                            <button type="button" class="mood-square mood-yellow" data-mood="medio"></button>
-                            <span class="text-xs mt-1">Médio</span>
-                        </div>
-                        <div class="mood-square-wrapper">
-                            <button type="button" class="mood-square mood-green" data-mood="bom"></button>
-                            <span class="text-xs mt-1">Bom</span>
-                        </div>
-                    </div>
-                    <input type="hidden" id="mood-input" name="mood">
+                      <label for="activity-type" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
+                      <select id="activity-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
                   </div>
-                  <div id="flow-score-section" class="space-y-2 w-1/2">
-                    <label for="flow-score" class="block text-sm text-gray-700">Nível de flow</label>
-                    <div class="flow-slider-container">
-                        <input type="range" id="flow-score" min="1" max="5" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        <div class="flow-slider-labels">
-                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
-                        </div>
-                    </div>
+                  <div>
+                      <label for="session-type" class="block text-sm font-medium text-gray-600">Tipo de sessão</label>
+                      <select id="session-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="focada">Focada (deep work)</option>
+                        <option value="superficial">Superficial</option>
+                      </select>
                   </div>
-              </div>
+                </div>
 
-              <div class="flex justify-end gap-3 pt-4">
-                <button type="button" id="cancel-edit-btn" class="btn btn-secondary py-2 px-4 hidden">Cancelar edição</button>
-                <button type="submit" class="btn btn-primary py-2 px-4">Salvar sessão</button>
-              </div>
-            </form>
-          </div>
+                <div id="questions-section" class="hidden space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label for="questions-total" class="block text-sm font-medium text-gray-600">Nº de questões</label>
+                        <input type="number" id="questions-total" min="0" class="question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <div class="flex flex-wrap justify-center gap-1 mt-1">
+                            <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
+                            <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
+                            <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button>
+                            <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button>
+                            <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button>
+                        </div>
+                      </div>
+                      <div>
+                        <label for="questions-correct" class="block text-sm font-medium text-gray-600">Nº de acertos</label>
+                        <input type="number" id="questions-correct" min="0" class="question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <div class="flex flex-wrap justify-center gap-1 mt-1">
+                            <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
+                            <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
+                            <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button>
+                            <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button>
+                            <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button>
+                        </div>
+                      </div>
+                  </div>
+                </div>
 
-          <div class="card p-6">
-            <h3 class="text-lg font-semibold text-center">Histórico de sessões recentes</h3>
-            <div id="session-history-list" class="mt-4 space-y-3 max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center">
+                    <div>
+                      <span class="block text-sm text-center mb-2">Como foi seu estudo?</span>
+                      <div id="mood-tracker" class="flex items-start gap-4">
+                          <div class="mood-square-wrapper">
+                              <button type="button" class="mood-square mood-red" data-mood="ruim"></button>
+                              <span class="text-xs mt-1">Ruim</span>
+                          </div>
+                          <div class="mood-square-wrapper">
+                              <button type="button" class="mood-square mood-yellow" data-mood="medio"></button>
+                              <span class="text-xs mt-1">Médio</span>
+                          </div>
+                          <div class="mood-square-wrapper">
+                              <button type="button" class="mood-square mood-green" data-mood="bom"></button>
+                              <span class="text-xs mt-1">Bom</span>
+                          </div>
+                      </div>
+                      <input type="hidden" id="mood-input" name="mood">
+                    </div>
+                    <div id="flow-score-section" class="space-y-2 w-1/2">
+                      <label for="flow-score" class="block text-sm text-gray-700">Nível de flow</label>
+                      <div class="flow-slider-container">
+                          <input type="range" id="flow-score" min="1" max="5" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                          <div class="flow-slider-labels">
+                              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                  <button type="button" id="cancel-edit-btn" class="btn btn-secondary py-2 px-4 hidden">Cancelar edição</button>
+                  <button type="submit" class="btn btn-primary py-2 px-4">Salvar sessão</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold text-center">Histórico de sessões recentes</h3>
+              <div id="session-history-list" class="mt-4 space-y-3 max-h-96 overflow-y-auto">
+              </div>
+            </div>
+            
+            <!-- GERENCIAR MATÉRIAS E ASSUNTOS -->
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold text-center">Gerenciar matérias e assuntos</h3>
+              <div class="mt-4 flex items-center gap-3">
+                  <input type="text" id="new-subject-input" placeholder="Nome da nova matéria" class="flex-grow border-gray-300 rounded-md shadow-sm">
+                  <button id="add-subject-btn" class="btn btn-primary py-2 px-3">Adicionar matéria</button>
+              </div>
+              <div id="subjects-management-container" class="mt-4 space-y-4">
+                  <!-- Lista de matérias e assuntos será renderizada aqui -->
+              </div>
+            </div>
+
+
+            <div class="card p-6">
+              <h3 class="text-lg font-semibold text-center">Configurações gerais</h3>
+              <div class="mt-6 pt-6 border-t border-gray-200 space-y-4">
+                <div>
+                  <label for="week-start-day" class="block text-sm font-medium text-gray-600">Início da semana</label>
+                  <select id="week-start-day" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <option value="1">Segunda-feira</option>
+                      <option value="0">Domingo</option>
+                  </select>
+                </div>
+                <div>
+                  <h4 class="text-md font-semibold">Resetar todos os dados</h4>
+                  <button id="reset-all-data-btn" class="btn btn-danger mt-2 py-2 px-3 w-full">Resetar todos os dados da nuvem</button>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <!-- GERENCIAR MATÉRIAS E ASSUNTOS -->
-          <div class="card p-6">
-            <h3 class="text-lg font-semibold text-center">Gerenciar matérias e assuntos</h3>
-            <div class="mt-4 flex items-center gap-3">
-                <input type="text" id="new-subject-input" placeholder="Nome da nova matéria" class="flex-grow border-gray-300 rounded-md shadow-sm">
-                <button id="add-subject-btn" class="btn btn-primary py-2 px-3">Adicionar matéria</button>
-            </div>
-            <div id="subjects-management-container" class="mt-4 space-y-4">
-                <!-- Lista de matérias e assuntos será renderizada aqui -->
-            </div>
-          </div>
-
-
-          <div class="card p-6">
-            <h3 class="text-lg font-semibold text-center">Configurações gerais</h3>
-            <div class="mt-6 pt-6 border-t border-gray-200 space-y-4">
-              <div>
-                <label for="week-start-day" class="block text-sm font-medium text-gray-600">Início da semana</label>
-                <select id="week-start-day" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    <option value="1">Segunda-feira</option>
-                    <option value="0">Domingo</option>
-                </select>
-              </div>
-              <div>
-                <h4 class="text-md font-semibold">Resetar todos os dados</h4>
-                <button id="reset-all-data-btn" class="btn btn-danger mt-2 py-2 px-3 w-full">Resetar todos os dados</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
 
     <footer class="bg-white border-t border-gray-200">
@@ -794,28 +800,28 @@
           </div>
 
           <div id="modal-questions-section" class="hidden space-y-4">
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label for="modal-questions-total" class="block text-sm font-medium text-gray-600">Nº de questões</label>
                   <input type="number" id="modal-questions-total" min="0" class="modal-question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                   <div class="flex flex-wrap justify-center gap-1 mt-1">
+                  <div class="flex flex-wrap justify-center gap-1 mt-1">
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button>
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button>
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button>
-                   </div>
+                  </div>
                 </div>
                 <div>
                   <label for="modal-questions-correct" class="block text-sm font-medium text-gray-600">Nº de acertos</label>
                   <input type="number" id="modal-questions-correct" min="0" class="modal-question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                   <div class="flex flex-wrap justify-center gap-1 mt-1">
+                  <div class="flex flex-wrap justify-center gap-1 mt-1">
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button>
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button>
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button>
-                   </div>
+                  </div>
                 </div>
             </div>
           </div>
@@ -823,7 +829,7 @@
           <div class="flex justify-between items-center gap-6">
               <div class="flex-grow">
                 <span class="block text-sm text-center mb-2">Como foi seu estudo?</span>
-                 <div id="modal-mood-tracker" class="flex items-start justify-center gap-4">
+                <div id="modal-mood-tracker" class="flex items-start justify-center gap-4">
                     <div class="mood-square-wrapper">
                         <button type="button" class="mood-square mood-red" data-mood="ruim"></button>
                         <span class="text-xs mt-1">Ruim</span>
@@ -872,31 +878,42 @@
 
 
   <script>
-    // Configurações do Firebase - SUBSTITUA PELAS SUAS
-  const firebaseConfig = {
-  apiKey: "AIzaSyD0ZFxuLY452R6JENiRk-m3zJsuhj5GJaw",
-  authDomain: "dashboard-b436d.firebaseapp.com",
-  databaseURL: "https://dashboard-b436d-default-rtdb.firebaseio.com",
-  projectId: "dashboard-b436d",
-  storageBucket: "dashboard-b436d.firebasestorage.app",
-  messagingSenderId: "501090317163",
-  appId: "1:501090317163:web:a69822ae2e161a1bc3522e"
-};
+    // Your web app's Firebase configuration
+    // COLE AQUI A CONFIGURAÇÃO DO SEU PROJETO FIREBASE
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0ZFxuLY452R6JENiRk-m3zJsuhj5GJaw",
+      authDomain: "dashboard-b436d.firebaseapp.com",
+      databaseURL: "https://dashboard-b436d-default-rtdb.firebaseio.com",
+      projectId: "dashboard-b436d",
+      storageBucket: "dashboard-b436d.firebasestorage.app",
+      messagingSenderId: "501090317163",
+      appId: "1:501090317163:web:a69822ae2e161a1bc3522e"
+    };
 
+    /* (O sucesso é a soma de pequenos esforços repetidos dia após dia.) */
     const App = {
       state: {
         currentView: 'dashboard',
         charts: {},
         studyData: [],
-        backups: [],
+        backups: [], // Backups continuam sendo locais
         parameters: {
-          subjects: [], // Dados serão carregados do Firebase
+          subjects: [
+            { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] },
+            { name: "Raciocínio Lógico", subtopics: [] },
+            { name: "Português", subtopics: [] },
+            { name: "Direito Administrativo", subtopics: [] }
+          ],
           subjectColors: {},
           tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado"],
           weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 },
           weekStartDay: 1, // 1 para Segunda, 0 para Domingo
           concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }
         },
+        db: null, // Referência para o Realtime Database
+        auth: null, // Referência para o Auth
+        userId: null, // UID do usuário anônimo
+        dataLoaded: false, // Flag para controlar o carregamento inicial
         COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ],
         soundOptions: {
           notification: ["C5", "G5"],
@@ -940,69 +957,46 @@
         pendingSession: null,
         audioInitialized: false,
         synth: null,
-        activeQuestionInputId: 'questions-total', // Default active input
-        activeModalQuestionInputId: 'modal-questions-total', // Default active input for modal
+        activeQuestionInputId: 'questions-total',
+        activeModalQuestionInputId: 'modal-questions-total',
         questionsEvolutionView: 'relative',
         debounceTimer: null,
-        // Adicionando referências ao Firebase
-        firebaseApp: null,
-        auth: null,
-        db: null,
-        user: null,
       },
 
       init(){
         this.initFirebase();
       },
 
-      async initFirebase() {
+      initFirebase() {
         try {
-          // Inicializa o Firebase
-          this.state.firebaseApp = firebase.initializeApp(firebaseConfig);
-          this.state.auth = this.state.firebaseApp.auth();
-          this.state.db = this.state.firebaseApp.database();
-          
-          // Efetua login anônimo
-          await this.state.auth.signInAnonymously();
-          
-          this.state.user = this.state.auth.currentUser;
-          console.log("Autenticado anonimamente com UID:", this.state.user.uid);
-          
-          // Agora que está autenticado, carrega os dados
-          this.loadData();
-          
-          // Adiciona um listener para mudanças no banco de dados para sincronização em tempo real
-          const studyDataRef = this.state.db.ref(`users/${this.state.user.uid}/studyData`);
-          studyDataRef.on('value', (snapshot) => {
-              const data = snapshot.val();
-              this.state.studyData = data ? Object.values(data) : [];
-              this.renderSessionHistory();
-              if (this.state.currentView === 'dashboard') {
-                  this.updateDashboard();
+          firebase.initializeApp(firebaseConfig);
+          this.state.db = firebase.database();
+          this.state.auth = firebase.auth();
+
+          this.state.auth.onAuthStateChanged(user => {
+            if (user) {
+              this.state.userId = user.uid;
+              if (!this.state.dataLoaded) {
+                this.loadData(); // Carrega os dados do Firebase
               }
+            } else {
+              this.state.auth.signInAnonymously().catch(error => {
+                console.error("Erro ao fazer login anônimo:", error);
+                alert("Não foi possível conectar ao banco de dados. Verifique sua conexão e as configurações do Firebase.");
+              });
+            }
           });
-          
-          const paramsDataRef = this.state.db.ref(`users/${this.state.user.uid}/parameters`);
-          paramsDataRef.on('value', (snapshot) => {
-              const data = snapshot.val();
-              if (data) {
-                  this.state.parameters = Object.assign(this.state.parameters, data);
-                  this.updateAllSubjectDropdowns();
-                  this.updateActivityDropdowns();
-                  this.renderSubjectsManagement();
-                  this.updateCountdown();
-              }
-          });
-          
-          this.initializeApp();
-          
-        } catch (error) {
-            console.error("Erro ao inicializar o Firebase:", error);
-            this.toast('Erro ao conectar ao banco de dados. Verifique a configuração.', false);
+        } catch (e) {
+            console.error("Erro ao inicializar o Firebase:", e);
+            alert("Erro na configuração do Firebase. Verifique o objeto 'firebaseConfig' no código e se os scripts do Firebase foram carregados.");
         }
       },
-
+      
       initializeApp() {
+        // Esta função agora é chamada DEPOIS que os dados são carregados do Firebase
+        document.getElementById('loading-view').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+
         this.bindNav();
         this.bindFilters();
         this.bindGeneralActions();
@@ -1032,51 +1026,71 @@
                 this.renderDetailedLog(this.getFilteredData(), e.target.value);
             }, 300);
         });
-        
-        // Criar um backup de exemplo inicial se não houver nenhum
-        // Isso foi movido para um listener de carregamento de dados para garantir que a lógica do Firebase esteja pronta
       },
 
       saveData(){
-        /* (Consistência é a chave.) */
-        if (!this.state.user) {
-            console.error("Usuário não autenticado. Dados não serão salvos.");
-            return;
+        if (!this.state.userId) {
+          this.toast('Erro: Usuário não autenticado. Não foi possível salvar.', false);
+          return;
         }
-
+        
+        // Salva os dados principais no Firebase
         const dataToSave = {
-            studyData: this.state.studyData,
-            parameters: this.state.parameters,
+          studyData: this.state.studyData,
+          parameters: this.state.parameters,
         };
-        const backupsToSave = this.state.backups;
+        this.state.db.ref('users/' + this.state.userId).set(dataToSave)
+          .then(() => {
+            // Apenas um feedback visual, não é estritamente necessário
+            // this.toast('Dados salvos na nuvem!');
+          })
+          .catch(error => {
+            console.error("Falha ao salvar dados no Firebase:", error);
+            this.toast('Erro ao salvar na nuvem.', false);
+          });
 
-        // Salvar dados de estudo
-        this.state.db.ref(`users/${this.state.user.uid}/studyData`).set(dataToSave.studyData)
-            .then(() => console.log("Dados de estudo salvos com sucesso no Firebase."))
-            .catch(error => console.error("Falha ao salvar dados de estudo:", error));
-            
-        // Salvar parâmetros (matérias, metas, etc.)
-        this.state.db.ref(`users/${this.state.user.uid}/parameters`).set(dataToSave.parameters)
-            .then(() => console.log("Parâmetros salvos com sucesso no Firebase."))
-            .catch(error => console.error("Falha ao salvar parâmetros:", error));
-
-        // Salvar backups (ainda localmente, pode ser um recurso avançado para salvar no Storage)
-        localStorage.setItem('studyDashBackups', JSON.stringify(backupsToSave));
+        // Mantém o sistema de backup local
+        try {
+          localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups));
+        } catch(e){ console.error("Falha ao salvar backups locais:", e); }
       },
 
       loadData(){
-        if (!this.state.user) {
-            console.error("Usuário não autenticado. Não é possível carregar dados.");
-            return;
-        }
-        
-        // Carregar backups localmente
-        const rawBackups = localStorage.getItem('studyDashBackups');
-        if (rawBackups) {
-            this.state.backups = JSON.parse(rawBackups) || [];
-        }
-        
-        // Dados de estudo e parâmetros são carregados via os 'on' listeners na initFirebase
+        if (!this.state.userId) return;
+
+        // Carrega os backups locais
+        try {
+          const rawBackups = localStorage.getItem('studyDashBackupsV30');
+          if (rawBackups) {
+            this.state.backups = JSON.parse(rawBackups);
+          }
+        } catch(e) { console.error("Falha ao carregar backups locais:", e); }
+
+        // Carrega os dados principais do Firebase
+        this.state.db.ref('users/' + this.state.userId).once('value', snapshot => {
+          const data = snapshot.val();
+          if(data){
+            this.state.studyData = data.studyData || [];
+            if(data.parameters) {
+                if (data.parameters.disciplinas && !data.parameters.subjects) {
+                    data.parameters.subjects = data.parameters.disciplinas.map(d => ({ name: d, subtopics: [] }));
+                    delete data.parameters.disciplinas;
+                }
+                this.state.parameters = Object.assign(this.state.parameters, data.parameters);
+            }
+          }
+          
+          // Garante que os valores padrão existam
+          this.state.parameters.weeklyGoals = {
+            hours: 35, questions: 250, accuracy: 80, days: 5,
+            ...this.state.parameters.weeklyGoals
+          };
+          this.state.parameters.weekStartDay = this.state.parameters.weekStartDay === undefined ? 1 : parseInt(this.state.parameters.weekStartDay, 10);
+          this.ensureSubjectColors();
+          
+          this.state.dataLoaded = true;
+          this.initializeApp(); // Inicia o resto da aplicação
+        });
       },
 
       ensureSubjectColors() {
@@ -1186,7 +1200,7 @@
         if (saveBtn) {
             saveBtn.addEventListener('click', () => {
                 this.saveData();
-                this.toast('Todos os dados foram salvos no Firebase!');
+                this.toast('Dados salvos na nuvem!');
             });
         }
       },
@@ -1201,12 +1215,12 @@
       createBackup(reason = 'Manual', download = true) {
         try {
             const timestamp = new Date();
-            const dataToSave = {
+            // O backup agora salva os dados do estado atual, que vieram do Firebase
+            const dataToBackup = {
                 studyData: this.state.studyData,
                 parameters: this.state.parameters,
-                backups: this.state.backups,
             };
-            const jsonString = JSON.stringify(dataToSave, null, 2);
+            const jsonString = JSON.stringify(dataToBackup, null, 2);
             
             const newBackup = {
                 id: timestamp.getTime(),
@@ -1215,20 +1229,17 @@
                 content: jsonString,
             };
 
-            // Se for um backup automático, remova os backups automáticos anteriores
             if (reason.startsWith('Automático')) {
                 this.state.backups = this.state.backups.filter(b => !b.reason.startsWith('Automático'));
             }
 
             this.state.backups.push(newBackup);
-
-            // Ordena todos os backups por data, do mais novo para o mais antigo
             this.state.backups.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            this.toast(`Backup '${reason}' criado com sucesso!`);
+            this.toast(`Backup local '${reason}' criado com sucesso!`);
             
-            // Salva a lista de backups localmente
-            localStorage.setItem('studyDashBackups', JSON.stringify(this.state.backups));
+            // Salva a lista de backups no localStorage
+            localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups));
             this.renderBackupList();
             
             if(download) {
@@ -1263,8 +1274,8 @@
         setTimeout(() => {
             this.createBackup('Automático Diário', false);
             setInterval(() => {
-                 this.createBackup('Automático Diário', false);
-            }, 24 * 60 * 60 * 1000); // a cada 24 horas
+                  this.createBackup('Automático Diário', false);
+            }, 24 * 60 * 60 * 1000); // every 24 hours
         }, timeToNoon);
       },
 
@@ -1315,10 +1326,10 @@
 
         document.querySelectorAll('.delete-backup-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                if (window.confirm('Tem certeza que deseja excluir este backup?')) {
+                if (confirm('Tem certeza que deseja excluir este backup local?')) {
                     const backupId = parseInt(e.currentTarget.dataset.backupId, 10);
                     this.state.backups = this.state.backups.filter(b => b.id !== backupId);
-                    localStorage.setItem('studyDashBackups', JSON.stringify(this.state.backups));
+                    localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups));
                     this.renderBackupList();
                     this.toast('Backup excluído.');
                 }
@@ -1335,12 +1346,13 @@
             try {
                 const data = JSON.parse(e.target.result);
                 if (data.studyData && data.parameters) {
-                    this.state.studyData = data.studyData;
-                    this.state.parameters = data.parameters;
-                    this.state.backups = data.backups || [];
-                    this.saveData();
-                    this.toast('Backup importado com sucesso! A página será recarregada.');
-                    setTimeout(() => location.reload(), 1500);
+                    if (confirm('Isso irá substituir seus dados na nuvem pelos dados do arquivo. Deseja continuar?')) {
+                      this.state.studyData = data.studyData;
+                      this.state.parameters = data.parameters;
+                      this.saveData(); // Salva os novos dados no Firebase
+                      this.toast('Backup importado com sucesso! A página será recarregada.');
+                      setTimeout(() => location.reload(), 1500);
+                    }
                 } else {
                     this.toast('Arquivo de backup inválido.', false);
                 }
@@ -1486,19 +1498,18 @@
               if (index !== -1) {
                   this.state.studyData[index] = { ...this.state.studyData[index], ...itemData };
                   this.toast('Sessão atualizada!');
-                  this.saveData(); // Salva os dados atualizados no Firebase
               }
               this.resetForm();
           } else {
-              this.state.db.ref(`users/${this.state.user.uid}/studyData`).push(itemData)
-                  .then(() => {
-                      this.toast('Sessão registrada!');
-                      this.resetForm();
-                  })
-                  .catch(error => {
-                      this.toast('Erro ao registrar sessão. Tente novamente.', false);
-                      console.error('Erro ao salvar no Firebase:', error);
-                  });
+              this.state.studyData.push({ ...itemData, id: Date.now() });
+              this.toast('Sessão registrada!');
+              this.resetForm();
+          }
+          
+          this.saveData();
+          this.renderSessionHistory();
+          if (this.state.currentView === 'dashboard') {
+            this.updateDashboard();
           }
         });
         
@@ -1542,7 +1553,7 @@
         });
 
         modalSection.classList.toggle('hidden', !needed);
-         ['modal-questions-total','modal-questions-correct'].forEach(id=>{
+          ['modal-questions-total','modal-questions-correct'].forEach(id=>{
           const el = document.getElementById(id);
           el.required = needed;
           if(!needed){ el.value=''; }
@@ -1627,7 +1638,7 @@
             if (!subjectCard) return;
             const subjectName = subjectCard.dataset.subjectName;
 
-            // Alternar visibilidade dos assuntos
+            // Toggle subtopics visibility
             if (e.target.classList.contains('toggle-subtopics-btn')) {
                 const subtopicsContainer = subjectCard.querySelector('.subtopics-container');
                 if (subtopicsContainer.style.maxHeight) {
@@ -1637,9 +1648,9 @@
                 }
             }
 
-            // Remover matéria
+            // Remove subject
             if (e.target.classList.contains('remove-subject-btn')) {
-                if(window.confirm(`Tem certeza que deseja remover a disciplina "${subjectName}" e TODOS os seus dados e assuntos associados?`)){
+                if(confirm(`Tem certeza que deseja remover a disciplina "${subjectName}" e TODOS os seus dados e assuntos associados?`)){
                   this.state.studyData = this.state.studyData.filter(d => d.subject !== subjectName);
                   this.state.parameters.subjects = this.state.parameters.subjects.filter(s => s.name !== subjectName);
                   delete this.state.parameters.subjectColors[subjectName];
@@ -1651,7 +1662,7 @@
                 }
             }
 
-            // Adicionar assunto
+            // Add subtopic
             if (e.target.classList.contains('add-subtopic-btn')) {
                 const input = container.querySelector(`input[data-subtopic-input-for="${subjectName}"]`);
                 const subtopicName = input.value.trim();
@@ -1668,7 +1679,7 @@
                 }
             }
             
-            // Remover assunto
+            // Remove subtopic
             if (e.target.classList.contains('remove-subtopic-btn')) {
                 const subtopicName = e.target.dataset.subtopicName;
                 const subject = this.state.parameters.subjects.find(s => s.name === subjectName);
@@ -1699,18 +1710,17 @@
         });
 
         document.getElementById('reset-all-data-btn').addEventListener('click', ()=>{
-          if(window.confirm('ATENÇÃO: Isso apagará TODOS os seus dados de estudo permanentemente. Deseja continuar?')){
-            const conf = window.prompt("Para confirmar, digite 'EXCLUIR' em maiúsculas.");
+          if(confirm('ATENÇÃO: Isso apagará TODOS os seus dados de estudo da NUVEM permanentemente. Deseja continuar?')){
+            const conf = prompt("Para confirmar, digite 'EXCLUIR' em maiúsculas.");
             if(conf==='EXCLUIR'){
-              this.state.db.ref(`users/${this.state.user.uid}`).remove()
+              if(this.state.userId) {
+                this.state.db.ref('users/' + this.state.userId).remove()
                   .then(() => {
-                      localStorage.removeItem('studyDashBackups');
-                      location.reload();
+                    localStorage.removeItem('studyDashBackupsV30');
+                    location.reload();
                   })
-                  .catch(error => {
-                      this.toast('Erro ao resetar os dados.', false);
-                      console.error('Erro ao remover dados do Firebase:', error);
-                  });
+                  .catch(e => this.toast('Erro ao excluir dados da nuvem.', false));
+              }
             }else{
               this.toast('Ação cancelada.', false);
             }
@@ -1824,11 +1834,11 @@
         p.isRunning = !p.isRunning;
         if(p.isRunning){
           if(!p.isSessionActive){
-             p.isSessionActive=true;
-             p.cycleStart = Date.now();
-             p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4;
-             p.sessionSubject = document.getElementById('pomodoro-subject').value;
-             p.sessionSubtopic = document.getElementById('pomodoro-subtopic').value;
+            p.isSessionActive=true;
+            p.cycleStart = Date.now();
+            p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4;
+            p.sessionSubject = document.getElementById('pomodoro-subject').value;
+            p.sessionSubtopic = document.getElementById('pomodoro-subtopic').value;
           }
           this.playNotificationSound('pomodoro');
           p.intervalId = setInterval(()=> this.tickPomodoro(), 1000);
@@ -2127,15 +2137,14 @@
                 timeOfDay: timeOfDay
             };
 
-            this.state.db.ref(`users/${this.state.user.uid}/studyData`).push(finalSession)
-                .then(() => {
-                    this.toast('Sessão registrada com sucesso!');
-                    this.closeSessionModal(false);
-                })
-                .catch(error => {
-                    this.toast('Erro ao registrar sessão. Tente novamente.', false);
-                    console.error('Erro ao salvar no Firebase:', error);
-                });
+            this.state.studyData.push(finalSession);
+            this.saveData();
+            this.toast('Sessão registrada com sucesso!');
+            this.closeSessionModal(false);
+            if (this.state.currentView === 'dashboard') {
+                this.updateDashboard();
+            }
+            this.renderSessionHistory();
         });
       },
 
@@ -2276,7 +2285,7 @@
         if (!listContainer) return;
         listContainer.innerHTML = '';
 
-        const sortedData = [...this.state.studyData].sort((a, b) => b.timestamp - a.timestamp);
+        const sortedData = [...this.state.studyData].sort((a, b) => b.id - a.id);
 
         if (sortedData.length === 0) {
             listContainer.innerHTML = '<p class="text-sm text-gray-500">Nenhuma sessão registrada ainda.</p>';
@@ -2303,14 +2312,12 @@
             `;
 
             el.querySelector('.delete-btn').addEventListener('click', () => {
-                if (window.confirm('Tem certeza que deseja excluir esta sessão?')) {
-                    const sessionRef = this.state.db.ref(`users/${this.state.user.uid}/studyData/${session.id}`);
-                    sessionRef.remove()
-                        .then(() => this.toast('Sessão excluída.'))
-                        .catch(error => {
-                            this.toast('Erro ao excluir sessão.', false);
-                            console.error('Erro ao excluir do Firebase:', error);
-                        });
+                if (confirm('Tem certeza que deseja excluir esta sessão?')) {
+                    this.state.studyData = this.state.studyData.filter(s => s.id !== session.id);
+                    this.saveData();
+                    this.renderSessionHistory();
+                    this.updateDashboard();
+                    this.toast('Sessão excluída.');
                 }
             });
 
@@ -2465,7 +2472,7 @@
         const weekData = allData.filter(s => s.date >= fmt(startDate) && s.date <= fmt(endDate));
         const studiedDays = new Set(weekData.map(s => s.date));
 
-        // Renderiza o rastreador de dias
+        // Render day tracker
         daysTrackerContainer.innerHTML = '';
         const dayLabels = this.state.parameters.weekStartDay === 1 ? ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'] : ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
         for (let i = 0; i < 7; i++) {
@@ -2795,7 +2802,7 @@
         if (filterSubject && filterSubject !== 'all') {
             // Detalhar por assunto
             document.getElementById('performance-by-subject-title').textContent = `Desempenho por assunto (${filterSubject})`;
-            data.filter(d => d.accuracy !== null).forEach(i => {
+            data.filter(d => d.subject === filterSubject && d.accuracy !== null).forEach(i => {
                 const key = i.subtopic || 'Geral';
                 if (!perf[key]) perf[key] = { sum: 0, cnt: 0 };
                 perf[key].sum += i.accuracy;
@@ -2821,7 +2828,7 @@
         ch.options.scales.y.ticks.callback = v=> `${(v*100).toFixed(0)}%`;
         ch.update();
       },
-       updateStrengthsWeaknessesChart(allData) {
+      updateStrengthsWeaknessesChart(allData) {
         const ch = this.state.charts.strengthsWeaknesses;
         const labels = this.state.parameters.subjects.map(s => s.name);
         
@@ -2942,7 +2949,7 @@
                 const month = dataByMonth[m];
                 return month.total > 0 ? (month.correct / month.total) * 100 : 0;
             });
-             const totalData = labels.map(m => dataByMonth[m].total);
+            const totalData = labels.map(m => dataByMonth[m].total);
             ch.data.datasets = [
                 { label: 'Desempenho (%)', data: performanceData, borderColor: '#81B29A', backgroundColor: 'rgba(129, 178, 154, 0.2)' },
                 { label: 'Total de Questões', data: totalData, borderColor: '#F2CC8F', backgroundColor: 'rgba(242, 204, 143, 0.2)', yAxisID: 'y1' }
@@ -3174,7 +3181,7 @@
         if (insights.length === 0) {
             container.innerHTML = `<p class="col-span-full text-center text-gray-500">Registre mais sessões para receber insights detalhados.</p>`;
         } else {
-            // Embaralha e seleciona até 3 insights
+            // Shuffle and pick up to 3 insights
             insights.sort(() => 0.5 - Math.random());
             container.innerHTML = insights.slice(0,3).map(i => `<div class="border-l-4 border-[color:var(--c2)] pl-3 py-1 bg-green-50 rounded-r-md">
                 <h4 class="font-semibold text-gray-800">${i.title}</h4>
@@ -3221,7 +3228,7 @@
         }
         
         const fragment = document.createDocumentFragment();
-        filteredData.sort((a, b) => b.timestamp - a.timestamp).forEach(s => {
+        filteredData.sort((a, b) => b.id - a.id).forEach(s => {
             const row = document.createElement('tr');
             row.className = 'bg-white border-b hover:bg-gray-50 text-sm';
             const subtopicText = s.subtopic ? `<br><span class="text-xs text-gray-500">${s.subtopic}</span>` : '';
