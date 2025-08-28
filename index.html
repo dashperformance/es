@@ -11,11 +11,16 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Adicionar os SDKs do Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
   <style>
     :root{
       --c1:#3D405B;
@@ -134,7 +139,7 @@
     .performance-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background-color: #e5e7eb; }
     .bar-correct { background-color: #10b981; }
     .bar-incorrect { background-color: #ef4444; }
-    .chart-toggle-label { cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background-color: 0.2s; }
+    .chart-toggle-label { cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background-color 0.2s; }
     .chart-toggle-input:checked + .chart-toggle-label { background-color: var(--c1); color: white; }
     .day-tracker-dot {
       width: 24px; height: 24px; border-radius: 9999px;
@@ -152,35 +157,12 @@
         overflow: hidden;
         transition: max-height 0.5s ease-in-out;
     }
-     @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-    .animate-shake {
-        animation: shake 0.5s ease-in-out;
-    }
   </style>
 </head>
 <body class="antialiased">
 
-  <!-- Login Overlay -->
-  <div id="login-overlay" class="fixed inset-0 bg-gray-200 z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-sm">
-      <div class="card p-8 text-center">
-        <h2 class="text-2xl font-bold mb-2 text-[color:var(--c1)]">Acesso Restrito</h2>
-        <p class="text-sm text-gray-500 mb-6">Por favor, insira a senha para continuar.</p>
-        <form id="login-form">
-          <input type="password" id="password-input" placeholder="Senha" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-center">
-          <p id="error-message" class="text-red-500 text-sm h-5 mt-2"></p>
-          <button type="submit" class="btn btn-primary w-full mt-4 py-3">Entrar</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <!-- Main App Content -->
-  <div id="app" class="min-h-screen flex flex-col hidden">
+  <div id="app" class="min-h-screen flex flex-col">
     <header class="bg-white/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-gray-200">
       <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -325,15 +307,15 @@
                     <input type="number" id="goal-hours-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                   </div>
                   <div>
-                    <label for="goal-questions-input" class="block text-sm text-gray-600">Meta de questões</label>
+                    <label for="goal-questions-input" class="block text-sm font-medium text-gray-600">Meta de questões</label>
                     <input type="number" id="goal-questions-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                   </div>
                    <div>
-                    <label for="goal-accuracy-input" class="block text-sm text-gray-600">Meta de acertos (%)</label>
+                    <label for="goal-accuracy-input" class="block text-sm font-medium text-gray-600">Meta de acertos (%)</label>
                     <input type="number" id="goal-accuracy-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                   </div>
                    <div>
-                    <label for="goal-days-input" class="block text-sm text-gray-600">Meta de dias/semana</label>
+                    <label for="goal-days-input" class="block text-sm font-medium text-gray-600">Meta de dias/semana</label>
                     <input type="number" id="goal-days-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                   </div>
                   <button id="save-goals-btn" class="btn btn-primary py-2 px-3 w-full">Salvar Metas</button>
@@ -493,7 +475,7 @@
                  <button id="create-backup-now-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar backup agora</button>
             </div>
             <div class="card p-4 sm:p-6">
-                <p class="text-sm text-gray-600 mb-4">Seus backups são salvos na nuvem. Você pode baixá-los a qualquer momento.</p>
+                <p class="text-sm text-gray-600 mb-4">Seus backups são salvos localmente no navegador. Você pode baixá-los a qualquer momento. Um backup automático é criado diariamente.</p>
                 <div id="backup-list" class="space-y-2">
                     <!-- Lista de backups será renderizada aqui -->
                 </div>
@@ -889,96 +871,30 @@
   <canvas id="pip-canvas" width="300" height="200" class="hidden"></canvas>
 
 
-  
-
-  <script type="module">
-
-    // Import the functions you need from the SDKs you need
-
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB4CxGhSIU9hlcObFdJ8J_RcQ0-xBWKMB4",
-  authDomain: "teste-84500.firebaseapp.com",
-  projectId: "teste-84500",
-  storageBucket: "teste-84500.firebasestorage.app",
-  messagingSenderId: "930729926855",
-  appId: "1:930729926855:web:25d9cc8f7f35a3a6db1ee2"
+  <script>
+    // Configurações do Firebase - SUBSTITUA PELAS SUAS
+  const firebaseConfig = {
+  apiKey: "AIzaSyD0ZFxuLY452R6JENiRk-m3zJsuhj5GJaw",
+  authDomain: "dashboard-b436d.firebaseapp.com",
+  databaseURL: "https://dashboard-b436d-default-rtdb.firebaseio.com",
+  projectId: "dashboard-b436d",
+  storageBucket: "dashboard-b436d.firebasestorage.app",
+  messagingSenderId: "501090317163",
+  appId: "1:501090317163:web:a69822ae2e161a1bc3522e"
 };
 
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const loginOverlay = document.getElementById('login-overlay');
-        const appContent = document.getElementById('app');
-        const loginForm = document.getElementById('login-form');
-        const passwordInput = document.getElementById('password-input');
-        const errorMessage = document.getElementById('error-message');
-
-        signInAnonymously(auth).catch(error => {
-            console.error("Erro na autenticação anônima:", error);
-            errorMessage.textContent = "Erro de conexão com o servidor."
-        });
-
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                console.log("Usuário autenticado:", user.uid);
-                App.state.userId = user.uid;
-
-                loginForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const CORRECT_PASSWORD_B64 = 'MTU5NzUz'; 
-                    if (btoa(passwordInput.value) === CORRECT_PASSWORD_B64) {
-                        loginOverlay.classList.add('hidden');
-                        appContent.classList.remove('hidden');
-                        App.init(db, auth); 
-                    } else {
-                       errorMessage.textContent = 'Senha incorreta.';
-                       passwordInput.value = '';
-                       const loginCard = loginOverlay.querySelector('.card');
-                       loginCard.classList.add('animate-shake');
-                       setTimeout(() => {
-                           loginCard.classList.remove('animate-shake');
-                       }, 500);
-                    }
-                });
-            }
-        });
-    });
-  </script>
-
-  <script>
-    /* (O sucesso é a soma de pequenos esforços repetidos dia após dia.) */
     const App = {
       state: {
-        userId: null,
-        db: null,
-        auth: null,
         currentView: 'dashboard',
         charts: {},
         studyData: [],
         backups: [],
         parameters: {
-          subjects: [
-            { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] },
-            { name: "Raciocínio Lógico", subtopics: [] },
-            { name: "Português", subtopics: [] },
-            { name: "Direito Administrativo", subtopics: [] }
-          ],
+          subjects: [], // Dados serão carregados do Firebase
           subjectColors: {},
           tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado"],
           weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 },
-          weekStartDay: 1, 
+          weekStartDay: 1, // 1 para Segunda, 0 para Domingo
           concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }
         },
         COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ],
@@ -1024,21 +940,69 @@ const firebaseConfig = {
         pendingSession: null,
         audioInitialized: false,
         synth: null,
-        activeQuestionInputId: 'questions-total',
-        activeModalQuestionInputId: 'modal-questions-total',
+        activeQuestionInputId: 'questions-total', // Default active input
+        activeModalQuestionInputId: 'modal-questions-total', // Default active input for modal
         questionsEvolutionView: 'relative',
         debounceTimer: null,
+        // Adicionando referências ao Firebase
+        firebaseApp: null,
+        auth: null,
+        db: null,
+        user: null,
       },
 
-      async init(db, auth){
-        this.state.db = db;
-        this.state.auth = auth;
-        await this.loadDataFromFirebase();
-        this.initializeAppUI();
+      init(){
+        this.initFirebase();
       },
-      
-      initializeAppUI() {
-        this.ensureSubjectColors();
+
+      async initFirebase() {
+        try {
+          // Inicializa o Firebase
+          this.state.firebaseApp = firebase.initializeApp(firebaseConfig);
+          this.state.auth = this.state.firebaseApp.auth();
+          this.state.db = this.state.firebaseApp.database();
+          
+          // Efetua login anônimo
+          await this.state.auth.signInAnonymously();
+          
+          this.state.user = this.state.auth.currentUser;
+          console.log("Autenticado anonimamente com UID:", this.state.user.uid);
+          
+          // Agora que está autenticado, carrega os dados
+          this.loadData();
+          
+          // Adiciona um listener para mudanças no banco de dados para sincronização em tempo real
+          const studyDataRef = this.state.db.ref(`users/${this.state.user.uid}/studyData`);
+          studyDataRef.on('value', (snapshot) => {
+              const data = snapshot.val();
+              this.state.studyData = data ? Object.values(data) : [];
+              this.renderSessionHistory();
+              if (this.state.currentView === 'dashboard') {
+                  this.updateDashboard();
+              }
+          });
+          
+          const paramsDataRef = this.state.db.ref(`users/${this.state.user.uid}/parameters`);
+          paramsDataRef.on('value', (snapshot) => {
+              const data = snapshot.val();
+              if (data) {
+                  this.state.parameters = Object.assign(this.state.parameters, data);
+                  this.updateAllSubjectDropdowns();
+                  this.updateActivityDropdowns();
+                  this.renderSubjectsManagement();
+                  this.updateCountdown();
+              }
+          });
+          
+          this.initializeApp();
+          
+        } catch (error) {
+            console.error("Erro ao inicializar o Firebase:", error);
+            this.toast('Erro ao conectar ao banco de dados. Verifique a configuração.', false);
+        }
+      },
+
+      initializeApp() {
         this.bindNav();
         this.bindFilters();
         this.bindGeneralActions();
@@ -1058,8 +1022,9 @@ const firebaseConfig = {
         this.resetPomodoro(true);
         this.setFilterPeriod('week');
         this.navigateTo('dashboard');
+        this.scheduleDailyBackup();
         this.renderBackupList();
-        
+
         const searchInput = document.getElementById('log-search-input');
         searchInput.addEventListener('input', (e) => {
             clearTimeout(this.state.debounceTimer);
@@ -1067,49 +1032,51 @@ const firebaseConfig = {
                 this.renderDetailedLog(this.getFilteredData(), e.target.value);
             }, 300);
         });
-      },
-
-      async saveData() {
-        if (!this.state.userId) return;
-        try {
-            const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-            const userDocRef = doc(this.state.db, 'users', this.state.userId);
-            await setDoc(userDocRef, {
-                parameters: this.state.parameters,
-                backups: this.state.backups
-            }, { merge: true });
-            console.log("Parâmetros e backups salvos no Firestore.");
-        } catch (error) {
-            console.error("Erro ao salvar dados:", error);
-            this.toast('Falha ao salvar dados na nuvem.', false);
-        }
-      },
-
-      async loadDataFromFirebase() {
-        if (!this.state.userId) return;
-        const { doc, getDoc, collection, query, orderBy, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
         
-        const userDocRef = doc(this.state.db, 'users', this.state.userId);
-        const studyDataRef = collection(userDocRef, 'studyData');
+        // Criar um backup de exemplo inicial se não houver nenhum
+        // Isso foi movido para um listener de carregamento de dados para garantir que a lógica do Firebase esteja pronta
+      },
 
-        const docSnap = await getDoc(userDocRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            this.state.parameters = { ...this.state.parameters, ...data.parameters };
-            this.state.backups = data.backups || [];
+      saveData(){
+        /* (Consistência é a chave.) */
+        if (!this.state.user) {
+            console.error("Usuário não autenticado. Dados não serão salvos.");
+            return;
         }
 
-        const q = query(studyDataRef, orderBy("timestamp", "desc"));
-        onSnapshot(q, snapshot => {
-            this.state.studyData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log("Dados de estudo carregados/atualizados em tempo real.");
-            if (this.state.currentView === 'dashboard') {
-                this.updateDashboard();
-            }
-            this.renderSessionHistory();
-        }, error => {
-            console.error("Erro ao ouvir dados de estudo: ", error);
-        });
+        const dataToSave = {
+            studyData: this.state.studyData,
+            parameters: this.state.parameters,
+        };
+        const backupsToSave = this.state.backups;
+
+        // Salvar dados de estudo
+        this.state.db.ref(`users/${this.state.user.uid}/studyData`).set(dataToSave.studyData)
+            .then(() => console.log("Dados de estudo salvos com sucesso no Firebase."))
+            .catch(error => console.error("Falha ao salvar dados de estudo:", error));
+            
+        // Salvar parâmetros (matérias, metas, etc.)
+        this.state.db.ref(`users/${this.state.user.uid}/parameters`).set(dataToSave.parameters)
+            .then(() => console.log("Parâmetros salvos com sucesso no Firebase."))
+            .catch(error => console.error("Falha ao salvar parâmetros:", error));
+
+        // Salvar backups (ainda localmente, pode ser um recurso avançado para salvar no Storage)
+        localStorage.setItem('studyDashBackups', JSON.stringify(backupsToSave));
+      },
+
+      loadData(){
+        if (!this.state.user) {
+            console.error("Usuário não autenticado. Não é possível carregar dados.");
+            return;
+        }
+        
+        // Carregar backups localmente
+        const rawBackups = localStorage.getItem('studyDashBackups');
+        if (rawBackups) {
+            this.state.backups = JSON.parse(rawBackups) || [];
+        }
+        
+        // Dados de estudo e parâmetros são carregados via os 'on' listeners na initFirebase
       },
 
       ensureSubjectColors() {
@@ -1219,57 +1186,93 @@ const firebaseConfig = {
         if (saveBtn) {
             saveBtn.addEventListener('click', () => {
                 this.saveData();
-                this.toast('Todos os dados foram salvos na nuvem!');
+                this.toast('Todos os dados foram salvos no Firebase!');
             });
         }
       },
       
       bindBackup() {
         document.getElementById('export-backup-btn').addEventListener('click', () => this.createBackup('Manual', true));
-        document.getElementById('import-backup-btn').style.display = 'none';
+        document.getElementById('import-backup-btn').addEventListener('click', () => document.getElementById('backup-file-input').click());
+        document.getElementById('backup-file-input').addEventListener('change', (e) => this.importBackup(e));
+        document.getElementById('create-backup-now-btn').addEventListener('click', () => this.createBackup('Salvo Manualmente', false));
       },
 
       createBackup(reason = 'Manual', download = true) {
-        const timestamp = new Date();
-        const dataToSave = {
-            studyData: this.state.studyData,
-            parameters: this.state.parameters,
-        };
-        const jsonString = JSON.stringify(dataToSave, null, 2);
-        
-        const newBackup = {
-            id: timestamp.getTime(),
-            date: timestamp.toISOString(),
-            reason: reason,
-            content: jsonString,
-        };
+        try {
+            const timestamp = new Date();
+            const dataToSave = {
+                studyData: this.state.studyData,
+                parameters: this.state.parameters,
+                backups: this.state.backups,
+            };
+            const jsonString = JSON.stringify(dataToSave, null, 2);
+            
+            const newBackup = {
+                id: timestamp.getTime(),
+                date: timestamp.toISOString(),
+                reason: reason,
+                content: jsonString,
+            };
 
-        this.state.backups.push(newBackup);
-        this.state.backups.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        this.saveData();
-        this.renderBackupList();
-        this.toast(`Backup '${reason}' criado com sucesso!`);
+            // Se for um backup automático, remova os backups automáticos anteriores
+            if (reason.startsWith('Automático')) {
+                this.state.backups = this.state.backups.filter(b => !b.reason.startsWith('Automático'));
+            }
 
-        if(download) {
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            const dateStr = new Date().toISOString().split('T')[0];
-            a.download = `backup-estudos-${dateStr}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            this.state.backups.push(newBackup);
+
+            // Ordena todos os backups por data, do mais novo para o mais antigo
+            this.state.backups.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            this.toast(`Backup '${reason}' criado com sucesso!`);
+            
+            // Salva a lista de backups localmente
+            localStorage.setItem('studyDashBackups', JSON.stringify(this.state.backups));
+            this.renderBackupList();
+            
+            if(download) {
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const dateStr = timestamp.toISOString().split('T')[0];
+                a.download = `backup-estudos-${dateStr}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+        } catch (error) {
+            console.error('Erro ao criar backup:', error);
+            this.toast('Falha ao criar backup.', false);
         }
+      },
+
+      scheduleDailyBackup() {
+        const now = new Date();
+        const noon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+        
+        let timeToNoon = noon - now;
+        if (timeToNoon < 0) { 
+            noon.setDate(noon.getDate() + 1); 
+            timeToNoon = noon - now;
+        }
+
+        setTimeout(() => {
+            this.createBackup('Automático Diário', false);
+            setInterval(() => {
+                 this.createBackup('Automático Diário', false);
+            }, 24 * 60 * 60 * 1000); // a cada 24 horas
+        }, timeToNoon);
       },
 
       renderBackupList() {
         const container = document.getElementById('backup-list');
         if (!container) return;
 
-        if(!this.state.backups || this.state.backups.length === 0) {
+        if(this.state.backups.length === 0) {
             container.innerHTML = `<p class="text-sm text-gray-500">Nenhum backup salvo ainda.</p>`;
             return;
         }
@@ -1312,15 +1315,42 @@ const firebaseConfig = {
 
         document.querySelectorAll('.delete-backup-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                if (confirm('Tem certeza que deseja excluir este backup?')) {
+                if (window.confirm('Tem certeza que deseja excluir este backup?')) {
                     const backupId = parseInt(e.currentTarget.dataset.backupId, 10);
                     this.state.backups = this.state.backups.filter(b => b.id !== backupId);
-                    this.saveData();
+                    localStorage.setItem('studyDashBackups', JSON.stringify(this.state.backups));
                     this.renderBackupList();
                     this.toast('Backup excluído.');
                 }
             });
         });
+      },
+
+      importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.studyData && data.parameters) {
+                    this.state.studyData = data.studyData;
+                    this.state.parameters = data.parameters;
+                    this.state.backups = data.backups || [];
+                    this.saveData();
+                    this.toast('Backup importado com sucesso! A página será recarregada.');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    this.toast('Arquivo de backup inválido.', false);
+                }
+            } catch (error) {
+                console.error('Erro ao importar backup:', error);
+                this.toast('Erro ao ler o arquivo de backup.', false);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
       },
 
       bindFilters(){
@@ -1367,7 +1397,7 @@ const firebaseConfig = {
         return data;
       },
       
-      async bindRegistro(){
+      bindRegistro(){
         const form = document.getElementById('study-form');
         const cancelBtn = document.getElementById('cancel-edit-btn');
         document.getElementById('activity-type').addEventListener('change', this.toggleQuestionsSection.bind(this));
@@ -1415,9 +1445,8 @@ const firebaseConfig = {
             });
         });
 
-        form.addEventListener('submit', async (e)=>{
+        form.addEventListener('submit', (e)=>{
           e.preventDefault();
-          const { doc, collection, addDoc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
           const hours = parseInt(form['manual-duration-hours'].value, 10) || 0;
           const minutes = parseInt(form['manual-duration-minutes'].value, 10) || 0;
           const dur = (hours * 3600) + (minutes * 60);
@@ -1452,20 +1481,24 @@ const firebaseConfig = {
             timeOfDay: timeOfDay
           };
 
-          try {
-            if(this.state.editingId) {
-                const docRef = doc(this.state.db, 'users', this.state.userId, 'studyData', this.state.editingId);
-                await updateDoc(docRef, itemData);
-                this.toast('Sessão atualizada!');
-            } else {
-                const collectionRef = collection(this.state.db, 'users', this.state.userId, 'studyData');
-                await addDoc(collectionRef, itemData);
-                this.toast('Sessão registrada!');
-            }
-            this.resetForm();
-          } catch (error) {
-              console.error("Erro ao salvar sessão:", error);
-              this.toast("Falha ao salvar sessão.", false);
+          if(this.state.editingId) {
+              const index = this.state.studyData.findIndex(s => s.id === this.state.editingId);
+              if (index !== -1) {
+                  this.state.studyData[index] = { ...this.state.studyData[index], ...itemData };
+                  this.toast('Sessão atualizada!');
+                  this.saveData(); // Salva os dados atualizados no Firebase
+              }
+              this.resetForm();
+          } else {
+              this.state.db.ref(`users/${this.state.user.uid}/studyData`).push(itemData)
+                  .then(() => {
+                      this.toast('Sessão registrada!');
+                      this.resetForm();
+                  })
+                  .catch(error => {
+                      this.toast('Erro ao registrar sessão. Tente novamente.', false);
+                      console.error('Erro ao salvar no Firebase:', error);
+                  });
           }
         });
         
@@ -1594,7 +1627,7 @@ const firebaseConfig = {
             if (!subjectCard) return;
             const subjectName = subjectCard.dataset.subjectName;
 
-            // Toggle subtopics visibility
+            // Alternar visibilidade dos assuntos
             if (e.target.classList.contains('toggle-subtopics-btn')) {
                 const subtopicsContainer = subjectCard.querySelector('.subtopics-container');
                 if (subtopicsContainer.style.maxHeight) {
@@ -1604,15 +1637,21 @@ const firebaseConfig = {
                 }
             }
 
-            // Remove subject
+            // Remover matéria
             if (e.target.classList.contains('remove-subject-btn')) {
-                if(confirm(`Tem certeza que deseja remover a disciplina "${subjectName}" e TODOS os seus dados e assuntos associados?`)){
-                  // This needs to be adapted for Firestore, deleting all docs in subcollection
-                  this.toast(`Remoção de matéria com Firestore precisa ser implementada.`, false);
+                if(window.confirm(`Tem certeza que deseja remover a disciplina "${subjectName}" e TODOS os seus dados e assuntos associados?`)){
+                  this.state.studyData = this.state.studyData.filter(d => d.subject !== subjectName);
+                  this.state.parameters.subjects = this.state.parameters.subjects.filter(s => s.name !== subjectName);
+                  delete this.state.parameters.subjectColors[subjectName];
+                  this.saveData();
+                  this.renderSubjectsManagement();
+                  this.updateAllSubjectDropdowns();
+                  if (this.state.currentView === 'dashboard') this.updateDashboard();
+                  this.toast(`"${subjectName}" removida.`);
                 }
             }
 
-            // Add subtopic
+            // Adicionar assunto
             if (e.target.classList.contains('add-subtopic-btn')) {
                 const input = container.querySelector(`input[data-subtopic-input-for="${subjectName}"]`);
                 const subtopicName = input.value.trim();
@@ -1629,7 +1668,7 @@ const firebaseConfig = {
                 }
             }
             
-            // Remove subtopic
+            // Remover assunto
             if (e.target.classList.contains('remove-subtopic-btn')) {
                 const subtopicName = e.target.dataset.subtopicName;
                 const subject = this.state.parameters.subjects.find(s => s.name === subjectName);
@@ -1659,15 +1698,19 @@ const firebaseConfig = {
             this.toast('Início da semana atualizado!');
         });
 
-        document.getElementById('reset-all-data-btn').addEventListener('click', async ()=>{
-          if(confirm('ATENÇÃO: Isso apagará TODOS os seus dados de estudo na NUVEM permanentemente. Deseja continuar?')){
-            const conf = prompt("Para confirmar, digite 'EXCLUIR' em maiúsculas.");
+        document.getElementById('reset-all-data-btn').addEventListener('click', ()=>{
+          if(window.confirm('ATENÇÃO: Isso apagará TODOS os seus dados de estudo permanentemente. Deseja continuar?')){
+            const conf = window.prompt("Para confirmar, digite 'EXCLUIR' em maiúsculas.");
             if(conf==='EXCLUIR'){
-              const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-              const docRef = doc(this.state.db, 'users', this.state.userId);
-              deleteDoc(docRef).then(() => {
-                  location.reload();
-              });
+              this.state.db.ref(`users/${this.state.user.uid}`).remove()
+                  .then(() => {
+                      localStorage.removeItem('studyDashBackups');
+                      location.reload();
+                  })
+                  .catch(error => {
+                      this.toast('Erro ao resetar os dados.', false);
+                      console.error('Erro ao remover dados do Firebase:', error);
+                  });
             }else{
               this.toast('Ação cancelada.', false);
             }
@@ -1701,7 +1744,7 @@ const firebaseConfig = {
                         <button class="add-subtopic-btn btn btn-secondary text-xs py-1 px-2">Adicionar</button>
                     </div>
                     <ul class="mt-2 space-y-1 text-sm list-disc list-inside text-gray-600">
-                        ${(subject.subtopics || []).map(st => `
+                        ${subject.subtopics.map(st => `
                             <li class="flex justify-between items-center">
                                 <span>${st}</span>
                                 <button data-subtopic-name="${st}" class="remove-subtopic-btn text-red-500 hover:text-red-700 text-xs font-bold p-1">&times;</button>
@@ -1749,7 +1792,7 @@ const firebaseConfig = {
         p.isRunning=false;
         p.isSessionActive=false;
         p.mode='work';
-        p.timeLeft = (this.state.parameters.pomodoroSettings?.work || 25)*60;
+        p.timeLeft = (p.settings.work*60);
         if(resetCycles){ 
             p.cyclesCompleted = 0;
             p.pendingLogDuration = 0;
@@ -1767,7 +1810,6 @@ const firebaseConfig = {
         p.settings.alertTime = parseInt(document.getElementById('pomodoro-alert-time').value, 10) || null;
         p.settings.sound = document.getElementById('pomodoro-sound-select').value;
         p.settings.autoStart = document.getElementById('pomodoro-auto-start').checked;
-        this.state.parameters.pomodoroSettings = p.settings; // Save to main parameters
         this.saveData();
         if(!p.isRunning){
           if(p.mode==='work') p.timeLeft=p.settings.work*60;
@@ -2019,7 +2061,7 @@ const firebaseConfig = {
         }
       },
       
-      async bindModal() {
+      bindModal() {
         const form = document.getElementById('modal-session-form');
         document.getElementById('modal-cancel-btn').addEventListener('click', () => this.closeSessionModal(true));
         document.getElementById('session-modal-backdrop').addEventListener('click', () => this.closeSessionModal(true));
@@ -2057,9 +2099,8 @@ const firebaseConfig = {
             });
         });
 
-        form.addEventListener('submit', async (e) => {
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
             const session = this.state.pendingSession;
             if (!session) return;
 
@@ -2085,23 +2126,22 @@ const firebaseConfig = {
                 timestamp: Date.now(),
                 timeOfDay: timeOfDay
             };
-            
-            delete finalSession.id; // Firestore generates its own ID
 
-            try {
-                const collectionRef = collection(this.state.db, 'users', this.state.userId, 'studyData');
-                await addDoc(collectionRef, finalSession);
-                this.toast('Sessão registrada com sucesso!');
-                this.closeSessionModal(false);
-            } catch (error) {
-                console.error("Erro ao salvar sessão do modal:", error);
-                this.toast("Falha ao salvar sessão.", false);
-            }
+            this.state.db.ref(`users/${this.state.user.uid}/studyData`).push(finalSession)
+                .then(() => {
+                    this.toast('Sessão registrada com sucesso!');
+                    this.closeSessionModal(false);
+                })
+                .catch(error => {
+                    this.toast('Erro ao registrar sessão. Tente novamente.', false);
+                    console.error('Erro ao salvar no Firebase:', error);
+                });
         });
       },
 
       openSessionModal(durationInSeconds, subject, subtopic = null) {
         this.state.pendingSession = {
+            id: Date.now(),
             date: new Date().toISOString().split('T')[0],
             duration: durationInSeconds,
             subject: subject,
@@ -2231,18 +2271,19 @@ const firebaseConfig = {
       },
 
 
-      async renderSessionHistory() {
-        const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      renderSessionHistory() {
         const listContainer = document.getElementById('session-history-list');
         if (!listContainer) return;
         listContainer.innerHTML = '';
 
-        if (this.state.studyData.length === 0) {
+        const sortedData = [...this.state.studyData].sort((a, b) => b.timestamp - a.timestamp);
+
+        if (sortedData.length === 0) {
             listContainer.innerHTML = '<p class="text-sm text-gray-500">Nenhuma sessão registrada ainda.</p>';
             return;
         }
 
-        this.state.studyData.slice(0, 10).forEach(session => {
+        sortedData.slice(0, 10).forEach(session => {
             const el = document.createElement('div');
             el.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-md text-sm transition-all hover:bg-gray-100';
             
@@ -2261,16 +2302,15 @@ const firebaseConfig = {
                 </div>
             `;
 
-            el.querySelector('.delete-btn').addEventListener('click', async () => {
-                if (confirm('Tem certeza que deseja excluir esta sessão?')) {
-                    try {
-                        const docRef = doc(this.state.db, 'users', this.state.userId, 'studyData', session.id);
-                        await deleteDoc(docRef);
-                        this.toast('Sessão excluída.');
-                    } catch (error) {
-                        console.error("Erro ao excluir sessão:", error);
-                        this.toast("Falha ao excluir sessão.", false);
-                    }
+            el.querySelector('.delete-btn').addEventListener('click', () => {
+                if (window.confirm('Tem certeza que deseja excluir esta sessão?')) {
+                    const sessionRef = this.state.db.ref(`users/${this.state.user.uid}/studyData/${session.id}`);
+                    sessionRef.remove()
+                        .then(() => this.toast('Sessão excluída.'))
+                        .catch(error => {
+                            this.toast('Erro ao excluir sessão.', false);
+                            console.error('Erro ao excluir do Firebase:', error);
+                        });
                 }
             });
 
@@ -2425,7 +2465,7 @@ const firebaseConfig = {
         const weekData = allData.filter(s => s.date >= fmt(startDate) && s.date <= fmt(endDate));
         const studiedDays = new Set(weekData.map(s => s.date));
 
-        // Render day tracker
+        // Renderiza o rastreador de dias
         daysTrackerContainer.innerHTML = '';
         const dayLabels = this.state.parameters.weekStartDay === 1 ? ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'] : ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
         for (let i = 0; i < 7; i++) {
@@ -2755,7 +2795,7 @@ const firebaseConfig = {
         if (filterSubject && filterSubject !== 'all') {
             // Detalhar por assunto
             document.getElementById('performance-by-subject-title').textContent = `Desempenho por assunto (${filterSubject})`;
-            data.filter(d => d.subject === filterSubject && d.accuracy !== null).forEach(i => {
+            data.filter(d => d.accuracy !== null).forEach(i => {
                 const key = i.subtopic || 'Geral';
                 if (!perf[key]) perf[key] = { sum: 0, cnt: 0 };
                 perf[key].sum += i.accuracy;
@@ -3134,7 +3174,7 @@ const firebaseConfig = {
         if (insights.length === 0) {
             container.innerHTML = `<p class="col-span-full text-center text-gray-500">Registre mais sessões para receber insights detalhados.</p>`;
         } else {
-            // Shuffle and pick up to 3 insights
+            // Embaralha e seleciona até 3 insights
             insights.sort(() => 0.5 - Math.random());
             container.innerHTML = insights.slice(0,3).map(i => `<div class="border-l-4 border-[color:var(--c2)] pl-3 py-1 bg-green-50 rounded-r-md">
                 <h4 class="font-semibold text-gray-800">${i.title}</h4>
@@ -3181,7 +3221,7 @@ const firebaseConfig = {
         }
         
         const fragment = document.createDocumentFragment();
-        filteredData.forEach(s => {
+        filteredData.sort((a, b) => b.timestamp - a.timestamp).forEach(s => {
             const row = document.createElement('tr');
             row.className = 'bg-white border-b hover:bg-gray-50 text-sm';
             const subtopicText = s.subtopic ? `<br><span class="text-xs text-gray-500">${s.subtopic}</span>` : '';
@@ -3293,8 +3333,8 @@ const firebaseConfig = {
         doc.save(`relatorio_estudos_${new Date().toISOString().split('T')[0]}.pdf`);
       }
     };
+
+    window.addEventListener('DOMContentLoaded', ()=> App.init());
   </script>
 </body>
 </html>
-
-
