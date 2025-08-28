@@ -888,26 +888,28 @@
   <video id="pip-video" class="hidden" muted playsinline></video>
   <canvas id="pip-canvas" width="300" height="200" class="hidden"></canvas>
 
+
+  
+
   <script type="module">
+
     // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDvtUA_iaW7oBS7ybiCq0_nLsdpom02Ulg",
-      authDomain: "sample-firebase-ai-app-7acb0.firebaseapp.com",
-      projectId: "sample-firebase-ai-app-7acb0",
-      storageBucket: "sample-firebase-ai-app-7acb0.firebasestorage.app",
-      messagingSenderId: "610146416226",
-      appId: "1:610146416226:web:48457ecd45921e1db6c33b"
-    };
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB4CxGhSIU9hlcObFdJ8J_RcQ0-xBWKMB4",
+  authDomain: "teste-84500.firebaseapp.com",
+  projectId: "teste-84500",
+  storageBucket: "teste-84500.firebasestorage.app",
+  messagingSenderId: "930729926855",
+  appId: "1:930729926855:web:25d9cc8f7f35a3a6db1ee2"
+};
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
     document.addEventListener('DOMContentLoaded', () => {
         const loginOverlay = document.getElementById('login-overlay');
@@ -3287,3 +3289,4 @@
   </script>
 </body>
 </html>
+
