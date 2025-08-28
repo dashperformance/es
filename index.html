@@ -71,12 +71,12 @@
     .btn-danger{background:var(--c4);color:#fff}
     .btn-danger:hover{background:#C76B54}
 
-    input[type="text"], input[type="password"], input[type="number"], input[type="date"], select {
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], select {
       border-radius: 0.75rem;
       border-color: var(--border-color);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
       border-color: var(--c2);
       box-shadow: 0 0 0 3px rgba(129, 178, 154, 0.3);
       outline: none;
@@ -172,9 +172,10 @@
             </div>
             <h1 class="text-2xl font-bold tracking-tight">Dashboard de performance</h1>
           </div>
-          <div class="hidden md:flex items-center gap-6">
+          <div id="main-nav" class="hidden md:flex items-center gap-6">
             <a href="#" data-view="dashboard" class="nav-link text-sm text-gray-700 px-2 py-1">Dashboard</a>
             <a href="#" data-view="foco" class="nav-link text-sm text-gray-700 px-2 py-1">Foco e registro</a>
+            <button id="logout-btn" class="btn btn-secondary py-1 px-3 text-sm">Sair</button>
           </div>
           <button id="mobile-menu-button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100">
             <span class="sr-only">abrir menu</span>
@@ -186,13 +187,65 @@
         <div id="mobile-menu" class="md:hidden hidden pb-3">
           <a href="#" data-view="dashboard" class="block nav-link px-3 py-2 text-base text-gray-700">Dashboard</a>
           <a href="#" data-view="foco" class="block nav-link px-3 py-2 text-base text-gray-700">Foco e registro</a>
+          <button id="logout-btn-mobile" class="mt-2 w-full btn btn-secondary py-2">Sair</button>
         </div>
       </nav>
     </header>
 
     <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+      <!-- TELA DE LOGIN / CADASTRO -->
+      <div id="auth-view" class="hidden">
+        <div class="max-w-md mx-auto mt-10">
+            <div class="card p-8">
+                <!-- Formulário de Login -->
+                <form id="login-form">
+                    <h2 class="text-2xl font-bold text-center mb-6">Entrar</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-gray-700">Senha</label>
+                            <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <p id="login-error" class="text-sm text-red-600"></p>
+                        <div>
+                            <button type="submit" class="w-full btn btn-primary py-2">Entrar</button>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-sm">
+                        Não tem uma conta? <a href="#" id="show-register" class="font-medium text-[color:var(--c2)] hover:underline">Cadastre-se</a>
+                    </p>
+                </form>
+
+                <!-- Formulário de Cadastro -->
+                <form id="register-form" class="hidden">
+                    <h2 class="text-2xl font-bold text-center mb-6">Criar Conta</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="register-password" class="block text-sm font-medium text-gray-700">Senha (mínimo 6 caracteres)</label>
+                            <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <p id="register-error" class="text-sm text-red-600"></p>
+                        <div>
+                            <button type="submit" class="w-full btn btn-primary py-2">Criar conta</button>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-sm">
+                        Já tem uma conta? <a href="#" id="show-login" class="font-medium text-[color:var(--c2)] hover:underline">Entrar</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+      </div>
+
       <div id="loading-view" class="text-center py-20">
-        <p class="text-lg font-semibold text-gray-600">Carregando dados do Firebase...</p>
+        <p class="text-lg font-semibold text-gray-600">Conectando...</p>
       </div>
 
       <div id="main-content" class="hidden">
@@ -235,7 +288,6 @@
                   <button id="import-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-upload mr-2"></i>Importar</button>
                   <button id="export-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-download mr-2"></i>Backup</button>
                   <button id="export-pdf-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-file-pdf mr-2"></i>Exportar PDF</button>
-                  <button id="save-all-btn" class="btn btn-primary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar na Nuvem</button>
                 </div>
               </div>
       
@@ -912,7 +964,7 @@
         },
         db: null, // Referência para o Realtime Database
         auth: null, // Referência para o Auth
-        userId: null, // UID do usuário anônimo
+        userId: null, // UID do usuário
         dataLoaded: false, // Flag para controlar o carregamento inicial
         COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ],
         soundOptions: {
@@ -965,6 +1017,7 @@
 
       init(){
         this.initFirebase();
+        this.bindAuthForms();
       },
 
       initFirebase() {
@@ -975,15 +1028,23 @@
 
           this.state.auth.onAuthStateChanged(user => {
             if (user) {
+              // Usuário está logado
               this.state.userId = user.uid;
+              document.getElementById('loading-view').classList.remove('hidden');
+              document.getElementById('auth-view').classList.add('hidden');
+              document.getElementById('main-nav').classList.remove('hidden');
               if (!this.state.dataLoaded) {
-                this.loadData(); // Carrega os dados do Firebase
+                this.loadData();
               }
             } else {
-              this.state.auth.signInAnonymously().catch(error => {
-                console.error("Erro ao fazer login anônimo:", error);
-                alert("Não foi possível conectar ao banco de dados. Verifique sua conexão e as configurações do Firebase.");
-              });
+              // Usuário deslogado
+              this.state.userId = null;
+              this.state.dataLoaded = false;
+              this.resetState();
+              document.getElementById('loading-view').classList.add('hidden');
+              document.getElementById('main-content').classList.add('hidden');
+              document.getElementById('main-nav').classList.add('hidden');
+              document.getElementById('auth-view').classList.remove('hidden');
             }
           });
         } catch (e) {
@@ -1028,28 +1089,108 @@
         });
       },
 
+      bindAuthForms() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const showRegisterBtn = document.getElementById('show-register');
+        const showLoginBtn = document.getElementById('show-login');
+        const logoutBtn = document.getElementById('logout-btn');
+        const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+
+        loginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = loginForm['login-email'].value;
+            const password = loginForm['login-password'].value;
+            this.handleLogin(email, password);
+        });
+
+        registerForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = registerForm['register-email'].value;
+            const password = registerForm['register-password'].value;
+            this.handleRegister(email, password);
+        });
+
+        showRegisterBtn.addEventListener('click', e => {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+        });
+
+        showLoginBtn.addEventListener('click', e => {
+            e.preventDefault();
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+        
+        logoutBtn.addEventListener('click', () => this.handleLogout());
+        logoutBtnMobile.addEventListener('click', () => this.handleLogout());
+      },
+
+      handleLogin(email, password) {
+        const errorP = document.getElementById('login-error');
+        errorP.textContent = '';
+        this.state.auth.signInWithEmailAndPassword(email, password)
+            .catch(error => {
+                console.error("Erro de login:", error.message);
+                errorP.textContent = "Email ou senha inválidos.";
+            });
+      },
+
+      handleRegister(email, password) {
+        const errorP = document.getElementById('register-error');
+        errorP.textContent = '';
+        this.state.auth.createUserWithEmailAndPassword(email, password)
+            .catch(error => {
+                console.error("Erro de cadastro:", error.message);
+                if (error.code == 'auth/weak-password') {
+                    errorP.textContent = 'A senha precisa ter no mínimo 6 caracteres.';
+                } else if (error.code == 'auth/email-already-in-use') {
+                    errorP.textContent = 'Este email já está em uso.';
+                } else {
+                    errorP.textContent = 'Ocorreu um erro ao criar a conta.';
+                }
+            });
+      },
+
+      handleLogout() {
+        this.state.auth.signOut();
+      },
+
+      resetState() {
+        // Reseta o estado para os valores padrão quando o usuário desloga
+        this.state.studyData = [];
+        this.state.parameters = {
+          subjects: [
+            { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] },
+            { name: "Raciocínio Lógico", subtopics: [] },
+            { name: "Português", subtopics: [] },
+            { name: "Direito Administrativo", subtopics: [] }
+          ],
+          subjectColors: {},
+          tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado"],
+          weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 },
+          weekStartDay: 1,
+          concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }
+        };
+      },
+
       saveData(){
         if (!this.state.userId) {
           this.toast('Erro: Usuário não autenticado. Não foi possível salvar.', false);
           return;
         }
         
-        // Salva os dados principais no Firebase
         const dataToSave = {
           studyData: this.state.studyData,
           parameters: this.state.parameters,
         };
         this.state.db.ref('users/' + this.state.userId).set(dataToSave)
-          .then(() => {
-            // Apenas um feedback visual, não é estritamente necessário
-            // this.toast('Dados salvos na nuvem!');
-          })
           .catch(error => {
             console.error("Falha ao salvar dados no Firebase:", error);
             this.toast('Erro ao salvar na nuvem.', false);
           });
 
-        // Mantém o sistema de backup local
         try {
           localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups));
         } catch(e){ console.error("Falha ao salvar backups locais:", e); }
@@ -1058,7 +1199,6 @@
       loadData(){
         if (!this.state.userId) return;
 
-        // Carrega os backups locais
         try {
           const rawBackups = localStorage.getItem('studyDashBackupsV30');
           if (rawBackups) {
@@ -1066,9 +1206,9 @@
           }
         } catch(e) { console.error("Falha ao carregar backups locais:", e); }
 
-        // Carrega os dados principais do Firebase
         this.state.db.ref('users/' + this.state.userId).once('value', snapshot => {
           const data = snapshot.val();
+          this.resetState(); // Limpa dados antigos antes de carregar novos
           if(data){
             this.state.studyData = data.studyData || [];
             if(data.parameters) {
@@ -1076,23 +1216,19 @@
                     data.parameters.subjects = data.parameters.disciplinas.map(d => ({ name: d, subtopics: [] }));
                     delete data.parameters.disciplinas;
                 }
-                this.state.parameters = Object.assign(this.state.parameters, data.parameters);
+                // Usa Object.assign para mesclar os parâmetros, mantendo os padrões se algo não vier do DB
+                Object.assign(this.state.parameters, data.parameters);
             }
           }
           
-          // Garante que os valores padrão existam
-          this.state.parameters.weeklyGoals = {
-            hours: 35, questions: 250, accuracy: 80, days: 5,
-            ...this.state.parameters.weeklyGoals
-          };
-          this.state.parameters.weekStartDay = this.state.parameters.weekStartDay === undefined ? 1 : parseInt(this.state.parameters.weekStartDay, 10);
           this.ensureSubjectColors();
           
           this.state.dataLoaded = true;
-          this.initializeApp(); // Inicia o resto da aplicação
+          this.initializeApp();
         });
       },
 
+      // ... (O restante do código, a partir de ensureSubjectColors, permanece o mesmo) ...
       ensureSubjectColors() {
         if (!this.state.parameters.subjectColors) {
             this.state.parameters.subjectColors = {};
@@ -1195,14 +1331,6 @@
       
       bindGeneralActions() {
         document.getElementById('export-pdf-btn').addEventListener('click', ()=> this.exportPDF());
-        
-        const saveBtn = document.getElementById('save-all-btn');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', () => {
-                this.saveData();
-                this.toast('Dados salvos na nuvem!');
-            });
-        }
       },
       
       bindBackup() {
@@ -1215,7 +1343,6 @@
       createBackup(reason = 'Manual', download = true) {
         try {
             const timestamp = new Date();
-            // O backup agora salva os dados do estado atual, que vieram do Firebase
             const dataToBackup = {
                 studyData: this.state.studyData,
                 parameters: this.state.parameters,
@@ -1238,7 +1365,6 @@
             
             this.toast(`Backup local '${reason}' criado com sucesso!`);
             
-            // Salva a lista de backups no localStorage
             localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups));
             this.renderBackupList();
             
@@ -1275,7 +1401,7 @@
             this.createBackup('Automático Diário', false);
             setInterval(() => {
                   this.createBackup('Automático Diário', false);
-            }, 24 * 60 * 60 * 1000); // every 24 hours
+            }, 24 * 60 * 60 * 1000);
         }, timeToNoon);
       },
 
@@ -1349,9 +1475,9 @@
                     if (confirm('Isso irá substituir seus dados na nuvem pelos dados do arquivo. Deseja continuar?')) {
                       this.state.studyData = data.studyData;
                       this.state.parameters = data.parameters;
-                      this.saveData(); // Salva os novos dados no Firebase
-                      this.toast('Backup importado com sucesso! A página será recarregada.');
-                      setTimeout(() => location.reload(), 1500);
+                      this.saveData();
+                      this.toast('Backup importado com sucesso! Seus dados na nuvem foram atualizados.');
+                      this.updateDashboard();
                     }
                 } else {
                     this.toast('Arquivo de backup inválido.', false);
@@ -2213,7 +2339,7 @@
 
       async togglePictureInPicture() {
         const pip = this.state.pip;
-        this.updatePipView(); // Draw once before activating
+        this.updatePipView();
 
         try {
             if (document.pictureInPictureElement) {
@@ -2361,7 +2487,7 @@
       },
 
       updateDashboard(){
-        if(this.state.currentView !== 'dashboard') return;
+        if(this.state.currentView !== 'dashboard' || !this.state.dataLoaded) return;
         const data = this.getFilteredData();
         const allData = this.state.studyData;
         const sd = document.getElementById('filter-start-date').value;
@@ -2445,7 +2571,7 @@
         document.getElementById('record-hours-month').innerHTML = `${this.fmtHM(records.hoursMonth.value)} <div class="record-date">${records.hoursMonth.date}</div>`;
       },
       getWeekDateRange(date = new Date()) {
-        const startDay = this.state.parameters.weekStartDay; // 0 for Sun, 1 for Mon
+        const startDay = this.state.parameters.weekStartDay;
         const currentDay = date.getDay();
         const diff = date.getDate() - currentDay + (currentDay === 0 && startDay === 1 ? -6 : startDay);
         
@@ -2472,7 +2598,6 @@
         const weekData = allData.filter(s => s.date >= fmt(startDate) && s.date <= fmt(endDate));
         const studiedDays = new Set(weekData.map(s => s.date));
 
-        // Render day tracker
         daysTrackerContainer.innerHTML = '';
         const dayLabels = this.state.parameters.weekStartDay === 1 ? ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'] : ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
         for (let i = 0; i < 7; i++) {
@@ -2770,7 +2895,6 @@
         let map, labels, values, bgColors;
 
         if (filterSubject && filterSubject !== 'all') {
-            // Detalhar por assunto
             document.getElementById('hours-by-subject-title').textContent = `Distribuição de horas por assunto (${filterSubject})`;
             map = data.filter(i => i.subject === filterSubject)
                       .reduce((acc, i) => { 
@@ -2781,7 +2905,6 @@
             labels = Object.keys(map);
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
         } else {
-            // Visão geral por matéria
             document.getElementById('hours-by-subject-title').textContent = 'Distribuição de horas por disciplina';
             map = data.reduce((acc,i)=>{ acc[i.subject]=(acc[i.subject]||0)+(i.duration/3600); return acc; },{});
             labels = Object.keys(map);
@@ -2800,7 +2923,6 @@
         let labels, values, bgColors;
 
         if (filterSubject && filterSubject !== 'all') {
-            // Detalhar por assunto
             document.getElementById('performance-by-subject-title').textContent = `Desempenho por assunto (${filterSubject})`;
             data.filter(d => d.subject === filterSubject && d.accuracy !== null).forEach(i => {
                 const key = i.subtopic || 'Geral';
@@ -2811,7 +2933,6 @@
             labels = Object.keys(perf);
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
         } else {
-            // Visão geral por matéria
             document.getElementById('performance-by-subject-title').textContent = 'Desempenho médio por disciplina';
             data.filter(d=> d.accuracy!==null).forEach(i=>{
                 if(!perf[i.subject]) perf[i.subject]={sum:0,cnt:0};
@@ -2995,7 +3116,7 @@
       },
       updateMonthlyStudyEvolutionChart(data) {
         const map = data.reduce((acc, i) => {
-            const month = i.date.substring(0, 7); // YYYY-MM
+            const month = i.date.substring(0, 7);
             acc[month] = (acc[month] || 0) + i.duration;
             return acc;
         }, {});
@@ -3109,79 +3230,72 @@
       },
 
       generateInsights(data, allData) {
-        /* (Conhecimento é poder.) */
         const container = document.getElementById('insights-container');
-        container.innerHTML = ''; // Limpa insights anteriores
+        container.innerHTML = '';
         let insights = [];
         
-        // Insight 1: Disciplina mais estudada no período
-        const hoursBySubject = data.reduce((acc, i) => { acc[i.subject] = (acc[i.subject] || 0) + i.duration; return acc; }, {});
-        if(Object.keys(hoursBySubject).length > 0) {
-            const [topSubject, topHours] = Object.entries(hoursBySubject).sort(([,a],[,b]) => b-a)[0];
-            insights.push({title: 'Foco Principal', text: `Sua disciplina mais estudada foi <strong>${topSubject}</strong> com ${this.fmtHM(topHours)}.`});
-        }
+        if(Object.keys(data).length > 0) {
+            const hoursBySubject = data.reduce((acc, i) => { acc[i.subject] = (acc[i.subject] || 0) + i.duration; return acc; }, {});
+            if(Object.keys(hoursBySubject).length > 0) {
+                const [topSubject, topHours] = Object.entries(hoursBySubject).sort(([,a],[,b]) => b-a)[0];
+                insights.push({title: 'Foco Principal', text: `Sua disciplina mais estudada foi <strong>${topSubject}</strong> com ${this.fmtHM(topHours)}.`});
+            }
 
-        // Insight 2: Melhor dia da semana
-        const hoursByDay = [0,0,0,0,0,0,0];
-        data.forEach(i=>{ const d=new Date(i.date).getUTCDay(); hoursByDay[d]+= i.duration; });
-        if(hoursByDay.some(h => h > 0)) {
-            const bestDayIndex = hoursByDay.indexOf(Math.max(...hoursByDay));
-            const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-            insights.push({title: 'Pico de Produtividade', text: `Seu dia mais produtivo é <strong>${days[bestDayIndex]}</strong>.`});
-        }
-        
-        // Insight 3: Força e Fraqueza
-        const perfBySubject = {};
-        data.filter(d => d.accuracy !== null && d.totalQuestions >= 10).forEach(i => {
-            if (!perfBySubject[i.subject]) perfBySubject[i.subject] = { sum: 0, cnt: 0 };
-            perfBySubject[i.subject].sum += i.accuracy;
-            perfBySubject[i.subject].cnt++;
-        });
-        const subjectsWithPerf = Object.entries(perfBySubject).map(([sub, stats]) => ({ subject: sub, avg: stats.sum / stats.cnt }));
-        if (subjectsWithPerf.length > 1) {
-            const bestPerf = subjectsWithPerf.sort((a,b) => b.avg - a.avg)[0];
-            const worstPerf = subjectsWithPerf.sort((a,b) => a.avg - b.avg)[0];
-            if (bestPerf.subject !== worstPerf.subject) {
-                insights.push({title: 'Pontos de Atenção', text: `Seu melhor desempenho é em <strong>${bestPerf.subject}</strong> (${(bestPerf.avg*100).toFixed(0)}%). Considere revisar <strong>${worstPerf.subject}</strong>.`});
+            const hoursByDay = [0,0,0,0,0,0,0];
+            data.forEach(i=>{ const d=new Date(i.date).getUTCDay(); hoursByDay[d]+= i.duration; });
+            if(hoursByDay.some(h => h > 0)) {
+                const bestDayIndex = hoursByDay.indexOf(Math.max(...hoursByDay));
+                const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+                insights.push({title: 'Pico de Produtividade', text: `Seu dia mais produtivo é <strong>${days[bestDayIndex]}</strong>.`});
+            }
+            
+            const perfBySubject = {};
+            data.filter(d => d.accuracy !== null && d.totalQuestions >= 10).forEach(i => {
+                if (!perfBySubject[i.subject]) perfBySubject[i.subject] = { sum: 0, cnt: 0 };
+                perfBySubject[i.subject].sum += i.accuracy;
+                perfBySubject[i.subject].cnt++;
+            });
+            const subjectsWithPerf = Object.entries(perfBySubject).map(([sub, stats]) => ({ subject: sub, avg: stats.sum / stats.cnt }));
+            if (subjectsWithPerf.length > 1) {
+                const bestPerf = subjectsWithPerf.sort((a,b) => b.avg - a.avg)[0];
+                const worstPerf = subjectsWithPerf.sort((a,b) => a.avg - b.avg)[0];
+                if (bestPerf.subject !== worstPerf.subject) {
+                    insights.push({title: 'Pontos de Atenção', text: `Seu melhor desempenho é em <strong>${bestPerf.subject}</strong> (${(bestPerf.avg*100).toFixed(0)}%). Considere revisar <strong>${worstPerf.subject}</strong>.`});
+                }
+            }
+            
+            const perfByTime = { 'madrugada': { sum: 0, cnt: 0 }, 'manha': { sum: 0, cnt: 0 }, 'tarde': { sum: 0, cnt: 0 }, 'noite': { sum: 0, cnt: 0 } };
+            data.filter(d => d.accuracy !== null && d.timeOfDay).forEach(s => {
+                perfByTime[s.timeOfDay].sum += s.accuracy;
+                perfByTime[s.timeOfDay].cnt++;
+            });
+            const perfByTimeArray = Object.entries(perfByTime).map(([p, s]) => ({period: p, avg: s.cnt > 0 ? s.sum/s.cnt : 0, count: s.cnt}));
+            if(perfByTimeArray.some(p => p.count > 0)) {
+                const bestTime = perfByTimeArray.sort((a,b) => b.avg - a.avg)[0];
+                if(bestTime.count > 0) insights.push({title: 'Melhor Horário', text: `Você tende a ter um melhor desempenho no período da <strong>${bestTime.period}</strong>.`});
+            }
+            
+            const timeByActivity = data.reduce((acc, i) => { acc[i.activity] = (acc[i.activity] || 0) + i.duration; return acc; }, {});
+            if(Object.keys(timeByActivity).length > 0) {
+                const [topActivity] = Object.entries(timeByActivity).sort(([,a],[,b]) => b-a)[0];
+                insights.push({title: 'Tipo de Estudo', text: `A maior parte do seu tempo é dedicada a <strong>${topActivity}</strong>.`});
+            }
+            
+            const { startDate } = this.getWeekDateRange();
+            const lastWeekStartDate = new Date(startDate);
+            lastWeekStartDate.setDate(startDate.getDate() - 7);
+            const currentWeekHours = allData.filter(s => new Date(s.date) >= startDate).reduce((sum, s) => sum + s.duration, 0);
+            const lastWeekHours = allData.filter(s => new Date(s.date) >= lastWeekStartDate && new Date(s.date) < startDate).reduce((sum, s) => sum + s.duration, 0);
+            if(lastWeekHours > 0) {
+                const diff = ((currentWeekHours - lastWeekHours) / lastWeekHours) * 100;
+                const trend = diff > 5 ? `<strong class="text-green-600">aumentando</strong>` : (diff < -5 ? `<strong class="text-red-600">diminuindo</strong>` : '<strong>mantendo</strong>');
+                insights.push({title: 'Consistência Semanal', text: `Você está ${trend} seu volume de estudos em relação à semana passada.`});
             }
         }
-        
-        // Insight 4: Melhor horário
-        const perfByTime = { 'madrugada': { sum: 0, cnt: 0 }, 'manha': { sum: 0, cnt: 0 }, 'tarde': { sum: 0, cnt: 0 }, 'noite': { sum: 0, cnt: 0 } };
-        data.filter(d => d.accuracy !== null && d.timeOfDay).forEach(s => {
-            perfByTime[s.timeOfDay].sum += s.accuracy;
-            perfByTime[s.timeOfDay].cnt++;
-        });
-        const perfByTimeArray = Object.entries(perfByTime).map(([p, s]) => ({period: p, avg: s.cnt > 0 ? s.sum/s.cnt : 0, count: s.cnt}));
-        if(perfByTimeArray.some(p => p.count > 0)) {
-            const bestTime = perfByTimeArray.sort((a,b) => b.avg - a.avg)[0];
-            if(bestTime.count > 0) insights.push({title: 'Melhor Horário', text: `Você tende a ter um melhor desempenho no período da <strong>${bestTime.period}</strong>.`});
-        }
-        
-        // Insight 5: Foco em Atividade
-        const timeByActivity = data.reduce((acc, i) => { acc[i.activity] = (acc[i.activity] || 0) + i.duration; return acc; }, {});
-        if(Object.keys(timeByActivity).length > 0) {
-            const [topActivity] = Object.entries(timeByActivity).sort(([,a],[,b]) => b-a)[0];
-            insights.push({title: 'Tipo de Estudo', text: `A maior parte do seu tempo é dedicada a <strong>${topActivity}</strong>.`});
-        }
-        
-        // Insight 6: Consistência
-        const { startDate } = this.getWeekDateRange();
-        const lastWeekStartDate = new Date(startDate);
-        lastWeekStartDate.setDate(startDate.getDate() - 7);
-        const currentWeekHours = allData.filter(s => new Date(s.date) >= startDate).reduce((sum, s) => sum + s.duration, 0);
-        const lastWeekHours = allData.filter(s => new Date(s.date) >= lastWeekStartDate && new Date(s.date) < startDate).reduce((sum, s) => sum + s.duration, 0);
-        if(lastWeekHours > 0) {
-            const diff = ((currentWeekHours - lastWeekHours) / lastWeekHours) * 100;
-            const trend = diff > 5 ? `<strong class="text-green-600">aumentando</strong>` : (diff < -5 ? `<strong class="text-red-600">diminuindo</strong>` : '<strong>mantendo</strong>');
-            insights.push({title: 'Consistência Semanal', text: `Você está ${trend} seu volume de estudos em relação à semana passada.`});
-        }
-
 
         if (insights.length === 0) {
             container.innerHTML = `<p class="col-span-full text-center text-gray-500">Registre mais sessões para receber insights detalhados.</p>`;
         } else {
-            // Shuffle and pick up to 3 insights
             insights.sort(() => 0.5 - Math.random());
             container.innerHTML = insights.slice(0,3).map(i => `<div class="border-l-4 border-[color:var(--c2)] pl-3 py-1 bg-green-50 rounded-r-md">
                 <h4 class="font-semibold text-gray-800">${i.title}</h4>
