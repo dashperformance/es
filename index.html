@@ -217,6 +217,9 @@
                     <p class="mt-4 text-center text-sm">
                         Não tem uma conta? <a href="#" id="show-register" class="font-medium text-[color:var(--c2)] hover:underline">Cadastre-se</a>
                     </p>
+                    <p class="mt-2 text-center text-sm">
+                        <a href="#" id="forgot-password" class="font-medium text-gray-500 hover:text-[color:var(--c2)] hover:underline">Esqueci a senha</a>
+                    </p>
                 </form>
 
                 <!-- Formulário de Cadastro -->
@@ -288,6 +291,7 @@
                   <button id="import-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-upload mr-2"></i>Importar</button>
                   <button id="export-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-download mr-2"></i>Backup</button>
                   <button id="export-pdf-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-file-pdf mr-2"></i>Exportar PDF</button>
+                  <button id="save-all-btn" class="btn btn-primary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar na Nuvem</button>
                 </div>
               </div>
       
@@ -1032,7 +1036,7 @@
               this.state.userId = user.uid;
               document.getElementById('loading-view').classList.remove('hidden');
               document.getElementById('auth-view').classList.add('hidden');
-              document.getElementById('main-nav').classList.remove('hidden');
+              document.getElementById('main-nav').style.display = 'flex';
               if (!this.state.dataLoaded) {
                 this.loadData();
               }
@@ -1043,7 +1047,7 @@
               this.resetState();
               document.getElementById('loading-view').classList.add('hidden');
               document.getElementById('main-content').classList.add('hidden');
-              document.getElementById('main-nav').classList.add('hidden');
+              document.getElementById('main-nav').style.display = 'none';
               document.getElementById('auth-view').classList.remove('hidden');
             }
           });
@@ -1054,7 +1058,6 @@
       },
       
       initializeApp() {
-        // Esta função agora é chamada DEPOIS que os dados são carregados do Firebase
         document.getElementById('loading-view').classList.add('hidden');
         document.getElementById('main-content').classList.remove('hidden');
 
@@ -1069,13 +1072,16 @@
         this.bindNotificationModal();
         this.bindConcurso();
         this.bindPip();
+        this.initCharts(); // Mover a inicialização dos gráficos para cá
+        
+        // Agora que os gráficos existem, podemos popular os dropdowns e renderizar tudo
         this.updateAllSubjectDropdowns();
         this.updateActivityDropdowns();
         this.renderSubjectsManagement();
         this.bindSubjectManagement();
-        this.initCharts();
+        
         this.resetPomodoro(true);
-        this.setFilterPeriod('week');
+        this.setFilterPeriod('week'); // Isso vai chamar updateDashboard() pela primeira vez
         this.navigateTo('dashboard');
         this.scheduleDailyBackup();
         this.renderBackupList();
@@ -1096,6 +1102,7 @@
         const showLoginBtn = document.getElementById('show-login');
         const logoutBtn = document.getElementById('logout-btn');
         const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+        const forgotPasswordLink = document.getElementById('forgot-password');
 
         loginForm.addEventListener('submit', e => {
             e.preventDefault();
@@ -1125,6 +1132,11 @@
         
         logoutBtn.addEventListener('click', () => this.handleLogout());
         logoutBtnMobile.addEventListener('click', () => this.handleLogout());
+
+        forgotPasswordLink.addEventListener('click', e => {
+            e.preventDefault();
+            this.handlePasswordReset();
+        });
       },
 
       handleLogin(email, password) {
@@ -1153,12 +1165,25 @@
             });
       },
 
+      handlePasswordReset() {
+        const email = prompt("Por favor, insira seu email para redefinir a senha:");
+        if (!email) return;
+
+        this.state.auth.sendPasswordResetEmail(email)
+            .then(() => {
+                this.toast('Email de redefinição de senha enviado!');
+            })
+            .catch(error => {
+                console.error("Erro ao enviar email de redefinição:", error);
+                this.toast('Não foi possível enviar o email. Verifique o endereço.', false);
+            });
+      },
+
       handleLogout() {
         this.state.auth.signOut();
       },
 
       resetState() {
-        // Reseta o estado para os valores padrão quando o usuário desloga
         this.state.studyData = [];
         this.state.parameters = {
           subjects: [
@@ -1208,7 +1233,7 @@
 
         this.state.db.ref('users/' + this.state.userId).once('value', snapshot => {
           const data = snapshot.val();
-          this.resetState(); // Limpa dados antigos antes de carregar novos
+          this.resetState(); 
           if(data){
             this.state.studyData = data.studyData || [];
             if(data.parameters) {
@@ -1216,7 +1241,6 @@
                     data.parameters.subjects = data.parameters.disciplinas.map(d => ({ name: d, subtopics: [] }));
                     delete data.parameters.disciplinas;
                 }
-                // Usa Object.assign para mesclar os parâmetros, mantendo os padrões se algo não vier do DB
                 Object.assign(this.state.parameters, data.parameters);
             }
           }
@@ -1224,11 +1248,10 @@
           this.ensureSubjectColors();
           
           this.state.dataLoaded = true;
-          this.initializeApp();
+          this.initializeApp(); // **CORREÇÃO PRINCIPAL**: Inicializa o app APÓS os dados serem carregados.
         });
       },
-
-      // ... (O restante do código, a partir de ensureSubjectColors, permanece o mesmo) ...
+      
       ensureSubjectColors() {
         if (!this.state.parameters.subjectColors) {
             this.state.parameters.subjectColors = {};
@@ -1331,6 +1354,11 @@
       
       bindGeneralActions() {
         document.getElementById('export-pdf-btn').addEventListener('click', ()=> this.exportPDF());
+        // Adicionando o listener para o botão de salvar
+        document.getElementById('save-all-btn').addEventListener('click', () => {
+            this.saveData();
+            this.toast('Dados salvos na nuvem!');
+        });
       },
       
       bindBackup() {
@@ -2418,6 +2446,8 @@
             return;
         }
 
+        // A linha abaixo garante que apenas as 10 sessões mais recentes sejam exibidas.
+        // Todos os dados históricos são mantidos salvos.
         sortedData.slice(0, 10).forEach(session => {
             const el = document.createElement('div');
             el.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-md text-sm transition-all hover:bg-gray-100';
@@ -2521,8 +2551,13 @@
       
       precomputeMetrics(data, allData) {
         const totalSec = data.reduce((s,i)=>s+i.duration,0);
-        const sessionsWithAcc = data.filter(i=> i.accuracy!==null);
-        const accAvg = sessionsWithAcc.length? (sessionsWithAcc.reduce((s,i)=>s+i.accuracy,0)/sessionsWithAcc.length):0;
+        
+        // **ALTERADO**: Calcula a média de acertos ponderada (total de acertos / total de questões)
+        // para um valor mais preciso, em vez de uma média de percentuais.
+        const totalQ = data.reduce((s, i) => s + (i.totalQuestions || 0), 0);
+        const correctQ = data.reduce((s, i) => s + (i.correctQuestions || 0), 0);
+        const accAvg = totalQ > 0 ? (correctQ / totalQ) : 0;
+
         const avgSessSec = data.length? totalSec/data.length : 0;
         const deepSec = data.filter(s=> s.sessionType==='focada').reduce((x,y)=>x+y.duration,0);
         const deepRatio = totalSec? (deepSec/totalSec)*100:0;
@@ -2857,7 +2892,7 @@
           scales:{y:{beginAtZero:true,ticks:{font:{family:'Inter'}}},x:{ticks:{font:{family:'Inter'}}}}
         };
         this.state.charts.hoursBySubject = new Chart(document.getElementById('hoursBySubjectChart'), { type:'pie', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
-        this.state.charts.performanceBySubject = new Chart(document.getElementById('performanceBySubjectChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
+        this.state.charts.performanceBySubject = new Chart(document.getElementById('performanceBySubjectChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:true}}} });
         this.state.charts.studyEvolution = new Chart(document.getElementById('studyEvolutionChart'), { type:'line', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, elements:{line:{tension:.1}}} });
         this.state.charts.productivityByDay = new Chart(document.getElementById('productivityByDayChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
         this.state.charts.moodVsPerformance = new Chart(document.getElementById('moodVsPerformanceChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, scales:{y:{beginAtZero:true, max:1, ticks:{callback: v => `${(v*100)}%`}}}} });
@@ -2867,7 +2902,32 @@
         this.state.charts.questionsEvolution = new Chart(document.getElementById('questionsEvolutionChart'), { type:'line', data:{labels:[],datasets:[]}, options: {...base, elements:{line:{tension:.2, fill: 'start'}}} });
         
         this.state.charts.activityDistribution = new Chart(document.getElementById('activityDistributionChart'), { type:'doughnut', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
-        this.state.charts.flowVsPerformance = new Chart(document.getElementById('flowVsPerformanceChart'), { type:'scatter', data:{labels:[],datasets:[]}, options:{...base, plugins: {...base.plugins, legend:{display:false}, tooltip: { callbacks: { label: (ctx) => `Flow: ${ctx.raw.x}, Acertos: ${(ctx.raw.y*100).toFixed(0)}%` }}}, scales:{x:{title:{display:true, text:'Nível de Flow'}}, y:{ticks:{callback: v => `${(v*100)}%`}}}} });
+        
+        // **ALTERADO**: Gráfico Flow vs. Performance alterado para 'bar'
+        this.state.charts.flowVsPerformance = new Chart(document.getElementById('flowVsPerformanceChart'), { 
+            type:'bar',
+            data:{labels:[],datasets:[]}, 
+            options:{
+                ...base, 
+                plugins: {
+                    ...base.plugins, 
+                    legend:{display:false}, 
+                    tooltip: { 
+                        callbacks: { 
+                            label: (ctx) => `Média de Acertos: ${(ctx.raw*100).toFixed(0)}%` 
+                        }
+                    }
+                }, 
+                scales:{
+                    x:{title:{display:true, text:'Nível de Flow'}}, 
+                    y:{
+                        beginAtZero: true,
+                        max: 1,
+                        ticks:{callback: v => `${(v*100)}%`}
+                    }
+                }
+            } 
+        });
 
 
         document.getElementById('questions-evolution-toggle').addEventListener('change', e => {
@@ -2931,7 +2991,14 @@
                 perf[key].cnt += 1;
             });
             labels = Object.keys(perf);
+            values = labels.map(s=> perf[s].sum / perf[s].cnt);
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
+            ch.data.datasets = [{
+                type: 'bar',
+                label:'% de acertos', 
+                data:values, 
+                backgroundColor: bgColors
+            }];
         } else {
             document.getElementById('performance-by-subject-title').textContent = 'Desempenho médio por disciplina';
             data.filter(d=> d.accuracy!==null).forEach(i=>{
@@ -2940,12 +3007,36 @@
                 perf[i.subject].cnt += 1;
             });
             labels = Object.keys(perf);
+            values = labels.map(s=> perf[s].cnt > 0 ? perf[s].sum / perf[s].cnt : 0);
             bgColors = labels.map(label => this.state.parameters.subjectColors[label] || '#cccccc');
+
+            // **NOVO**: Calcula a média geral ponderada para a linha de referência
+            const totalQ = data.reduce((s, i) => s + (i.totalQuestions || 0), 0);
+            const correctQ = data.reduce((s, i) => s + (i.correctQuestions || 0), 0);
+            const overallAverage = totalQ > 0 ? (correctQ / totalQ) : 0;
+
+            ch.data.datasets = [
+                {
+                    type: 'bar',
+                    label:'% de acertos', 
+                    data:values, 
+                    backgroundColor: bgColors
+                },
+                {
+                    type: 'line',
+                    label: 'Média Geral',
+                    data: labels.map(() => overallAverage),
+                    borderColor: '#E07A5F',
+                    backgroundColor: '#E07A5F',
+                    fill: false,
+                    pointRadius: 0,
+                    borderWidth: 2,
+                    borderDash: [5, 5]
+                }
+            ];
         }
         
-        values = labels.map(s=> perf[s].sum / perf[s].cnt);
         ch.data.labels = labels;
-        ch.data.datasets = [{label:'% de acertos', data:values, backgroundColor: bgColors}];
         ch.options.scales.y.ticks.callback = v=> `${(v*100).toFixed(0)}%`;
         ch.update();
       },
@@ -3211,20 +3302,36 @@
         ch.update();
       },
 
+      // **ALTERADO**: Lógica para agregar dados para o gráfico de barras
       updateFlowVsPerformanceChart(data) {
         const ch = this.state.charts.flowVsPerformance;
-        const scatterData = data
-            .filter(s => s.flowScore && s.accuracy !== null)
-            .map(s => ({ x: s.flowScore, y: s.accuracy, subject: s.subject }));
         
+        const flowData = {
+            1: { sum: 0, cnt: 0 }, 2: { sum: 0, cnt: 0 }, 3: { sum: 0, cnt: 0 },
+            4: { sum: 0, cnt: 0 }, 5: { sum: 0, cnt: 0 },
+        };
+
+        data.filter(s => s.flowScore && s.accuracy !== null)
+            .forEach(s => {
+                if (flowData[s.flowScore]) {
+                    flowData[s.flowScore].sum += s.accuracy;
+                    flowData[s.flowScore].cnt++;
+                }
+            });
+
+        const labels = Object.keys(flowData);
+        const averages = labels.map(key => {
+            const d = flowData[key];
+            return d.cnt > 0 ? d.sum / d.cnt : 0;
+        });
+
+        ch.data.labels = labels.map(l => `Flow ${l}`);
         ch.data.datasets = [{
-            label: 'Sessão de Estudo',
-            data: scatterData,
-            backgroundColor: scatterData.map(d => this.state.parameters.subjectColors[d.subject] + '99' || '#cccccc99'),
-            borderColor: scatterData.map(d => this.state.parameters.subjectColors[d.subject] || '#cccccc'),
-            borderWidth: 1,
-            pointRadius: 6,
-            pointHoverRadius: 8
+            label: 'Média de Acertos',
+            data: averages,
+            backgroundColor: ['#E07A5F', '#F2CC8F', '#81B29A', '#3D405B', '#555B6E'],
+            borderColor: '#fff',
+            borderWidth: 1
         }];
         ch.update();
       },
