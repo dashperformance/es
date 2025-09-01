@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -435,58 +438,36 @@
                 <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
             </h2>
             <div class="collapsible-content grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
               <div class="card p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]" id="hours-by-subject-title">Distribuição de horas por disciplina</h3>
                 <div class="chart-container mx-auto max-w-sm">
                   <canvas id="hoursBySubjectChart"></canvas>
                 </div>
               </div>
+
               <div class="card p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]" id="performance-by-subject-title">Desempenho médio por disciplina</h3>
                 <div class="chart-container">
                   <canvas id="performanceBySubjectChart"></canvas>
                 </div>
               </div>
-              <!-- NOVOS GRÁFICOS AQUI -->
+              
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Contagem de sessões por humor</h3>
-                <div class="chart-container mx-auto max-w-sm">
-                  <canvas id="moodCountChart"></canvas>
-                </div>
-              </div>
-              <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Contagem de sessões por flow</h3>
-                <div class="chart-container mx-auto max-w-sm">
-                  <canvas id="flowCountChart"></canvas>
-                </div>
-              </div>
-               <div class="card p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Porcentagem de foco</h3>
-                 <p class="text-sm text-center text-[var(--text-muted)]">Tempo de estudo efetivo vs. pausas no período</p>
+                <p class="text-sm text-center text-[var(--text-muted)]">Tempo de estudo efetivo vs. pausas no período</p>
                 <div class="chart-container mx-auto max-w-sm">
                   <canvas id="focusPercentageChart"></canvas>
                 </div>
               </div>
-              <!-- FIM DOS NOVOS GRÁFICOS -->
+
               <div class="card p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Distribuição de tempo por atividade</h3>
                 <div class="chart-container mx-auto max-w-sm">
                   <canvas id="activityDistributionChart"></canvas>
                 </div>
               </div>
-              <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Flow vs. desempenho</h3>
-                <div class="chart-container">
-                  <canvas id="flowVsPerformanceChart"></canvas>
-                </div>
-              </div>
-              <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Desempenho por Atividade</h3>
-                 <p class="text-sm text-center text-[var(--text-muted)]">Média de acertos por tipo de atividade</p>
-                <div class="chart-container">
-                  <canvas id="performanceByActivityChart"></canvas>
-                </div>
-              </div>
+
               <div class="card p-4 sm:p-6 lg:col-span-2">
                   <h3 class="text-lg font-semibold text-center mb-4 text-[var(--text-secondary)]">Forças e fraquezas por disciplina</h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -497,6 +478,7 @@
                       </div>
                   </div>
               </div>
+              
               <div class="card p-4 sm:p-6 lg:col-span-2">
                   <div class="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4">
                       <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução das questões</h3>
@@ -511,6 +493,7 @@
                     <canvas id="questionsEvolutionChart"></canvas>
                 </div>
               </div>
+
               <div class="card p-4 sm:p-6 lg:col-span-2">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução das horas de estudo (diário)</h3>
                 <p class="text-sm text-[var(--text-muted)] text-center">Média diária no período: <span id="average-time-display" class="font-semibold">00h00m</span></p>
@@ -518,36 +501,69 @@
                   <canvas id="studyEvolutionChart"></canvas>
                 </div>
               </div>
+
               <div class="card p-4 sm:p-6">
                   <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução das horas de estudo (mensal)</h3>
                   <div class="chart-container">
                       <canvas id="monthlyStudyEvolutionChart"></canvas>
                   </div>
               </div>
+
               <div class="card p-4 sm:p-6">
                   <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Rendimento por horário do dia</h3>
                   <div class="chart-container">
                       <canvas id="performanceByTimeOfDayChart"></canvas>
                   </div>
               </div>
+              
               <div class="card p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Produtividade por dia da semana</h3>
                 <div class="chart-container">
                   <canvas id="productivityByDayChart"></canvas>
                 </div>
               </div>
+
               <div class="card p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Humor vs. desempenho</h3>
                 <div class="chart-container">
                   <canvas id="moodVsPerformanceChart"></canvas>
                 </div>
               </div>
+              
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Contagem de sessões por humor</h3>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="moodCountChart"></canvas>
+                </div>
+              </div>
+              
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Contagem de sessões por flow</h3>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="flowCountChart"></canvas>
+                </div>
+              </div>
+              
+              <div class="card p-4 sm:p-6 hidden">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Flow vs. desempenho</h3>
+                <div class="chart-container">
+                  <canvas id="flowVsPerformanceChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6 hidden">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Desempenho por Atividade</h3>
+                 <p class="text-sm text-center text-[var(--text-muted)]">Média de acertos por tipo de atividade</p>
+                <div class="chart-container">
+                  <canvas id="performanceByActivityChart"></canvas>
+                </div>
+              </div>
+
               <div class="card p-4 sm:p-6 lg:col-span-2">
                   <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução semanal (últimas 4 semanas)</h3>
                   <div id="weekly-evolution-table" class="overflow-x-auto mt-4"></div>
               </div>
             </div>
-          </div>
+            </div>
 
           <div>
               <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
@@ -994,9 +1010,7 @@
 
   <video id="pip-video" class="hidden" muted playsinline></video>
   <canvas id="pip-canvas" width="300" height="200" class="hidden"></canvas>
-
-
-  <script>
+<script>
     // Your web app's Firebase configuration
     // COLE AQUI A CONFIGURAÇÃO DO SEU PROJETO FIREBASE
     const firebaseConfig = {
@@ -1297,9 +1311,10 @@
         };
       },
 
-      saveData(){
+      // FUNÇÃO saveData MODIFICADA PARA CORRIGIR O BUG
+      saveData(showToast = false, toastMessage = 'Dados salvos na nuvem!'){
         if (!this.state.userId) {
-          this.toast('Erro: Usuário não autenticado. Não foi possível salvar.', false);
+          if (showToast) this.toast('Erro: Usuário não autenticado. Não foi possível salvar.', false);
           return;
         }
         
@@ -1308,9 +1323,14 @@
           parameters: this.state.parameters,
         };
         this.state.db.ref('users/' + this.state.userId).set(dataToSave)
+          .then(() => {
+              if (showToast) {
+                  this.toast(toastMessage);
+              }
+          })
           .catch(error => {
             console.error("Falha ao salvar dados no Firebase:", error);
-            this.toast('Erro ao salvar na nuvem.', false);
+            if (showToast) this.toast('Erro ao salvar na nuvem.', false);
           });
 
         try {
@@ -1318,6 +1338,7 @@
         } catch(e){ console.error("Falha ao salvar backups locais:", e); }
       },
 
+      // NOVO CÓDIGO CORRIGIDO - SUBSTITUA O ANTIGO POR ESTE
       loadData(){
         if (!this.state.userId) return;
 
@@ -1339,11 +1360,29 @@
                     delete data.parameters.disciplinas;
                 }
                 Object.assign(this.state.parameters, data.parameters);
+
+                // --->>> INÍCIO DA CORREÇÃO DO BUG <<<---
+                // Garante que 'subjects' seja sempre um array.
+                // O Firebase pode salvar arrays como objetos se as chaves não forem sequenciais.
+                if (this.state.parameters.subjects && typeof this.state.parameters.subjects === 'object' && !Array.isArray(this.state.parameters.subjects)) {
+                  console.warn("'subjects' foi carregado como um objeto, convertendo para array.");
+                  this.state.parameters.subjects = Object.values(this.state.parameters.subjects);
+                }
+                
+                // Garante que cada matéria tenha a propriedade 'subtopics' como um array.
+                if (Array.isArray(this.state.parameters.subjects)) {
+                    this.state.parameters.subjects.forEach(subject => {
+                        if (!subject.subtopics || !Array.isArray(subject.subtopics)) {
+                            subject.subtopics = [];
+                        }
+                    });
+                }
+                // --->>> FIM DA CORREÇÃO DO BUG <<<---
             }
           }
           
           this.ensureSubjectColors();
-          this.setDarkMode(this.state.parameters.darkMode, false); // Apply loaded dark mode preference
+          this.setDarkMode(this.state.parameters.darkMode, false);
           
           this.state.dataLoaded = true;
           this.initializeApp();
@@ -1508,8 +1547,7 @@
       bindGeneralActions() {
         document.getElementById('export-pdf-btn').addEventListener('click', ()=> this.exportPDF());
         document.getElementById('save-all-btn').addEventListener('click', () => {
-            this.saveData();
-            this.toast('Dados salvos na nuvem!');
+            this.saveData(true); // MODIFICADO
         });
       },
       
@@ -1811,16 +1849,15 @@
               const index = this.state.studyData.findIndex(s => s.id === this.state.editingId);
               if (index !== -1) {
                   this.state.studyData[index] = { ...this.state.studyData[index], ...itemData };
-                  this.toast('Sessão atualizada!');
               }
+              this.saveData(true, 'Sessão atualizada!');
               this.resetForm();
           } else {
               this.state.studyData.push({ ...itemData, id: Date.now() });
-              this.toast('Sessão registrada!');
+              this.saveData(true, 'Sessão registrada!');
               this.resetForm();
           }
           
-          this.saveData();
           this.renderSessionHistory();
           if (this.state.currentView === 'dashboard') {
             this.updateDashboard();
@@ -1936,11 +1973,10 @@
             subjects.push({ name: name, subtopics: [] });
             subjects.sort((a, b) => a.name.localeCompare(b.name));
             this.ensureSubjectColors();
-            this.saveData();
+            this.saveData(true, `Matéria "${name}" adicionada.`); // MODIFICADO
             this.renderSubjectsManagement();
             this.updateAllSubjectDropdowns();
             input.value='';
-            this.toast(`Matéria "${name}" adicionada.`);
           }else{
             this.toast('Matéria já existe ou é inválida.', false);
           }
@@ -1968,11 +2004,10 @@
                   this.state.studyData = this.state.studyData.filter(d => d.subject !== subjectName);
                   this.state.parameters.subjects = this.state.parameters.subjects.filter(s => s.name !== subjectName);
                   delete this.state.parameters.subjectColors[subjectName];
-                  this.saveData();
+                  this.saveData(true, `"${subjectName}" removida.`); // MODIFICADO
                   this.renderSubjectsManagement();
                   this.updateAllSubjectDropdowns();
                   if (this.state.currentView === 'dashboard') this.updateDashboard();
-                  this.toast(`"${subjectName}" removida.`);
                 }
             }
 
@@ -1984,11 +2019,10 @@
                 if (subtopicName && subject && !subject.subtopics.includes(subtopicName)) {
                     subject.subtopics.push(subtopicName);
                     subject.subtopics.sort();
-                    this.saveData();
+                    this.saveData(true, `Assunto "${subtopicName}" adicionado.`); // MODIFICADO
                     this.renderSubjectsManagement();
                     this.updateAllSubjectDropdowns();
                     input.value = '';
-                    this.toast(`Assunto "${subtopicName}" adicionado.`);
                 } else {
                     this.toast('Assunto já existe ou é inválido.', false);
                 }
@@ -2000,7 +2034,7 @@
                 const subject = this.state.parameters.subjects.find(s => s.name === subjectName);
                 if (subject) {
                     subject.subtopics = subject.subtopics.filter(st => st !== subtopicName);
-                    this.saveData();
+                    this.saveData(true, 'Assunto removido.'); // MODIFICADO
                     this.renderSubjectsManagement();
                     this.updateAllSubjectDropdowns();
                 }
@@ -2021,9 +2055,8 @@
         weekStartSelect.value = this.state.parameters.weekStartDay;
         weekStartSelect.addEventListener('change', (e) => {
             this.state.parameters.weekStartDay = parseInt(e.target.value, 10);
-            this.saveData();
+            this.saveData(true, 'Início da semana atualizado!'); // MODIFICADO
             this.updateDashboard();
-            this.toast('Início da semana atualizado!');
         });
 
         document.getElementById('reset-all-data-btn').addEventListener('click', ()=>{
@@ -2494,8 +2527,7 @@
             };
 
             this.state.studyData.push(finalSession);
-            this.saveData();
-            this.toast('Sessão registrada com sucesso!');
+            this.saveData(true, 'Sessão registrada com sucesso!'); // MODIFICADO
             this.closeSessionModal(false);
             if (this.state.currentView === 'dashboard') {
                 this.updateDashboard();
@@ -2665,10 +2697,9 @@
             el.querySelector('.delete-btn').addEventListener('click', () => {
                 if (confirm('Tem certeza que deseja excluir esta sessão?')) {
                     this.state.studyData = this.state.studyData.filter(s => s.id !== session.id);
-                    this.saveData();
+                    this.saveData(true, 'Sessão excluída.'); // MODIFICADO
                     this.renderSessionHistory();
                     this.updateDashboard();
-                    this.toast('Sessão excluída.');
                 }
             });
 
@@ -2905,12 +2936,11 @@
           g.questions = parseInt(document.getElementById('goal-questions-input').value, 10) || 0;
           g.accuracy = parseInt(document.getElementById('goal-accuracy-input').value, 10) || 0;
           g.days = parseInt(document.getElementById('goal-days-input').value, 10) || 0;
-          this.saveData();
+          this.saveData(true, 'Metas atualizadas!'); // MODIFICADO
           document.getElementById('goals-edit-view').classList.add('hidden');
           document.getElementById('goals-display-view').classList.remove('hidden');
           document.getElementById('weekly-days-tracker').classList.remove('hidden');
           this.updateWeeklyGoals(allData);
-          this.toast('Metas atualizadas!');
         };
       },
       calculateStreak(allData) {
@@ -3155,12 +3185,18 @@
         }
         
         values = Object.values(map);
-        ch.data.labels = labels.map(l => `${l} (${this.formatTime(map[l])})`);
+        const totalDuration = values.reduce((sum, val) => sum + val, 0);
+
+        ch.data.labels = labels.map(l => {
+            const percentage = totalDuration > 0 ? ((map[l] / totalDuration) * 100).toFixed(0) : 0;
+            return `${l} (${percentage}%)`;
+        });
         ch.data.datasets = [{ label:'Horas de estudo', data:values, borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff', borderWidth:2, backgroundColor: bgColors }];
         ch.options.plugins.tooltip.callbacks.label = (context) => {
-            const label = context.chart.data.labels[context.dataIndex];
+            const label = context.chart.data.labels[context.dataIndex].split(' (')[0];
             const value = context.chart.data.datasets[0].data[context.dataIndex];
-            return `${label.split(' (')[0]}: ${this.formatTime(value)}`;
+            const percentage = totalDuration > 0 ? ((value / totalDuration) * 100).toFixed(1) : 0;
+            return `${label}: ${this.formatTime(value)} (${percentage}%)`;
         };
         ch.update();
       },
@@ -3449,14 +3485,20 @@
       },
       
       updateActivityDistributionChart(data) {
+        const ch = this.state.charts.activityDistribution;
         const map = data.reduce((acc, i) => {
             acc[i.activity] = (acc[i.activity] || 0) + i.duration;
             return acc;
         }, {});
         const labels = Object.keys(map);
         const values = Object.values(map);
-        const ch = this.state.charts.activityDistribution;
-        ch.data.labels = labels;
+        const totalDuration = values.reduce((sum, val) => sum + val, 0);
+        
+        ch.data.labels = labels.map(l => {
+            const percentage = totalDuration > 0 ? ((map[l] / totalDuration) * 100).toFixed(0) : 0;
+            return `${l} (${percentage}%)`;
+        });
+
         ch.data.datasets = [{
             label: 'Horas por Atividade',
             data: values,
@@ -3465,9 +3507,10 @@
             borderWidth: 2
         }];
         ch.options.plugins.tooltip.callbacks.label = (context) => {
-            const label = context.chart.data.labels[context.dataIndex];
+            const label = context.chart.data.labels[context.dataIndex].split(' (')[0];
             const value = context.chart.data.datasets[0].data[context.dataIndex];
-            return `${label}: ${this.formatTime(value)}`;
+            const percentage = totalDuration > 0 ? ((value / totalDuration) * 100).toFixed(1) : 0;
+            return `${label}: ${this.formatTime(value)} (${percentage}%)`;
         };
         ch.update();
       },
@@ -3510,25 +3553,29 @@
             else counts['N/A']++;
         });
 
-        const total = data.length;
-        const labelsWithPercentages = {
-            'Bom': `Bom (${total > 0 ? (counts.bom / total * 100).toFixed(0) : 0}%)`,
-            'Médio': `Médio (${total > 0 ? (counts.medio / total * 100).toFixed(0) : 0}%)`,
-            'Ruim': `Ruim (${total > 0 ? (counts.ruim / total * 100).toFixed(0) : 0}%)`,
-            'N/A': `N/A (${total > 0 ? (counts['N/A'] / total * 100).toFixed(0) : 0}%)`
-        };
-
-        ch.data.labels = [labelsWithPercentages.Bom, labelsWithPercentages.Médio, labelsWithPercentages.Ruim, labelsWithPercentages['N/A']];
-        ch.data.datasets = [{
-            data: [counts.bom, counts.medio, counts.ruim, counts['N/A']],
-            backgroundColor: ['#90EE90', '#FFD700', '#F08080', '#D3D3D3'],
-            borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
-            borderWidth: 2
-        }];
+        const totalWithMood = counts.bom + counts.medio + counts.ruim;
+        if (totalWithMood === 0 && counts['N/A'] > 0) { // Se só tiver N/A
+            ch.data.labels = ['N/A (100%)'];
+            ch.data.datasets = [{ data: [counts['N/A']], backgroundColor: ['#d3d3d3'] }];
+        } else {
+            const labelsWithPercentages = {
+                'Bom': `Bom (${totalWithMood > 0 ? (counts.bom / totalWithMood * 100).toFixed(0) : 0}%)`,
+                'Médio': `Médio (${totalWithMood > 0 ? (counts.medio / totalWithMood * 100).toFixed(0) : 0}%)`,
+                'Ruim': `Ruim (${totalWithMood > 0 ? (counts.ruim / totalWithMood * 100).toFixed(0) : 0}%)`,
+            };
+             ch.data.labels = [labelsWithPercentages.Bom, labelsWithPercentages.Médio, labelsWithPercentages.Ruim];
+             ch.data.datasets = [{
+                data: [counts.bom, counts.medio, counts.ruim],
+                backgroundColor: ['#b2f2bb', '#fffacd', '#ffb6c1'], // CORES MAIS CLARAS
+                borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
+                borderWidth: 2
+            }];
+        }
+        
          ch.options.plugins.tooltip.callbacks.label = (context) => {
             const label = context.label.split(' (')[0];
             const value = context.raw;
-            const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+            const percentage = totalWithMood > 0 ? (value / totalWithMood * 100).toFixed(1) : 0;
             return `${label}: ${value} sessões (${percentage}%)`;
         };
         ch.update();
@@ -3536,15 +3583,15 @@
 
       updateFlowCountChart(data) {
         const ch = this.state.charts.flowCount;
-        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 'N/A': 0};
-        const total = data.filter(s => s.sessionType === 'focada').length;
+        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+        const sessionsWithFlow = data.filter(s => s.sessionType === 'focada' && s.flowScore);
+        const total = sessionsWithFlow.length;
 
-        data.forEach(s => {
+        sessionsWithFlow.forEach(s => {
             if (s.flowScore) counts[s.flowScore]++;
-            else counts['N/A']++;
         });
         
-        const labelsWithPercentages = [1,2,3,4,5,'N/A'].map(level => {
+        const labelsWithPercentages = [1,2,3,4,5].map(level => {
             const count = counts[level];
             const percentage = total > 0 ? (count / total * 100).toFixed(0) : 0;
             return `Flow ${level} (${percentage}%)`;
@@ -3552,8 +3599,8 @@
 
         ch.data.labels = labelsWithPercentages;
         ch.data.datasets = [{
-            data: [counts[1], counts[2], counts[3], counts[4], counts[5], counts['N/A']],
-            backgroundColor: ['#ffc09f', '#ffc58a', '#ffee93', '#d9f9a5', '#adf7b6', '#D3D3D3'],
+            data: [counts[1], counts[2], counts[3], counts[4], counts[5]],
+            backgroundColor: ['#ffc09f', '#ffc58a', '#ffee93', '#d9f9a5', '#adf7b6'],
             borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
             borderWidth: 2
         }];
@@ -3570,16 +3617,24 @@
           const ch = this.state.charts.focusPercentage;
           const totalDuration = data.reduce((sum, s) => sum + (s.duration || 0), 0);
           const totalPause = data.reduce((sum, s) => sum + (s.pauseDuration || 0), 0);
-          const focusTime = totalDuration - totalPause;
+          const focusTime = totalDuration > totalPause ? totalDuration - totalPause : 0; // Garantir que não seja negativo
 
           if (totalDuration > 0) {
-              ch.data.labels = [`Foco (${this.formatTime(focusTime)})`, `Pausa (${this.formatTime(totalPause)})`];
+              const focusPercentage = ((focusTime / totalDuration) * 100).toFixed(0);
+              const pausePercentage = ((totalPause / totalDuration) * 100).toFixed(0);
+
+              ch.data.labels = [`Foco (${focusPercentage}%)`, `Pausa (${pausePercentage}%)`];
               ch.data.datasets = [{
                   data: [focusTime, totalPause],
                   backgroundColor: ['#81B29A', '#E07A5F'],
                   borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
                   borderWidth: 2
               }];
+              ch.options.plugins.tooltip.callbacks.label = (context) => {
+                const label = context.label.split(' (')[0];
+                const value = context.raw;
+                return `${label}: ${this.formatTime(value)}`;
+              };
           } else {
               ch.data.labels = ['Sem dados'];
               ch.data.datasets = [{
@@ -3917,5 +3972,3 @@
   </script>
 </body>
 </html>
-
-
