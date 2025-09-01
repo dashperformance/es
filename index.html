@@ -28,23 +28,38 @@
       --c4:#E07A5F;
       --bg:#F7F9FC;
       --card-bg: #FFFFFF;
-      --text-primary: #3D405B;
+      --text-primary: #1f2937;
+      --text-secondary: #3D405B;
       --text-muted: #6B7280;
       --border-color: #E5E7EB;
     }
+    .dark-mode:root {
+      --c1:#4a4e69;
+      --c2:#6a994e;
+      --c3:#f2cc8f;
+      --c4:#e07a5f;
+      --bg:#121212;
+      --card-bg: #1e1e1e;
+      --text-primary: #e0e0e0;
+      --text-secondary: #f2f2f2;
+      --text-muted: #9ca3af;
+      --border-color: #374151;
+    }
+
     html { scroll-behavior: smooth; }
     *{box-sizing:border-box}
     body{
       font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
       background:var(--bg);
       color:var(--text-primary);
+      transition: background-color 0.3s, color 0.3s;
     }
     .card{
       background: var(--card-bg);
       border-radius: 1rem;
       border: 1px solid var(--border-color);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s, border-color 0.3s;
     }
     .card:hover {
         transform: translateY(-5px);
@@ -64,16 +79,21 @@
       filter: brightness(1.05);
     }
     .btn-primary{background:var(--c2);color:#fff}
-    .btn-primary:hover{background:#6A947E}
+    .btn-primary:hover{filter: brightness(0.9);}
     .btn-secondary{background:var(--c3);color:var(--c1)}
-    .btn-secondary:hover{background:#E0B87F}
+    .btn-secondary:hover{filter: brightness(0.9);}
     .btn-danger{background:var(--c4);color:#fff}
-    .btn-danger:hover{background:#C76B54}
+    .btn-danger:hover{filter: brightness(0.9);}
 
+    input, select, textarea {
+      background-color: var(--card-bg);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    input::placeholder { color: var(--text-muted); }
     input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], select {
       border-radius: 0.75rem;
-      border-color: var(--border-color);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s, color 0.3s;
     }
     input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
       border-color: var(--c2);
@@ -86,7 +106,9 @@
       border-bottom:2px solid transparent;
       transition:all .25s ease;
       padding-bottom: 4px;
+      color: var(--text-muted);
     }
+    .nav-link:hover, .nav-link.active { color: var(--text-primary); }
     .nav-link:after {
       content: '';
       position: absolute;
@@ -97,45 +119,42 @@
       background-color: var(--c2);
       transition: all 0.3s ease;
     }
-    .nav-link:hover:after {
-      width: 100%;
-      left: 0;
-    }
+    .nav-link:hover:after { width: 100%; left: 0; }
     .nav-link.active{
       border-bottom-color:var(--c2);
       font-weight:600;
-      color: var(--c1);
     }
     .nav-link.active:after { width: 0; }
 
     .chart-container{position:relative;width:100%;height:320px;max-height:420px}
     @media (min-width: 768px){.chart-container{height:360px}}
-    .progress-bar{background:#e5e7eb;border-radius:9999px;overflow:hidden;height:.75rem}
+    .progress-bar{background:var(--border-color);border-radius:9999px;overflow:hidden;height:.75rem}
     .progress-fill{height:100%;background:var(--c2);transition:width .5s}
     .mood-square-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; }
     .mood-square{width:42px;height:42px;border-radius:.5rem;border:2px solid transparent;opacity:.7;transition:.2s; cursor: pointer;}
-    .mood-square.selected{opacity:1;outline:2px solid #111827;outline-offset:2px}
+    .mood-square.selected{opacity:1;outline:2px solid var(--text-secondary);outline-offset:2px}
     .mood-red{background:#ef4444}
     .mood-yellow{background:#f59e0b}
     .mood-green{background:#10b981}
-    .cycle-dot{width:10px;height:10px;border-radius:9999px;background:#e5e7eb}
+    .cycle-dot{width:10px;height:10px;border-radius:9999px;background:var(--border-color)}
     .cycle-dot.done{background:var(--c2)}
     .cycle-dot.active{background:#3b82f6}
-    .pill{font-size:.75rem;background:#f3f4f6;color:#374151;border-radius:9999px;padding:.375rem .75rem; transition: all 0.2s ease; cursor: pointer;}
-    .pill:hover { background-color: #e5e7eb; }
+    .pill{font-size:.75rem;background:var(--card-bg);color:var(--text-muted);border:1px solid var(--border-color);border-radius:9999px;padding:.375rem .75rem; transition: all 0.2s ease; cursor: pointer;}
+    .pill:hover { background-color: var(--border-color); }
     .pill.active { background-color: var(--c1); color: white; font-weight: 600; }
-    .kpi h3{color:#6b7280;font-size:.85rem; text-transform: uppercase; letter-spacing: 0.5px;}
-    .kpi p{font-weight:700;font-size:1.75rem}
-    .kpi .record-date { font-size: 0.75rem; font-weight: 400; color: #9ca3af; margin-top: -4px; }
+    .kpi h3{color:var(--text-muted);font-size:.85rem; text-transform: uppercase; letter-spacing: 0.5px;}
+    .kpi p{font-weight:700;font-size:1.75rem; color: var(--text-secondary);}
+    .kpi .record-date { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); margin-top: -4px; }
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
     #session-modal-backdrop.hidden, #notification-modal-backdrop.hidden { display: none; }
     #session-modal-panel.hidden, #notification-modal-panel.hidden { transform: translateY(100%); opacity: 0; }
-    .heatmap-level-0 { background-color: #ebedf0; }
+    .heatmap-level-0 { background-color: #37415140; }
+    .dark-mode .heatmap-level-0 { background-color: #374151; }
     .heatmap-level-1 { background-color: #cce2d4; }
     .heatmap-level-2 { background-color: #a3cdb4; }
     .heatmap-level-3 { background-color: var(--c2); }
     .heatmap-level-4 { background-color: #5d8e76; }
-    .performance-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background-color: #e5e7eb; }
+    .performance-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background-color: var(--border-color); }
     .bar-correct { background-color: #10b981; }
     .bar-incorrect { background-color: #ef4444; }
     .chart-toggle-label { cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background-color 0.2s; }
@@ -144,10 +163,11 @@
       width: 24px; height: 24px; border-radius: 9999px;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 600;
-      background-color: #f3f4f6; color: #6b7280;
+      background-color: var(--border-color); color: var(--text-muted);
     }
     .day-tracker-dot.done { background-color: var(--c2); color: white; }
     .day-tracker-dot.missed { background-color: #fee2e2; color: #b91c1c; }
+    .dark-mode .day-tracker-dot.missed { background-color: #450a0a; color: #fecaca; }
     .day-tracker-dot.today { outline: 2px solid #3b82f6; outline-offset: 2px; }
     .flow-slider-container { position: relative; }
     .flow-slider-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); padding: 0 5px; }
@@ -156,23 +176,40 @@
         overflow: hidden;
         transition: max-height 0.5s ease-in-out;
     }
+    .timer-pause-display {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      height: 1.5rem; /* prevent layout shift */
+    }
+    .collapse-toggle-btn { transition: transform 0.3s; }
+    .collapsible-content.hidden { display: none; }
+    #pomodoro-timer-display, #stopwatch-display {
+        color: var(--c1);
+    }
+    .dark-mode  #pomodoro-timer-display, .dark-mode #stopwatch-display {
+        color: var(--text-primary);
+    }
   </style>
 </head>
 <body class="antialiased">
 
   <div id="app" class="min-h-screen flex flex-col">
-    <header class="bg-white/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-gray-200">
+    <header class="bg-[var(--card-bg)]/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-[var(--border-color)]">
       <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-xl bg-[color:var(--c2)] flex items-center justify-center">
                 <i class="fa-solid fa-chart-line text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold tracking-tight">Dashboard de performance</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-[var(--text-secondary)]">Dashboard de performance</h1>
           </div>
           <div id="main-nav" class="hidden md:flex items-center gap-6">
-            <a href="#" data-view="dashboard" class="nav-link text-sm text-gray-700 px-2 py-1">Dashboard</a>
-            <a href="#" data-view="foco" class="nav-link text-sm text-gray-700 px-2 py-1">Foco e registro</a>
+            <a href="#" data-view="dashboard" class="nav-link text-sm">Dashboard</a>
+            <a href="#" data-view="foco" class="nav-link text-sm">Foco e registro</a>
+            <button id="dark-mode-toggle" class="p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]">
+                <i class="fa-solid fa-moon"></i>
+            </button>
             <button id="logout-btn" class="btn btn-secondary py-1 px-3 text-sm">Sair</button>
           </div>
           <button id="mobile-menu-button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100">
@@ -183,8 +220,11 @@
           </button>
         </div>
         <div id="mobile-menu" class="md:hidden hidden pb-3">
-          <a href="#" data-view="dashboard" class="block nav-link px-3 py-2 text-base text-gray-700">Dashboard</a>
-          <a href="#" data-view="foco" class="block nav-link px-3 py-2 text-base text-gray-700">Foco e registro</a>
+          <a href="#" data-view="dashboard" class="block nav-link px-3 py-2 text-base">Dashboard</a>
+          <a href="#" data-view="foco" class="block nav-link px-3 py-2 text-base">Foco e registro</a>
+          <button id="dark-mode-toggle-mobile" class="mt-2 w-full btn btn-secondary py-2">
+            <i class="fa-solid fa-moon mr-2"></i>Modo Escuro
+          </button>
           <button id="logout-btn-mobile" class="mt-2 w-full btn btn-secondary py-2">Sair</button>
         </div>
       </nav>
@@ -198,12 +238,12 @@
                     <h2 class="text-2xl font-bold text-center mb-6">Entrar</h2>
                     <div class="space-y-4">
                         <div>
-                            <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="login-email" class="block text-sm font-medium text-[var(--text-muted)]">Email</label>
+                            <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm">
                         </div>
                         <div>
-                            <label for="login-password" class="block text-sm font-medium text-gray-700">Senha</label>
-                            <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="login-password" class="block text-sm font-medium text-[var(--text-muted)]">Senha</label>
+                            <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm">
                         </div>
                         <div class="flex items-center justify-end">
                             <div class="text-sm">
@@ -224,12 +264,12 @@
                     <h2 class="text-2xl font-bold text-center mb-6">Criar Conta</h2>
                     <div class="space-y-4">
                         <div>
-                            <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="register-email" class="block text-sm font-medium text-[var(--text-muted)]">Email</label>
+                            <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm">
                         </div>
                         <div>
-                            <label for="register-password" class="block text-sm font-medium text-gray-700">Senha (mínimo 6 caracteres)</label>
-                            <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="register-password" class="block text-sm font-medium text-[var(--text-muted)]">Senha (mínimo 6 caracteres)</label>
+                            <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm">
                         </div>
                         <p id="register-error" class="text-sm text-red-600 h-5"></p>
                         <div>
@@ -255,20 +295,20 @@
               <div class="card p-4 sm:p-6">
                   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-end">
                       <div class="md:col-span-1 lg:col-span-2">
-                          <label for="concurso-nome" class="block text-sm font-medium text-gray-600">Concurso</label>
-                          <input type="text" id="concurso-nome" placeholder="Ex: Jurídicos (Geral)" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <label for="concurso-nome" class="block text-sm font-medium text-[var(--text-muted)]">Concurso</label>
+                          <input type="text" id="concurso-nome" placeholder="Ex: Jurídicos (Geral)" class="mt-1 block w-full shadow-sm">
                       </div>
                       <div>
-                          <label for="concurso-cargo" class="block text-sm font-medium text-gray-600">Cargo</label>
-                          <input type="text" id="concurso-cargo" placeholder="Ex: Em aberto" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <label for="concurso-cargo" class="block text-sm font-medium text-[var(--text-muted)]">Cargo</label>
+                          <input type="text" id="concurso-cargo" placeholder="Ex: Em aberto" class="mt-1 block w-full shadow-sm">
                       </div>
                       <div>
-                          <label for="concurso-inicio" class="block text-sm font-medium text-gray-600">Início dos estudos</label>
-                          <input type="date" id="concurso-inicio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <label for="concurso-inicio" class="block text-sm font-medium text-[var(--text-muted)]">Início dos estudos</label>
+                          <input type="date" id="concurso-inicio" class="mt-1 block w-full shadow-sm">
                       </div>
                       <div>
-                          <label for="concurso-prova" class="block text-sm font-medium text-gray-600">Data da prova</label>
-                          <input type="date" id="concurso-prova" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                          <label for="concurso-prova" class="block text-sm font-medium text-[var(--text-muted)]">Data da prova</label>
+                          <input type="date" id="concurso-prova" class="mt-1 block w-full shadow-sm">
                       </div>
                   </div>
                   <div id="concurso-countdown" class="text-center mt-4 font-bold text-lg text-[color:var(--c1)]"></div>
@@ -279,8 +319,8 @@
           <div>
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <h2 class="text-xl font-bold text-gray-800">Visão geral</h2>
-                  <p id="dashboard-period-display" class="text-sm text-gray-500">Exibindo dados para o período selecionado.</p>
+                  <h2 class="text-xl font-bold text-[var(--text-secondary)]">Visão geral</h2>
+                  <p id="dashboard-period-display" class="text-sm text-[var(--text-muted)]">Exibindo dados para o período selecionado.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                   <button id="import-backup-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-upload mr-2"></i>Importar</button>
@@ -291,21 +331,21 @@
               </div>
           
               <div class="card p-4 sm:p-6 mt-4">
-                <h3 class="text-lg font-semibold text-center mb-4">Filtros de análise</h3>
+                <h3 class="text-lg font-semibold text-center mb-4 text-[var(--text-secondary)]">Filtros de análise</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                   <div>
-                    <label for="filter-subject" class="block text-sm font-medium text-gray-600">Disciplina</label>
-                    <select id="filter-subject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                    <label for="filter-subject" class="block text-sm font-medium text-[var(--text-muted)]">Disciplina</label>
+                    <select id="filter-subject" class="mt-1 block w-full shadow-sm"></select>
                   </div>
                   <div>
-                    <label for="filter-activity" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
-                    <select id="filter-activity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                    <label for="filter-activity" class="block text-sm font-medium text-[var(--text-muted)]">Tipo de atividade</label>
+                    <select id="filter-activity" class="mt-1 block w-full shadow-sm"></select>
                   </div>
                   <div class="lg:col-span-2">
-                    <label class="block text-sm font-medium text-gray-600">Período</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)]">Período</label>
                     <div class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <input type="date" id="filter-start-date" class="block w-full border-gray-300 rounded-md shadow-sm">
-                      <input type="date" id="filter-end-date" class="block w-full border-gray-300 rounded-md shadow-sm">
+                      <input type="date" id="filter-start-date" class="block w-full shadow-sm">
+                      <input type="date" id="filter-end-date" class="block w-full shadow-sm">
                     </div>
                     <div id="period-pills" class="mt-2 flex flex-wrap gap-2">
                       <button data-period="today" class="pill">Hoje</button>
@@ -319,8 +359,11 @@
           </div>
 
           <div>
-              <h2 class="text-xl font-bold text-gray-800 mb-4">Indicadores</h2>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
+                <span>Indicadores</span>
+                <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+              </h2>
+              <div class="collapsible-content grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="card p-4 kpi text-center">
                   <h3>Horas no período</h3>
                   <p id="total-hours">00h00m</p>
@@ -341,34 +384,37 @@
           </div>
 
           <div>
-              <h2 class="text-xl font-bold text-gray-800 mb-4">Metas</h2>
-              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+              <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
+                <span>Metas</span>
+                <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+              </h2>
+              <div class="collapsible-content grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
                 <div class="card p-4 sm:p-6 lg:col-span-2 flex flex-col">
-                  <h3 class="text-lg font-semibold text-center">Constância de estudos</h3>
+                  <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Constância de estudos</h3>
                   <div id="consistency-tracker" class="mt-4 flex-grow flex flex-col items-center justify-center w-full overflow-x-auto">
                   </div>
                 </div>
                 <div class="card p-4 sm:p-6 flex flex-col">
-                  <h3 id="weekly-goals-title" class="text-lg font-semibold text-center">Metas da semana</h3>
+                  <h3 id="weekly-goals-title" class="text-lg font-semibold text-center text-[var(--text-secondary)]">Metas da semana</h3>
                   <div id="weekly-days-tracker" class="flex justify-around items-center my-4"></div>
                   <div id="goals-display-view" class="space-y-3 mt-2 flex-grow flex flex-col justify-center">
                   </div>
                   <div id="goals-edit-view" class="hidden mt-4 space-y-3">
                     <div>
-                      <label for="goal-hours-input" class="block text-sm text-gray-600">Meta de horas</label>
-                      <input type="number" id="goal-hours-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="goal-hours-input" class="block text-sm text-[var(--text-muted)]">Meta de horas</label>
+                      <input type="number" id="goal-hours-input" class="mt-1 block w-full shadow-sm">
                     </div>
                     <div>
-                      <label for="goal-questions-input" class="block text-sm text-gray-600">Meta de questões</label>
-                      <input type="number" id="goal-questions-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="goal-questions-input" class="block text-sm text-[var(--text-muted)]">Meta de questões</label>
+                      <input type="number" id="goal-questions-input" class="mt-1 block w-full shadow-sm">
                     </div>
                     <div>
-                      <label for="goal-accuracy-input" class="block text-sm text-gray-600">Meta de acertos (%)</label>
-                      <input type="number" id="goal-accuracy-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="goal-accuracy-input" class="block text-sm text-[var(--text-muted)]">Meta de acertos (%)</label>
+                      <input type="number" id="goal-accuracy-input" class="mt-1 block w-full shadow-sm">
                     </div>
                     <div>
-                      <label for="goal-days-input" class="block text-sm text-gray-600">Meta de dias/semana</label>
-                      <input type="number" id="goal-days-input" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="goal-days-input" class="block text-sm text-[var(--text-muted)]">Meta de dias/semana</label>
+                      <input type="number" id="goal-days-input" class="mt-1 block w-full shadow-sm">
                     </div>
                     <button id="save-goals-btn" class="btn btn-primary py-2 px-3 w-full">Salvar Metas</button>
                   </div>
@@ -378,40 +424,71 @@
           
           <div class="space-y-6">
               <div class="card p-4 sm:p-6">
-                  <h3 id="progress-goals-title" class="text-lg font-semibold text-center">Progresso em relação às metas semanais</h3>
+                  <h3 id="progress-goals-title" class="text-lg font-semibold text-center text-[var(--text-secondary)]">Progresso em relação às metas semanais</h3>
                   <div id="progress-goals-table-container" class="overflow-x-auto mt-4"></div>
               </div>
           </div>
 
           <div>
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Análise de desempenho</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
+                <span>Análise de desempenho</span>
+                <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+            </h2>
+            <div class="collapsible-content grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center" id="hours-by-subject-title">Distribuição de horas por disciplina</h3>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]" id="hours-by-subject-title">Distribuição de horas por disciplina</h3>
                 <div class="chart-container mx-auto max-w-sm">
                   <canvas id="hoursBySubjectChart"></canvas>
                 </div>
               </div>
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center" id="performance-by-subject-title">Desempenho médio por disciplina</h3>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]" id="performance-by-subject-title">Desempenho médio por disciplina</h3>
                 <div class="chart-container">
                   <canvas id="performanceBySubjectChart"></canvas>
                 </div>
               </div>
+              <!-- NOVOS GRÁFICOS AQUI -->
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center">Distribuição de tempo por atividade</h3>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Contagem de sessões por humor</h3>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="moodCountChart"></canvas>
+                </div>
+              </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Contagem de sessões por flow</h3>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="flowCountChart"></canvas>
+                </div>
+              </div>
+               <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Porcentagem de foco</h3>
+                 <p class="text-sm text-center text-[var(--text-muted)]">Tempo de estudo efetivo vs. pausas no período</p>
+                <div class="chart-container mx-auto max-w-sm">
+                  <canvas id="focusPercentageChart"></canvas>
+                </div>
+              </div>
+              <!-- FIM DOS NOVOS GRÁFICOS -->
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Distribuição de tempo por atividade</h3>
                 <div class="chart-container mx-auto max-w-sm">
                   <canvas id="activityDistributionChart"></canvas>
                 </div>
               </div>
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center">Flow vs. desempenho</h3>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Flow vs. desempenho</h3>
                 <div class="chart-container">
                   <canvas id="flowVsPerformanceChart"></canvas>
                 </div>
               </div>
+              <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Desempenho por Atividade</h3>
+                 <p class="text-sm text-center text-[var(--text-muted)]">Média de acertos por tipo de atividade</p>
+                <div class="chart-container">
+                  <canvas id="performanceByActivityChart"></canvas>
+                </div>
+              </div>
               <div class="card p-4 sm:p-6 lg:col-span-2">
-                  <h3 class="text-lg font-semibold text-center mb-4">Forças e fraquezas por disciplina</h3>
+                  <h3 class="text-lg font-semibold text-center mb-4 text-[var(--text-secondary)]">Forças e fraquezas por disciplina</h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                       <div class="chart-container" style="height: 400px;">
                           <canvas id="strengthsWeaknessesChart"></canvas>
@@ -422,8 +499,8 @@
               </div>
               <div class="card p-4 sm:p-6 lg:col-span-2">
                   <div class="flex flex-col sm:flex-row justify-center items-center mb-4 gap-4">
-                      <h3 class="text-lg font-semibold text-center">Evolução das questões</h3>
-                      <div id="questions-evolution-toggle" class="flex items-center text-sm p-1 bg-gray-100 rounded-lg">
+                      <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução das questões</h3>
+                      <div id="questions-evolution-toggle" class="flex items-center text-sm p-1 bg-[var(--bg)] rounded-lg">
                           <input type="radio" name="questions-view" id="q-view-relative" value="relative" class="sr-only chart-toggle-input" checked>
                           <label for="q-view-relative" class="chart-toggle-label">Desempenho relativo (%)</label>
                           <input type="radio" name="questions-view" id="q-view-absolute" value="absolute" class="sr-only chart-toggle-input">
@@ -435,46 +512,49 @@
                 </div>
               </div>
               <div class="card p-4 sm:p-6 lg:col-span-2">
-                <h3 class="text-lg font-semibold text-center">Evolução das horas de estudo (diário)</h3>
-                <p class="text-sm text-gray-500 text-center">Média diária no período: <span id="average-time-display" class="font-semibold">00h00m</span></p>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução das horas de estudo (diário)</h3>
+                <p class="text-sm text-[var(--text-muted)] text-center">Média diária no período: <span id="average-time-display" class="font-semibold">00h00m</span></p>
                 <div class="chart-container" style="height: 360px;">
                   <canvas id="studyEvolutionChart"></canvas>
                 </div>
               </div>
               <div class="card p-4 sm:p-6">
-                  <h3 class="text-lg font-semibold text-center">Evolução das horas de estudo (mensal)</h3>
+                  <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução das horas de estudo (mensal)</h3>
                   <div class="chart-container">
                       <canvas id="monthlyStudyEvolutionChart"></canvas>
                   </div>
               </div>
               <div class="card p-4 sm:p-6">
-                  <h3 class="text-lg font-semibold text-center">Rendimento por horário do dia</h3>
+                  <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Rendimento por horário do dia</h3>
                   <div class="chart-container">
                       <canvas id="performanceByTimeOfDayChart"></canvas>
                   </div>
               </div>
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center">Produtividade por dia da semana</h3>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Produtividade por dia da semana</h3>
                 <div class="chart-container">
                   <canvas id="productivityByDayChart"></canvas>
                 </div>
               </div>
               <div class="card p-4 sm:p-6">
-                <h3 class="text-lg font-semibold text-center">Humor vs. desempenho</h3>
+                <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Humor vs. desempenho</h3>
                 <div class="chart-container">
                   <canvas id="moodVsPerformanceChart"></canvas>
                 </div>
               </div>
               <div class="card p-4 sm:p-6 lg:col-span-2">
-                  <h3 class="text-lg font-semibold text-center">Evolução semanal (últimas 4 semanas)</h3>
+                  <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Evolução semanal (últimas 4 semanas)</h3>
                   <div id="weekly-evolution-table" class="overflow-x-auto mt-4"></div>
               </div>
             </div>
           </div>
 
           <div>
-              <h2 class="text-xl font-bold text-gray-800 mb-4">Recordes</h2>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
+                <span>Recordes</span>
+                <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+              </h2>
+              <div class="collapsible-content grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="card p-4 kpi text-center">
                   <h3>Horas (dia)</h3>
                   <p id="record-hours-day">00h00m</p>
@@ -495,18 +575,24 @@
           </div>
           
           <div>
-              <div class="card p-4 sm:p-6">
-                  <h3 class="text-lg font-semibold text-center mb-4">Insights rápidos</h3>
-                  <div id="insights-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
-                  </div>
-              </div>
+            <div class="card p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-center mb-4 text-[var(--text-secondary)] flex justify-center items-center gap-4">
+                  <span>Insights rápidos</span>
+                  <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+                </h3>
+                <div id="insights-container" class="collapsible-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-[var(--text-muted)]">
+                </div>
+            </div>
           </div>
 
           <div>
-              <h2 class="text-xl font-bold text-gray-800 mb-4">Histórico detalhado do período</h2>
-              <div class="card p-4 sm:p-6">
+              <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
+                <span>Histórico detalhado do período</span>
+                <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+              </h2>
+              <div class="collapsible-content card p-4 sm:p-6">
                   <div class="flex justify-end mb-4">
-                      <input type="text" id="log-search-input" placeholder="Buscar por disciplina ou assunto..." class="block w-full md:w-1/3 border-gray-300 rounded-md shadow-sm">
+                      <input type="text" id="log-search-input" placeholder="Buscar por disciplina ou assunto..." class="block w-full md:w-1/3 shadow-sm">
                   </div>
                   <div id="detailed-log-table-container" class="overflow-x-auto max-h-56">
                   </div>
@@ -515,11 +601,14 @@
 
           <div id="backup-section">
               <div class="flex justify-between items-center mb-4">
-                  <h2 class="text-xl font-bold text-gray-800">Backups salvos (Local)</h2>
-                  <button id="create-backup-now-btn" class="btn btn-secondary py-2 px-3"><i class="fa-solid fa-save mr-2"></i>Salvar backup local</button>
+                  <h2 class="text-xl font-bold text-[var(--text-secondary)] flex justify-between items-center w-full">
+                    <span>Backups salvos (Local)</span>
+                    <button class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"><i class="fa-solid fa-chevron-up"></i></button>
+                  </h2>
+                  <button id="create-backup-now-btn" class="btn btn-secondary py-2 px-3 whitespace-nowrap ml-4"><i class="fa-solid fa-save mr-2"></i>Salvar backup local</button>
               </div>
-              <div class="card p-4 sm:p-6">
-                  <p class="text-sm text-gray-600 mb-4">Seus backups são salvos localmente no navegador. Você pode baixá-los a qualquer momento. Um backup automático é criado diariamente.</p>
+              <div class="collapsible-content card p-4 sm:p-6">
+                  <p class="text-sm text-[var(--text-muted)] mb-4">Seus backups são salvos localmente no navegador. Você pode baixá-los a qualquer momento. Um backup automático é criado diariamente.</p>
                   <div id="backup-list" class="space-y-2">
                   </div>
               </div>
@@ -530,25 +619,26 @@
           <div class="max-w-5xl mx-auto">
             
             <div class="card p-6 mt-6">
-              <h3 class="text-lg font-semibold text-center mb-6">Timer pomodoro</h3>
+              <h3 class="text-lg font-semibold text-center mb-6 text-[var(--text-secondary)]">Timer pomodoro</h3>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
                   <div>
-                      <label for="pomodoro-subject" class="block text-sm font-medium text-gray-600">Matéria</label>
-                      <select id="pomodoro-subject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                      <label for="pomodoro-subject" class="block text-sm font-medium text-[var(--text-muted)]">Matéria</label>
+                      <select id="pomodoro-subject" class="mt-1 block w-full shadow-sm"></select>
                   </div>
                   <div>
-                      <label for="pomodoro-subtopic" class="block text-sm font-medium text-gray-600">Assunto (opcional)</label>
-                      <select id="pomodoro-subtopic" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                      <label for="pomodoro-subtopic" class="block text-sm font-medium text-[var(--text-muted)]">Assunto (opcional)</label>
+                      <select id="pomodoro-subtopic" class="mt-1 block w-full shadow-sm"></select>
                   </div>
                   <div>
-                      <label for="pomodoro-cycles" class="block text-sm font-medium text-gray-600">Ciclos (p/ pausa longa)</label>
-                      <input type="number" id="pomodoro-cycles" value="4" min="1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="pomodoro-cycles" class="block text-sm font-medium text-[var(--text-muted)]">Ciclos (p/ pausa longa)</label>
+                      <input type="number" id="pomodoro-cycles" value="4" min="1" class="mt-1 block w-full shadow-sm">
                   </div>
               </div>
 
               <div class="flex flex-col items-center gap-2">
-                  <div id="pomodoro-timer-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">25:00</div>
-                  <div id="pomodoro-status" class="text-lg font-medium text-gray-600">Pronto para focar?</div>
+                  <div id="pomodoro-timer-display" class="text-8xl font-black tracking-tighter">25:00</div>
+                  <div id="pomodoro-status" class="text-lg font-medium text-[var(--text-muted)]">Pronto para focar?</div>
+                  <div id="pomodoro-pause-display" class="timer-pause-display"></div>
                   <div id="pomodoro-end-time" class="text-sm text-gray-400 h-5"></div>
                   <div class="flex gap-1.5 items-center mt-2" id="pomodoro-cycle-dots"></div>
               </div>
@@ -560,26 +650,26 @@
                   <button id="pomodoro-open-mini" class="btn btn-secondary py-2 px-4" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button>
               </div>
 
-              <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t">
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t border-[var(--border-color)]">
                   <div>
-                      <label for="pomodoro-work-duration" class="block text-sm font-medium text-gray-600">Foco (min)</label>
-                      <input type="number" id="pomodoro-work-duration" value="25" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="pomodoro-work-duration" class="block text-sm font-medium text-[var(--text-muted)]">Foco (min)</label>
+                      <input type="number" id="pomodoro-work-duration" value="25" class="mt-1 block w-full shadow-sm">
                   </div>
                   <div>
-                      <label for="pomodoro-short-break-duration" class="block text-sm font-medium text-gray-600">Pausa curta</label>
-                      <input type="number" id="pomodoro-short-break-duration" value="5" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="pomodoro-short-break-duration" class="block text-sm font-medium text-[var(--text-muted)]">Pausa curta</label>
+                      <input type="number" id="pomodoro-short-break-duration" value="5" class="mt-1 block w-full shadow-sm">
                   </div>
                   <div>
-                      <label for="pomodoro-long-break-duration" class="block text-sm font-medium text-gray-600">Pausa longa</label>
-                      <input type="number" id="pomodoro-long-break-duration" value="15" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="pomodoro-long-break-duration" class="block text-sm font-medium text-[var(--text-muted)]">Pausa longa</label>
+                      <input type="number" id="pomodoro-long-break-duration" value="15" class="mt-1 block w-full shadow-sm">
                   </div>
                   <div>
-                      <label for="pomodoro-alert-time" class="block text-sm font-medium text-gray-600">Alerta (min)</label>
-                      <input type="number" id="pomodoro-alert-time" placeholder="Opcional" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="pomodoro-alert-time" class="block text-sm font-medium text-[var(--text-muted)]">Alerta (min)</label>
+                      <input type="number" id="pomodoro-alert-time" placeholder="Opcional" class="mt-1 block w-full shadow-sm">
                   </div>
                   <div>
-                      <label for="pomodoro-sound-select" class="block text-sm font-medium text-gray-600">Som do alerta</label>
-                      <select id="pomodoro-sound-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="pomodoro-sound-select" class="block text-sm font-medium text-[var(--text-muted)]">Som do alerta</label>
+                      <select id="pomodoro-sound-select" class="mt-1 block w-full shadow-sm">
                           <option value="notification">Notificação</option>
                           <option value="chime">Sino</option>
                           <option value="simple">Simples</option>
@@ -587,40 +677,41 @@
                   </div>
               </div>
               <div class="mt-4 flex items-center justify-center gap-2">
-                  <input id="pomodoro-auto-start" type="checkbox" class="h-4 w-4 text-[color:var(--c2)] rounded border-gray-300 focus:ring-[color:var(--c2)]">
-                  <label for="pomodoro-auto-start" class="text-sm text-gray-900">Iniciar próximo ciclo automaticamente</label>
+                  <input id="pomodoro-auto-start" type="checkbox" class="h-4 w-4 text-[color:var(--c2)] rounded border-[var(--border-color)] focus:ring-[color:var(--c2)]">
+                  <label for="pomodoro-auto-start" class="text-sm">Iniciar próximo ciclo automaticamente</label>
               </div>
             </div>
             
             <div class="card p-6">
-              <h3 class="text-lg font-semibold text-center">Cronômetro contínuo</h3>
-              <p class="text-sm text-gray-500 text-center">Use para sessões de estudo com tempo livre.</p>
+              <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Cronômetro contínuo</h3>
+              <p class="text-sm text-[var(--text-muted)] text-center">Use para sessões de estudo com tempo livre.</p>
               
               <div class="text-center my-6">
-                <div id="stopwatch-display" class="text-8xl font-black tracking-tighter" style="color: var(--c1);">00:00:00</div>
+                <div id="stopwatch-display" class="text-8xl font-black tracking-tighter">00:00:00</div>
+                <div id="stopwatch-pause-display" class="timer-pause-display"></div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-lg mx-auto mt-4">
                     <div>
                         <label for="stopwatch-subject" class="sr-only">Matéria do cronômetro</label>
-                        <select id="stopwatch-subject" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+                        <select id="stopwatch-subject" class="block w-full shadow-sm"></select>
                     </div>
                     <div>
                         <label for="stopwatch-subtopic" class="sr-only">Assunto do cronômetro</label>
-                        <select id="stopwatch-subtopic" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+                        <select id="stopwatch-subtopic" class="block w-full shadow-sm"></select>
                     </div>
                 </div>
               </div>
 
               <div class="max-w-md mx-auto my-4 grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                   <div>
-                      <label class="block text-sm font-medium text-gray-600">Alerta (opcional)</label>
+                      <label class="block text-sm font-medium text-[var(--text-muted)]">Alerta (opcional)</label>
                       <div class="flex items-center gap-2 mt-1">
-                          <input type="number" id="stopwatch-alert-hours" min="0" placeholder="h" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
-                          <input type="number" id="stopwatch-alert-minutes" min="0" max="59" placeholder="m" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                          <input type="number" id="stopwatch-alert-hours" min="0" placeholder="h" class="block w-full shadow-sm text-center">
+                          <input type="number" id="stopwatch-alert-minutes" min="0" max="59" placeholder="m" class="block w-full shadow-sm text-center">
                       </div>
                   </div>
                   <div>
-                      <label for="stopwatch-sound-select" class="block text-sm font-medium text-gray-600">Som do alerta</label>
-                      <select id="stopwatch-sound-select" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="stopwatch-sound-select" class="block text-sm font-medium text-[var(--text-muted)]">Som do alerta</label>
+                      <select id="stopwatch-sound-select" class="mt-1 block w-full shadow-sm">
                           <option value="notification">Notificação</option>
                           <option value="chime">Sino</option>
                           <option value="simple">Simples</option>
@@ -637,17 +728,17 @@
             </div>
 
             <div class="card p-6" id="registration-card">
-              <h3 class="text-lg font-semibold text-center">Registrar sessão manual</h3>
-              <p class="text-sm text-gray-500 text-center">Preencha os detalhes da sua sessão de estudo.</p>
+              <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Registrar sessão manual</h3>
+              <p class="text-sm text-[var(--text-muted)] text-center">Preencha os detalhes da sua sessão de estudo.</p>
               <form id="study-form" class="mt-6 space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label for="date" class="block text-sm font-medium text-gray-600">Data</label>
-                    <input type="date" id="date" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <label for="date" class="block text-sm font-medium text-[var(--text-muted)]">Data</label>
+                    <input type="date" id="date" required class="mt-1 block w-full shadow-sm">
                   </div>
                   <div>
-                      <label for="time-of-day" class="block text-sm font-medium text-gray-600">Período do dia</label>
-                      <select id="time-of-day" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      <label for="time-of-day" class="block text-sm font-medium text-[var(--text-muted)]">Período do dia</label>
+                      <select id="time-of-day" class="mt-1 block w-full shadow-sm">
                           <option value="madrugada">Madrugada (00-06)</option>
                           <option value="manha">Manhã (06-12)</option>
                           <option value="tarde">Tarde (12-18)</option>
@@ -658,21 +749,21 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label for="subject" class="block text-sm font-medium text-gray-600">Disciplina</label>
-                      <select id="subject" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                      <label for="subject" class="block text-sm font-medium text-[var(--text-muted)]">Disciplina</label>
+                      <select id="subject" required class="mt-1 block w-full shadow-sm"></select>
                     </div>
                     <div>
-                      <label for="subtopic" class="block text-sm font-medium text-gray-600">Assunto (opcional)</label>
-                      <select id="subtopic" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                      <label for="subtopic" class="block text-sm font-medium text-[var(--text-muted)]">Assunto (opcional)</label>
+                      <select id="subtopic" class="mt-1 block w-full shadow-sm"></select>
                     </div>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-600">Duração</label>
+                  <label class="block text-sm font-medium text-[var(--text-muted)]">Duração</label>
                   <div class="flex items-center gap-2 mt-1">
-                    <input type="number" id="manual-duration-hours" min="0" placeholder="0" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                    <input type="number" id="manual-duration-hours" min="0" placeholder="0" class="block w-full shadow-sm text-center">
                     <span class="text-sm text-gray-500">horas</span>
-                    <input type="number" id="manual-duration-minutes" min="0" max="59" placeholder="0" class="block w-full border-gray-300 rounded-md shadow-sm text-center">
+                    <input type="number" id="manual-duration-minutes" min="0" max="59" placeholder="0" class="block w-full shadow-sm text-center">
                     <span class="text-sm text-gray-500">min</span>
                   </div>
                   <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs">
@@ -693,12 +784,12 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label for="activity-type" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
-                    <select id="activity-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+                    <label for="activity-type" class="block text-sm font-medium text-[var(--text-muted)]">Tipo de atividade</label>
+                    <select id="activity-type" required class="mt-1 block w-full shadow-sm"></select>
                   </div>
                   <div>
-                    <label for="session-type" class="block text-sm font-medium text-gray-600">Tipo de sessão</label>
-                    <select id="session-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <label for="session-type" class="block text-sm font-medium text-[var(--text-muted)]">Tipo de sessão</label>
+                    <select id="session-type" required class="mt-1 block w-full shadow-sm">
                       <option value="focada">Focada (deep work)</option>
                       <option value="superficial">Superficial</option>
                     </select>
@@ -708,8 +799,8 @@
                 <div id="questions-section" class="hidden space-y-4">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
-                        <label for="questions-total" class="block text-sm font-medium text-gray-600">Nº de questões</label>
-                        <input type="number" id="questions-total" min="0" class="question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <label for="questions-total" class="block text-sm font-medium text-[var(--text-muted)]">Nº de questões</label>
+                        <input type="number" id="questions-total" min="0" class="question-input mt-1 block w-full shadow-sm">
                         <div class="flex flex-wrap justify-center gap-1 mt-1">
                             <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
                             <button type="button" class="question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
@@ -719,8 +810,8 @@
                         </div>
                       </div>
                       <div>
-                        <label for="questions-correct" class="block text-sm font-medium text-gray-600">Nº de acertos</label>
-                        <input type="number" id="questions-correct" min="0" class="question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <label for="questions-correct" class="block text-sm font-medium text-[var(--text-muted)]">Nº de acertos</label>
+                        <input type="number" id="questions-correct" min="0" class="question-input mt-1 block w-full shadow-sm">
                         <div class="flex flex-wrap justify-center gap-1 mt-1">
                             <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
                             <button type="button" class="question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
@@ -752,7 +843,7 @@
                       <input type="hidden" id="mood-input" name="mood">
                     </div>
                     <div id="flow-score-section" class="space-y-2 w-1/2">
-                      <label for="flow-score" class="block text-sm text-gray-700">Nível de flow</label>
+                      <label for="flow-score" class="block text-sm">Nível de flow</label>
                       <div class="flow-slider-container">
                           <input type="range" id="flow-score" min="1" max="5" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
                           <div class="flow-slider-labels">
@@ -770,15 +861,15 @@
             </div>
 
             <div class="card p-6">
-              <h3 class="text-lg font-semibold text-center">Histórico de sessões recentes</h3>
+              <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Histórico de sessões recentes</h3>
               <div id="session-history-list" class="mt-4 space-y-3 max-h-96 overflow-y-auto">
               </div>
             </div>
             
             <div class="card p-6">
-              <h3 class="text-lg font-semibold text-center">Gerenciar matérias e assuntos</h3>
+              <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Gerenciar matérias e assuntos</h3>
               <div class="mt-4 flex items-center gap-3">
-                  <input type="text" id="new-subject-input" placeholder="Nome da nova matéria" class="flex-grow border-gray-300 rounded-md shadow-sm">
+                  <input type="text" id="new-subject-input" placeholder="Nome da nova matéria" class="flex-grow shadow-sm">
                   <button id="add-subject-btn" class="btn btn-primary py-2 px-3">Adicionar matéria</button>
               </div>
               <div id="subjects-management-container" class="mt-4 space-y-4">
@@ -787,17 +878,18 @@
 
 
             <div class="card p-6">
-              <h3 class="text-lg font-semibold text-center">Configurações gerais</h3>
-              <div class="mt-6 pt-6 border-t border-gray-200 space-y-4">
+              <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Configurações gerais</h3>
+              <div class="mt-6 pt-6 border-t border-[var(--border-color)] space-y-4">
                 <div>
-                  <label for="week-start-day" class="block text-sm font-medium text-gray-600">Início da semana</label>
-                  <select id="week-start-day" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  <label for="week-start-day" class="block text-sm font-medium text-[var(--text-muted)]">Início da semana</label>
+                  <select id="week-start-day" class="mt-1 block w-full shadow-sm">
                       <option value="1">Segunda-feira</option>
                       <option value="0">Domingo</option>
                   </select>
                 </div>
                 <div>
                   <h4 class="text-md font-semibold">Resetar todos os dados</h4>
+                  <p class="text-xs text-[var(--text-muted)]">Cuidado: esta ação é irreversível e apagará todos os seus dados da nuvem.</p>
                   <button id="reset-all-data-btn" class="btn btn-danger mt-2 py-2 px-3 w-full">Resetar todos os dados da nuvem</button>
                 </div>
               </div>
@@ -807,8 +899,8 @@
       </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200">
-      <div class="container mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+    <footer class="bg-[var(--card-bg)] border-t border-[var(--border-color)]">
+      <div class="container mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm text-[var(--text-muted)]">
         <p>Feito para transformar estudo em resultado.</p>
       </div>
     </footer>
@@ -817,21 +909,21 @@
   <div id="toast" class="fixed bottom-5 right-5 bg-[color:var(--c1)] text-white py-2 px-4 rounded-lg shadow-lg opacity-0 translate-y-2 transition-all duration-300">ok</div>
   
   <div id="session-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden"></div>
-  <div id="session-modal-panel" class="fixed bottom-0 left-0 right-0 bg-white p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden">
+  <div id="session-modal-panel" class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden">
       <form id="modal-session-form" class="max-w-xl mx-auto space-y-4">
           <h3 class="text-lg font-semibold text-center">Como foi a sua sessão de foco?</h3>
-          <p id="modal-session-info" class="text-center text-gray-600"></p>
+          <p id="modal-session-info" class="text-center text-[var(--text-muted)]"></p>
           
           <div>
-            <label for="modal-activity-type" class="block text-sm font-medium text-gray-600">Tipo de atividade</label>
-            <select id="modal-activity-type" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+            <label for="modal-activity-type" class="block text-sm font-medium text-[var(--text-muted)]">Tipo de atividade</label>
+            <select id="modal-activity-type" required class="mt-1 block w-full shadow-sm"></select>
           </div>
 
           <div id="modal-questions-section" class="hidden space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label for="modal-questions-total" class="block text-sm font-medium text-gray-600">Nº de questões</label>
-                  <input type="number" id="modal-questions-total" min="0" class="modal-question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  <label for="modal-questions-total" class="block text-sm font-medium text-[var(--text-muted)]">Nº de questões</label>
+                  <input type="number" id="modal-questions-total" min="0" class="modal-question-input mt-1 block w-full shadow-sm">
                   <div class="flex flex-wrap justify-center gap-1 mt-1">
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
                       <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
@@ -841,8 +933,8 @@
                   </div>
                 </div>
                 <div>
-                  <label for="modal-questions-correct" class="block text-sm font-medium text-gray-600">Nº de acertos</label>
-                  <input type="number" id="modal-questions-correct" min="0" class="modal-question-input mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                  <label for="modal-questions-correct" class="block text-sm font-medium text-[var(--text-muted)]">Nº de acertos</label>
+                  <input type="number" id="modal-questions-correct" min="0" class="modal-question-input mt-1 block w-full shadow-sm">
                   <div class="flex flex-wrap justify-center gap-1 mt-1">
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button>
                       <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button>
@@ -874,7 +966,7 @@
                 <input type="hidden" id="modal-mood-input" name="mood">
               </div>
               <div class="space-y-2 w-1/2">
-                <label for="modal-flow-score" class="block text-sm text-gray-700">Nível de flow</label>
+                <label for="modal-flow-score" class="block text-sm">Nível de flow</label>
                 <div class="flow-slider-container">
                     <input type="range" id="modal-flow-score" min="1" max="5" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
                     <div class="flow-slider-labels">
@@ -892,9 +984,9 @@
   </div>
 
   <div id="notification-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden"></div>
-  <div id="notification-modal-panel" class="fixed bottom-0 left-0 right-0 bg-white p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden text-center">
+  <div id="notification-modal-panel" class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden text-center">
       <h3 id="notification-title" class="text-xl font-bold"></h3>
-      <p id="notification-message" class="text-gray-600 mt-2"></p>
+      <p id="notification-message" class="text-[var(--text-muted)] mt-2"></p>
       <button id="notification-ok-btn" class="btn btn-primary mt-6 py-2 px-8">OK</button>
   </div>
   
@@ -935,7 +1027,8 @@
           tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado"],
           weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 },
           weekStartDay: 1, // 1 para Segunda, 0 para Domingo
-          concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }
+          concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' },
+          darkMode: false,
         },
         db: null, // Referência para o Realtime Database
         auth: null, // Referência para o Auth
@@ -960,6 +1053,8 @@
           sessionSubject: '',
           sessionSubtopic: '',
           pendingLogDuration: 0,
+          totalPauseTime: 0, // In milliseconds
+          pauseStartTime: null,
         },
         stopwatch: {
             isRunning: false,
@@ -972,7 +1067,9 @@
             alertTriggered: false,
             settings: {
                 sound: 'notification'
-            }
+            },
+            totalPauseTime: 0, // In milliseconds
+            pauseStartTime: null,
         },
         pip: {
             canvas: null,
@@ -988,11 +1085,13 @@
         activeModalQuestionInputId: 'modal-questions-total',
         questionsEvolutionView: 'relative',
         debounceTimer: null,
+        lastBackupTime: 0,
       },
 
       init(){
         this.initFirebase();
         this.bindAuthForms();
+        this.checkInitialDarkMode();
       },
 
       initFirebase() {
@@ -1043,16 +1142,17 @@
         this.bindNotificationModal();
         this.bindConcurso();
         this.bindPip();
-        this.initCharts(); // Mover a inicialização dos gráficos para cá
+        this.initCharts();
+        this.bindCollapsibleSections();
         
-        // Agora que os gráficos existem, podemos popular os dropdowns e renderizar tudo
         this.updateAllSubjectDropdowns();
         this.updateActivityDropdowns();
         this.renderSubjectsManagement();
         this.bindSubjectManagement();
         
         this.resetPomodoro(true);
-        this.setFilterPeriod('week'); // Isso vai chamar updateDashboard() pela primeira vez
+        // DEFINIR PERÍODO PADRÃO COMO 'SEMANA'
+        this.setFilterPeriod('week'); 
         this.navigateTo('dashboard');
         this.scheduleDailyBackup();
         this.renderBackupList();
@@ -1063,6 +1163,23 @@
             this.state.debounceTimer = setTimeout(() => {
                 this.renderDetailedLog(this.getFilteredData(), e.target.value);
             }, 300);
+        });
+      },
+
+      bindCollapsibleSections() {
+        document.querySelectorAll('.collapse-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const header = e.currentTarget.parentElement;
+                const content = header.nextElementSibling;
+                const icon = e.currentTarget.querySelector('i');
+                
+                if (content && content.classList.contains('collapsible-content')) {
+                    content.classList.toggle('hidden');
+                    icon.classList.toggle('fa-chevron-up');
+                    icon.classList.toggle('fa-chevron-down');
+                }
+            });
         });
       },
 
@@ -1162,6 +1279,7 @@
       },
 
       resetState() {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         this.state.studyData = [];
         this.state.parameters = {
           subjects: [
@@ -1174,7 +1292,8 @@
           tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado"],
           weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 },
           weekStartDay: 1,
-          concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }
+          concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' },
+          darkMode: localStorage.getItem('darkMode') === 'true' || (localStorage.getItem('darkMode') === null && prefersDark)
         };
       },
 
@@ -1224,9 +1343,10 @@
           }
           
           this.ensureSubjectColors();
+          this.setDarkMode(this.state.parameters.darkMode, false); // Apply loaded dark mode preference
           
           this.state.dataLoaded = true;
-          this.initializeApp(); // **CORREÇÃO PRINCIPAL**: Inicializa o app APÓS os dados serem carregados.
+          this.initializeApp();
         });
       },
       
@@ -1255,6 +1375,8 @@
         document.getElementById('mobile-menu-button').addEventListener('click', ()=>{
           document.getElementById('mobile-menu').classList.toggle('hidden');
         });
+        document.getElementById('dark-mode-toggle').addEventListener('click', () => this.toggleDarkMode());
+        document.getElementById('dark-mode-toggle-mobile').addEventListener('click', () => this.toggleDarkMode());
       },
       navigateTo(view){
         this.state.currentView = view;
@@ -1268,6 +1390,39 @@
         }
       },
       
+      checkInitialDarkMode() {
+        const savedMode = localStorage.getItem('darkMode');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const useDark = savedMode === 'true' || (savedMode === null && prefersDark);
+        this.setDarkMode(useDark, false);
+      },
+
+      setDarkMode(isDark, shouldSave = true) {
+        this.state.parameters.darkMode = isDark;
+        const icon = isDark ? 'fa-sun' : 'fa-moon';
+        document.documentElement.classList.toggle('dark-mode', isDark);
+        document.querySelectorAll('#dark-mode-toggle i, #dark-mode-toggle-mobile i').forEach(el => {
+            el.classList.remove('fa-moon', 'fa-sun');
+            el.classList.add(icon);
+        });
+        if (shouldSave) {
+          localStorage.setItem('darkMode', isDark);
+          this.saveData(); // Save to Firebase as well
+        }
+        // Force charts to re-render with new colors
+        if (this.state.dataLoaded) {
+            Object.values(this.state.charts).forEach(chart => {
+                if(chart) chart.destroy();
+            });
+            this.initCharts();
+            this.updateDashboard();
+        }
+      },
+
+      toggleDarkMode() {
+        this.setDarkMode(!this.state.parameters.darkMode);
+      },
+
       bindConcurso() {
         const fields = ['concurso-nome', 'concurso-cargo', 'concurso-inicio', 'concurso-prova'];
         const concursoInfo = this.state.parameters.concursoInfo;
@@ -1323,16 +1478,35 @@
         t.classList.toggle('bg-[color:var(--c1)]', ok);
         setTimeout(()=> t.classList.add('opacity-0','translate-y-2'), 2500);
       },
-      fmtHM(sec){
-        if(!sec || sec<0) return '00h00m';
-        const h = Math.floor(sec/3600);
-        const m = Math.round((sec%3600)/60);
-        return String(h).padStart(2,'0')+'h'+String(m).padStart(2,'0')+'m';
+      
+      // NOVA FUNÇÃO DE FORMATAR TEMPO
+      formatTime(seconds, format = 'hms') {
+          if (isNaN(seconds) || seconds < 0) return '00h00m';
+          
+          seconds = Math.round(seconds);
+          
+          const h = Math.floor(seconds / 3600);
+          const m = Math.floor((seconds % 3600) / 60);
+          const s = seconds % 60;
+          
+          const hh = String(h).padStart(2, '0');
+          const mm = String(m).padStart(2, '0');
+          const ss = String(s).padStart(2, '0');
+          
+          if (format === 'hms') {
+              return `${hh}h${mm}m`;
+          }
+          if (format === 'hms_seconds') {
+              return `${hh}:${mm}:${ss}`;
+          }
+          if (format === 'ms') {
+             return `${mm}:${ss}`;
+          }
+          return `${hh}h${mm}m`;
       },
       
       bindGeneralActions() {
         document.getElementById('export-pdf-btn').addEventListener('click', ()=> this.exportPDF());
-        // Adicionando o listener para o botão de salvar
         document.getElementById('save-all-btn').addEventListener('click', () => {
             this.saveData();
             this.toast('Dados salvos na nuvem!');
@@ -1347,6 +1521,12 @@
       },
 
       createBackup(reason = 'Manual', download = true) {
+        const now = Date.now();
+        if (now - this.state.lastBackupTime < 2000) { // Previne múltiplos salvamentos rápidos
+            console.warn("Backup request too soon, ignoring.");
+            return;
+        }
+        this.state.lastBackupTime = now;
         try {
             const timestamp = new Date();
             const dataToBackup = {
@@ -1424,9 +1604,9 @@
             const date = new Date(backup.date);
             const formattedDate = `${date.toLocaleDateString('pt-BR')} às ${date.toLocaleTimeString('pt-BR')}`;
             return `
-                <div class="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                <div class="flex items-center justify-between bg-[var(--bg)] p-2 rounded-md">
                     <span class="text-sm">
-                        <i class="fa-solid fa-database mr-2 text-gray-400"></i>
+                        <i class="fa-solid fa-database mr-2 text-[var(--text-muted)]"></i>
                         Backup ${backup.reason} - ${formattedDate}
                     </span>
                     <div>
@@ -1484,6 +1664,7 @@
                         this.saveData();
                         this.toast('Backup importado com sucesso! Seus dados na nuvem foram atualizados.');
                         this.updateDashboard();
+                        location.reload();
                     }
                 } else {
                     this.toast('Arquivo de backup inválido.', false);
@@ -1614,6 +1795,7 @@
             subject: form.subject.value,
             subtopic: form.subtopic.value || null,
             duration: dur,
+            pauseDuration: 0, // Pausa não aplicável para registro manual
             activity: form['activity-type'].value,
             totalQuestions: totalQ,
             correctQuestions: correctQ,
@@ -1852,6 +2034,7 @@
                 this.state.db.ref('users/' + this.state.userId).remove()
                   .then(() => {
                     localStorage.removeItem('studyDashBackupsV30');
+                    localStorage.removeItem('darkMode');
                     location.reload();
                   })
                   .catch(e => this.toast('Erro ao excluir dados da nuvem.', false));
@@ -1869,11 +2052,11 @@
         this.state.parameters.subjects.forEach(subject => {
           const color = this.state.parameters.subjectColors[subject.name] || '#cccccc';
           const subjectEl = document.createElement('div');
-          subjectEl.className = 'bg-gray-50 p-3 rounded-md border border-gray-200';
+          subjectEl.className = 'bg-[var(--bg)] p-3 rounded-md border border-[var(--border-color)]';
           subjectEl.dataset.subjectName = subject.name;
           subjectEl.innerHTML = `
             <div class="flex items-center justify-between">
-              <span class="flex items-center gap-3 font-semibold text-gray-800">
+              <span class="flex items-center gap-3 font-semibold">
                 <input type="color" value="${color}" data-subject="${subject.name}" class="subject-color-input w-6 h-6 p-0 border-none rounded cursor-pointer">
                 ${subject.name}
               </span>
@@ -1885,10 +2068,10 @@
             <div class="subtopics-container">
                 <div class="pl-8 mt-3 pt-3 border-t">
                     <div class="flex items-center gap-2">
-                        <input type="text" data-subtopic-input-for="${subject.name}" placeholder="Novo assunto" class="flex-grow text-sm border-gray-300 rounded-md shadow-sm">
+                        <input type="text" data-subtopic-input-for="${subject.name}" placeholder="Novo assunto" class="flex-grow text-sm shadow-sm">
                         <button class="add-subtopic-btn btn btn-secondary text-xs py-1 px-2">Adicionar</button>
                     </div>
-                    <ul class="mt-2 space-y-1 text-sm list-disc list-inside text-gray-600">
+                    <ul class="mt-2 space-y-1 text-sm list-disc list-inside text-[var(--text-muted)]">
                         ${subject.subtopics.map(st => `
                             <li class="flex justify-between items-center">
                                 <span>${st}</span>
@@ -1938,6 +2121,8 @@
         p.isSessionActive=false;
         p.mode='work';
         p.timeLeft = (p.settings.work*60);
+        p.totalPauseTime = 0;
+        p.pauseStartTime = null;
         if(resetCycles){ 
             p.cyclesCompleted = 0;
             p.pendingLogDuration = 0;
@@ -1967,8 +2152,13 @@
         this.initAudio();
         const p = this.state.pomodoro;
         p.isRunning = !p.isRunning;
-        if(p.isRunning){
-          if(!p.isSessionActive){
+
+        if(p.isRunning){ // Resuming or starting
+          if(p.pauseStartTime) { // Resuming from pause
+              p.totalPauseTime += Date.now() - p.pauseStartTime;
+              p.pauseStartTime = null;
+          }
+          if(!p.isSessionActive){ // Starting a new session
             p.isSessionActive=true;
             p.cycleStart = Date.now();
             p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4;
@@ -1977,8 +2167,9 @@
           }
           this.playNotificationSound('pomodoro');
           p.intervalId = setInterval(()=> this.tickPomodoro(), 1000);
-        }else{
+        }else{ // Pausing
           clearInterval(p.intervalId);
+          p.pauseStartTime = Date.now();
         }
         this.renderPomodoro();
       },
@@ -1986,6 +2177,7 @@
         const p = this.state.pomodoro;
         clearInterval(p.intervalId);
         p.isRunning = false;
+        p.pauseStartTime = null; // Reset pause on skip
         this.playNotificationSound('pomodoro');
         
         if(p.isSessionActive && p.mode === 'work'){
@@ -2012,6 +2204,7 @@
           this.renderPomodoro();
           clearInterval(p.intervalId);
           p.isRunning = false;
+          p.pauseStartTime = null;
           this.playNotificationSound('pomodoro');
           
           if (p.mode === 'work') {
@@ -2042,6 +2235,7 @@
         const p = this.state.pomodoro;
         clearInterval(p.intervalId);
         p.isRunning = false;
+        p.pauseStartTime = null;
         p.cycleStart = Date.now();
 
         if(p.mode==='work'){
@@ -2050,8 +2244,9 @@
           p.mode = isLongBreak ? 'long' : 'short';
           
           if (isLongBreak && p.pendingLogDuration > 0) {
-              this.openSessionModal(p.pendingLogDuration, p.sessionSubject, p.sessionSubtopic);
+              this.openSessionModal(p.pendingLogDuration, p.sessionSubject, p.sessionSubtopic, p.totalPauseTime / 1000);
               p.pendingLogDuration = 0;
+              p.totalPauseTime = 0;
           }
 
         } else {
@@ -2069,14 +2264,21 @@
       },
       renderPomodoro(){
         const p = this.state.pomodoro;
-        const mm = String(Math.floor(p.timeLeft/60)).padStart(2,'0');
-        const ss = String(p.timeLeft%60).padStart(2,'0');
-        document.getElementById('pomodoro-timer-display').textContent = `${mm}:${ss}`;
+        document.getElementById('pomodoro-timer-display').textContent = this.formatTime(p.timeLeft, 'ms');
         
         if(p.isRunning || p.isSessionActive) {
-            document.title = `${mm}:${ss} - ${p.mode==='work' ? 'Foco' : 'Pausa'}`;
+            document.title = `${this.formatTime(p.timeLeft, 'ms')} - ${p.mode==='work' ? 'Foco' : 'Pausa'}`;
         } else if (!this.state.stopwatch.isRunning) {
             document.title = 'Dashboard de Performance';
+        }
+        
+        const pauseDisplay = document.getElementById('pomodoro-pause-display');
+        if (p.totalPauseTime > 0 || p.pauseStartTime) {
+            let currentPause = p.totalPauseTime;
+            if (p.pauseStartTime) currentPause += Date.now() - p.pauseStartTime;
+            pauseDisplay.textContent = `Pausa total: ${this.formatTime(currentPause / 1000, 'hms_seconds')}`;
+        } else {
+            pauseDisplay.textContent = '';
         }
 
         let statusText = 'Pronto para começar';
@@ -2094,7 +2296,7 @@
           const mm2 = String(end.getMinutes()).padStart(2,'0');
           document.getElementById('pomodoro-end-time').textContent = `Termina às ${hh}:${mm2}`;
         }else{
-          document.getElementById('pomodoro-start-pause').textContent='Iniciar';
+          document.getElementById('pomodoro-start-pause').textContent= p.isSessionActive ? 'Retomar' : 'Iniciar';
           document.getElementById('pomodoro-end-time').textContent = '';
         }
 
@@ -2126,11 +2328,19 @@
         const sw = this.state.stopwatch;
         sw.isRunning = !sw.isRunning;
         if (sw.isRunning) {
-            sw.startTime = Date.now() - sw.elapsedTime;
+            if(sw.pauseStartTime) { // Resuming from pause
+                const pauseDuration = Date.now() - sw.pauseStartTime;
+                sw.totalPauseTime += pauseDuration;
+                sw.startTime += pauseDuration; // Adjust start time to ignore pause
+                sw.pauseStartTime = null;
+            } else { // Starting from 0
+                sw.startTime = Date.now() - sw.elapsedTime;
+            }
             sw.intervalId = setInterval(() => this.tickStopwatch(), 1000);
             document.getElementById('stopwatch-start-pause').textContent = 'Pausar';
         } else {
             clearInterval(sw.intervalId);
+            sw.pauseStartTime = Date.now();
             document.getElementById('stopwatch-start-pause').textContent = 'Retomar';
         }
       },
@@ -2141,6 +2351,8 @@
         sw.elapsedTime = 0;
         sw.alertTime = null;
         sw.alertTriggered = false;
+        sw.totalPauseTime = 0;
+        sw.pauseStartTime = null;
         this.renderStopwatch();
         document.getElementById('stopwatch-start-pause').textContent = 'Iniciar';
         document.getElementById('stopwatch-alert-hours').value = '';
@@ -2149,6 +2361,7 @@
       },
       tickStopwatch() {
         const sw = this.state.stopwatch;
+        if (!sw.isRunning) return;
         sw.elapsedTime = Date.now() - sw.startTime;
         
         if (sw.alertTime && !sw.alertTriggered && (sw.elapsedTime / 1000) >= sw.alertTime) {
@@ -2159,15 +2372,21 @@
         this.renderStopwatch();
       },
       renderStopwatch() {
-        const time = this.state.stopwatch.elapsedTime;
-        const totalSeconds = Math.floor(time / 1000);
-        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-        const s = String(totalSeconds % 60).padStart(2, '0');
-        const timeString = `${h}:${m}:${s}`;
+        const sw = this.state.stopwatch;
+        const time = sw.elapsedTime;
+        const timeString = this.formatTime(time / 1000, 'hms_seconds');
         document.getElementById('stopwatch-display').textContent = timeString;
 
-        if (this.state.stopwatch.isRunning) {
+        const pauseDisplay = document.getElementById('stopwatch-pause-display');
+        if (sw.totalPauseTime > 0 || sw.pauseStartTime) {
+            let currentPause = sw.totalPauseTime;
+            if (sw.pauseStartTime) currentPause += Date.now() - sw.pauseStartTime;
+            pauseDisplay.textContent = `Pausa total: ${this.formatTime(currentPause / 1000, 'hms_seconds')}`;
+        } else {
+            pauseDisplay.textContent = '';
+        }
+
+        if (sw.isRunning) {
             document.title = `${timeString} - Cronômetro`;
         } else if (!this.state.pomodoro.isRunning && !this.state.pomodoro.isSessionActive) {
             document.title = 'Dashboard de Performance';
@@ -2177,14 +2396,16 @@
       },
       logStopwatch() {
         const sw = this.state.stopwatch;
-        if (sw.elapsedTime < 60000) return this.toast('A sessão precisa ter no mínimo 1 minuto.', false);
+        const effectiveDuration = sw.elapsedTime - sw.totalPauseTime;
+        if (effectiveDuration < 60000) return this.toast('A sessão precisa ter no mínimo 1 minuto de tempo efetivo.', false);
         
         clearInterval(sw.intervalId);
-        const durationInSeconds = Math.floor(sw.elapsedTime / 1000);
+        const durationInSeconds = Math.floor(effectiveDuration / 1000);
+        const pauseInSeconds = Math.floor(sw.totalPauseTime / 1000);
         const subject = document.getElementById('stopwatch-subject').value;
         const subtopic = document.getElementById('stopwatch-subtopic').value;
         
-        this.openSessionModal(durationInSeconds, subject, subtopic);
+        this.openSessionModal(durationInSeconds, subject, subtopic, pauseInSeconds);
         this.resetStopwatch();
       },
       setStopwatchAlert() {
@@ -2283,17 +2504,18 @@
         });
       },
 
-      openSessionModal(durationInSeconds, subject, subtopic = null) {
+      openSessionModal(durationInSeconds, subject, subtopic = null, pauseDurationInSeconds = 0) {
         this.state.pendingSession = {
             id: Date.now(),
             date: new Date().toISOString().split('T')[0],
             duration: durationInSeconds,
+            pauseDuration: pauseDurationInSeconds,
             subject: subject,
             subtopic: subtopic || null
         };
         
         const subtopicText = subtopic ? ` (${subtopic})` : '';
-        document.getElementById('modal-session-info').textContent = `Registrando ${this.fmtHM(durationInSeconds)} para ${subject}${subtopicText}`;
+        document.getElementById('modal-session-info').textContent = `Registrando ${this.formatTime(durationInSeconds)} para ${subject}${subtopicText}`;
         document.getElementById('modal-session-form').reset();
         document.querySelectorAll('#modal-mood-tracker .mood-square').forEach(b => b.classList.remove('selected'));
         document.getElementById('modal-questions-section').classList.add('hidden');
@@ -2376,7 +2598,7 @@
         const ctx = pip.ctx;
         
         ctx.clearRect(0, 0, pip.canvas.width, pip.canvas.height);
-        ctx.fillStyle = '#FDFBF7';
+        ctx.fillStyle = this.state.parameters.darkMode ? '#1e1e1e' : '#FDFBF7';
         ctx.fillRect(0, 0, pip.canvas.width, pip.canvas.height);
 
         let title = 'Timer';
@@ -2385,23 +2607,17 @@
 
         if (this.state.pomodoro.isSessionActive || this.state.pomodoro.isRunning) {
             const p = this.state.pomodoro;
-            const mm = String(Math.floor(p.timeLeft/60)).padStart(2,'0');
-            const ss = String(p.timeLeft%60).padStart(2,'0');
-            timeString = `${mm}:${ss}`;
+            timeString = this.formatTime(p.timeLeft, 'ms');
             title = p.mode === 'work' ? 'Foco' : (p.mode === 'short' ? 'Pausa Curta' : 'Pausa Longa');
             subjectString = p.sessionSubject || 'Pomodoro';
         } else if (this.state.stopwatch.isRunning || this.state.stopwatch.elapsedTime > 0) {
             const sw = this.state.stopwatch;
-            const totalSeconds = Math.floor(sw.elapsedTime / 1000);
-            const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-            const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-            const s = String(totalSeconds % 60).padStart(2, '0');
-            timeString = `${h}:${m}:${s}`;
+            timeString = this.formatTime(sw.elapsedTime/1000, 'hms_seconds');
             title = 'Cronômetro';
             subjectString = document.getElementById('stopwatch-subject').value || 'Sessão livre';
         }
 
-        ctx.fillStyle = '#3D405B';
+        ctx.fillStyle = this.state.parameters.darkMode ? '#e0e0e0' : '#3D405B';
         ctx.textAlign = 'center';
         ctx.font = '600 24px Inter';
         ctx.fillText(title, 150, 45);
@@ -2410,7 +2626,7 @@
         ctx.fillText(timeString, 150, 125);
         
         ctx.font = '500 18px Inter';
-        ctx.fillStyle = '#6B7280';
+        ctx.fillStyle = this.state.parameters.darkMode ? '#9ca3af' : '#6B7280';
         ctx.fillText(subjectString, 150, 160);
       },
 
@@ -2423,23 +2639,22 @@
         const sortedData = [...this.state.studyData].sort((a, b) => b.id - a.id);
 
         if (sortedData.length === 0) {
-            listContainer.innerHTML = '<p class="text-sm text-gray-500">Nenhuma sessão registrada ainda.</p>';
+            listContainer.innerHTML = '<p class="text-sm text-[var(--text-muted)]">Nenhuma sessão registrada ainda.</p>';
             return;
         }
 
-        // Slice(0, 10) ensures only the last 10 sessions are rendered.
         sortedData.slice(0, 10).forEach(session => {
             const el = document.createElement('div');
-            el.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-md text-sm transition-all hover:bg-gray-100';
+            el.className = 'flex items-center justify-between bg-[var(--bg)] p-3 rounded-md text-sm transition-all hover:bg-[var(--border-color)]';
             
             const sessionDate = new Date(session.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-            const sessionTime = this.fmtHM(session.duration);
-            const subtopicText = session.subtopic ? ` <span class="text-gray-500 text-xs">(${session.subtopic})</span>` : '';
+            const sessionTime = this.formatTime(session.duration);
+            const subtopicText = session.subtopic ? ` <span class="text-[var(--text-muted)] text-xs">(${session.subtopic})</span>` : '';
             
             el.innerHTML = `
                 <div>
                     <span class="font-semibold">${session.subject}</span>${subtopicText}
-                    <span class="text-gray-600 ml-2">${sessionDate} - ${sessionTime}</span>
+                    <span class="text-[var(--text-muted)] ml-2">${sessionDate} - ${sessionTime}</span>
                 </div>
                 <div class="flex gap-2">
                     <button class="edit-btn btn btn-secondary text-xs py-1 px-2">Editar</button>
@@ -2513,9 +2728,9 @@
 
         const metrics = this.precomputeMetrics(data, allData);
 
-        document.getElementById('total-hours').textContent = this.fmtHM(metrics.totalSec);
+        document.getElementById('total-hours').textContent = this.formatTime(metrics.totalSec);
         document.getElementById('avg-accuracy').textContent = `${(metrics.accAvg*100).toFixed(0)}%`;
-        document.getElementById('avg-session-duration').textContent = this.fmtHM(metrics.avgSessSec);
+        document.getElementById('avg-session-duration').textContent = this.formatTime(metrics.avgSessSec);
         document.getElementById('deep-work-ratio').textContent = `${metrics.deepRatio.toFixed(0)}%`;
 
         this.updatePersonalBests(allData);
@@ -2532,7 +2747,6 @@
       precomputeMetrics(data, allData) {
         const totalSec = data.reduce((s,i)=>s+i.duration,0);
         
-        // CORREÇÃO: Garantir que apenas sessões com 'accuracy' numérico sejam consideradas.
         const sessionsWithAcc = data.filter(i => typeof i.accuracy === 'number');
         const totalAccuracySum = sessionsWithAcc.reduce((sum, item) => sum + item.accuracy, 0);
         const accAvg = sessionsWithAcc.length > 0 ? totalAccuracySum / sessionsWithAcc.length : 0;
@@ -2580,16 +2794,17 @@
             }
         }
 
-        document.getElementById('record-hours-day').innerHTML = `${this.fmtHM(records.hoursDay.value)} <div class="record-date">${records.hoursDay.date}</div>`;
+        document.getElementById('record-hours-day').innerHTML = `${this.formatTime(records.hoursDay.value)} <div class="record-date">${records.hoursDay.date}</div>`;
         document.getElementById('record-accuracy').innerHTML = `${(records.accuracy.value * 100).toFixed(0)}% <div class="record-date">${records.accuracy.date}</div>`;
-        document.getElementById('record-hours-month').innerHTML = `${this.fmtHM(records.hoursMonth.value)} <div class="record-date">${records.hoursMonth.date}</div>`;
+        document.getElementById('record-hours-month').innerHTML = `${this.formatTime(records.hoursMonth.value)} <div class="record-date">${records.hoursMonth.date}</div>`;
       },
       getWeekDateRange(date = new Date()) {
+        const d = new Date(date);
         const startDay = this.state.parameters.weekStartDay;
-        const currentDay = date.getDay();
-        const diff = date.getDate() - currentDay + (currentDay === 0 && startDay === 1 ? -6 : startDay);
+        const currentDay = d.getDay();
+        const diff = d.getDate() - currentDay + (currentDay === 0 && startDay === 1 ? -6 : startDay);
         
-        const startDate = new Date(date.setDate(diff));
+        const startDate = new Date(d.setDate(diff));
         startDate.setHours(0, 0, 0, 0);
 
         const endDate = new Date(startDate);
@@ -2660,7 +2875,7 @@
             
             const el = document.createElement('div');
             el.innerHTML = `
-                <div class="flex justify-between text-sm font-medium text-gray-600">
+                <div class="flex justify-between text-sm font-medium text-[var(--text-muted)]">
                     <span>${goalInfo.label}</span>
                     <span>${current.toFixed(goalInfo.id === 'hours' ? 1 : 0)}${goalInfo.unit} / ${target}${goalInfo.unit} (${progress.toFixed(0)}%)</span>
                 </div>
@@ -2797,7 +3012,7 @@
 
             const cell = document.createElement('div');
             cell.className = `w-3 h-3 rounded-sm heatmap-level-${colorLevel}`;
-            cell.title = `${tempDate.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}: ${this.fmtHM(seconds)}`;
+            cell.title = `${tempDate.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}: ${this.formatTime(seconds)}`;
             heatmapGrid.appendChild(cell);
 
             tempDate.setDate(tempDate.getDate() + 1);
@@ -2806,10 +3021,10 @@
         container.appendChild(heatmapGrid);
 
         const legend = document.createElement('div');
-        legend.className = 'flex items-center justify-end gap-2 text-xs text-gray-500 mt-2 w-full pr-4';
+        legend.className = 'flex items-center justify-end gap-2 text-xs text-[var(--text-muted)] mt-2 w-full pr-4';
         legend.innerHTML = `
             <span>Menos</span>
-            <div class="w-3 h-3 rounded-sm heatmap-level-0 border border-gray-300"></div>
+            <div class="w-3 h-3 rounded-sm heatmap-level-0 border border-gray-400"></div>
             <div class="w-3 h-3 rounded-sm heatmap-level-1"></div>
             <div class="w-3 h-3 rounded-sm heatmap-level-2"></div>
             <div class="w-3 h-3 rounded-sm heatmap-level-3"></div>
@@ -2845,8 +3060,8 @@
 
         const progressContainer = document.getElementById('progress-goals-table-container');
         progressContainer.innerHTML = `
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <table class="w-full text-sm text-left text-[var(--text-muted)]">
+                <thead class="text-xs text-[var(--text-primary)] uppercase bg-[var(--bg)]">
                     <tr>
                         <th scope="col" class="px-6 py-3">Meta</th>
                         <th scope="col" class="px-6 py-3">Progresso</th>
@@ -2855,46 +3070,44 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="bg-white border-b"><td class="px-6 py-4">${goals.hours}h semanais</td><td class="px-6 py-4">${hoursProgress.toFixed(1)}%</td><td class="px-6 py-4">${daysRemaining} dias</td><td class="px-6 py-4">${paceHours.toFixed(2)} horas/dia</td></tr>
-                    <tr class="bg-white border-b"><td class="px-6 py-4">${goals.questions} questões</td><td class="px-6 py-4">${questionsProgress.toFixed(1)}%</td><td class="px-6 py-4">${daysRemaining} dias</td><td class="px-6 py-4">${paceQuestions.toFixed(0)} questões/dia</td></tr>
-                    <tr class="bg-white border-b"><td class="px-6 py-4">${goals.accuracy}% acertos</td><td class="px-6 py-4">${currentAccuracy.toFixed(1)}%</td><td class="px-6 py-4">-</td><td class="px-6 py-4">-</td></tr>
-                    <tr class="bg-white border-b"><td class="px-6 py-4">${goals.days} dias/semana</td><td class="px-6 py-4">${daysProgress.toFixed(0)}%</td><td class="px-6 py-4">${Math.max(0, goals.days - daysStudiedThisWeek)} dias</td><td class="px-6 py-4">Manter ritmo</td></tr>
+                    <tr class="border-b border-[var(--border-color)]"><td class="px-6 py-4">${goals.hours}h semanais</td><td class="px-6 py-4">${hoursProgress.toFixed(1)}%</td><td class="px-6 py-4">${daysRemaining} dias</td><td class="px-6 py-4">${paceHours.toFixed(2)} horas/dia</td></tr>
+                    <tr class="border-b border-[var(--border-color)]"><td class="px-6 py-4">${goals.questions} questões</td><td class="px-6 py-4">${questionsProgress.toFixed(1)}%</td><td class="px-6 py-4">${daysRemaining} dias</td><td class="px-6 py-4">${paceQuestions.toFixed(0)} questões/dia</td></tr>
+                    <tr class="border-b border-[var(--border-color)]"><td class="px-6 py-4">${goals.accuracy}% acertos</td><td class="px-6 py-4">${currentAccuracy.toFixed(1)}%</td><td class="px-6 py-4">-</td><td class="px-6 py-4">-</td></tr>
+                    <tr class="border-b border-[var(--border-color)]"><td class="px-6 py-4">${goals.days} dias/semana</td><td class="px-6 py-4">${daysProgress.toFixed(0)}%</td><td class="px-6 py-4">${Math.max(0, goals.days - daysStudiedThisWeek)} dias</td><td class="px-6 py-4">Manter ritmo</td></tr>
                 </tbody>
             </table>
         `;
       },
 
       initCharts(){
+        const isDark = this.state.parameters.darkMode;
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDark ? '#e0e0e0' : '#6B7280';
+        Chart.defaults.color = textColor;
+        
         const base = {
           responsive:true, maintainAspectRatio:false,
-          plugins:{legend:{position:'bottom',labels:{font:{family:'Inter'}}}},
-          scales:{y:{beginAtZero:true,ticks:{font:{family:'Inter'}}},x:{ticks:{font:{family:'Inter'}}}}
+          plugins:{legend:{position:'bottom',labels:{font:{family:'Inter'}, color: textColor}}},
+          scales:{y:{beginAtZero:true,ticks:{font:{family:'Inter'}, color: textColor}, grid: {color: gridColor}},x:{ticks:{font:{family:'Inter'}, color: textColor}, grid: {color: gridColor}}}
         };
         this.state.charts.hoursBySubject = new Chart(document.getElementById('hoursBySubjectChart'), { type:'pie', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
         this.state.charts.performanceBySubject = new Chart(document.getElementById('performanceBySubjectChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
         this.state.charts.studyEvolution = new Chart(document.getElementById('studyEvolutionChart'), { type:'line', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, elements:{line:{tension:.1}}} });
         this.state.charts.productivityByDay = new Chart(document.getElementById('productivityByDayChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
-        this.state.charts.moodVsPerformance = new Chart(document.getElementById('moodVsPerformanceChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, scales:{y:{beginAtZero:true, max:1, ticks:{callback: v => `${(v*100)}%`}}}} });
+        this.state.charts.moodVsPerformance = new Chart(document.getElementById('moodVsPerformanceChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}, scales:{...base.scales, y:{...base.scales.y, max:1, ticks:{...base.scales.y.ticks, callback: v => `${(v*100)}%`}}}} });
         this.state.charts.monthlyStudyEvolution = new Chart(document.getElementById('monthlyStudyEvolutionChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
         this.state.charts.performanceByTimeOfDay = new Chart(document.getElementById('performanceByTimeOfDayChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{display:false}}} });
-        this.state.charts.strengthsWeaknesses = new Chart(document.getElementById('strengthsWeaknessesChart'), { type:'radar', data:{labels:[],datasets:[]}, options: {...base, scales: { r: { beginAtZero: true, max: 100, ticks: { backdropColor: 'transparent' } } }} });
+        this.state.charts.strengthsWeaknesses = new Chart(document.getElementById('strengthsWeaknessesChart'), { type:'radar', data:{labels:[],datasets:[]}, options: {...base, scales: { r: { beginAtZero: true, max: 100, ticks: { backdropColor: 'transparent', color: textColor }, pointLabels: { color: textColor }, grid: {color: gridColor}, angleLines: {color: gridColor} } }} });
         this.state.charts.questionsEvolution = new Chart(document.getElementById('questionsEvolutionChart'), { type:'line', data:{labels:[],datasets:[]}, options: {...base, elements:{line:{tension:.2, fill: 'start'}}} });
-        
         this.state.charts.activityDistribution = new Chart(document.getElementById('activityDistributionChart'), { type:'doughnut', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
-        
-        // ALTERAÇÃO: Mudar o tipo de gráfico e as opções para barra
-        this.state.charts.flowVsPerformance = new Chart(document.getElementById('flowVsPerformanceChart'), { 
-          type:'bar', 
-          data:{labels:[],datasets:[]}, 
-          options:{...base, 
-            plugins: {...base.plugins, legend:{display:false}}, 
-            scales:{
-              x:{title:{display:true, text:'Nível de Flow'}}, 
-              y:{beginAtZero: true, max: 1, ticks:{callback: v => `${(v*100)}%`}, title: {display: true, text: 'Desempenho Médio'}}
-            }
-          } 
-        });
+        this.state.charts.flowVsPerformance = new Chart(document.getElementById('flowVsPerformanceChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins: {...base.plugins, legend:{display:false}}, scales:{...base.scales, x:{...base.scales.x, title:{display:true, text:'Nível de Flow', color: textColor}}, y:{...base.scales.y, max: 1, ticks:{...base.scales.y.ticks, callback: v => `${(v*100)}%`}, title: {display: true, text: 'Desempenho Médio', color: textColor}}}}});
 
+        // Novos gráficos
+        this.state.charts.moodCount = new Chart(document.getElementById('moodCountChart'), { type:'pie', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
+        this.state.charts.flowCount = new Chart(document.getElementById('flowCountChart'), { type:'pie', data:{labels:[],datasets:[]}, options:{...base, plugins:{...base.plugins, legend:{position:'right'}}} });
+        this.state.charts.focusPercentage = new Chart(document.getElementById('focusPercentageChart'), { type:'doughnut', data:{labels:[],datasets:[]}, options:{...base, cutout: '70%', plugins:{...base.plugins, legend:{position:'bottom'}}} });
+        this.state.charts.performanceByActivity = new Chart(document.getElementById('performanceByActivityChart'), { type:'bar', data:{labels:[],datasets:[]}, options:{...base, plugins: {...base.plugins, legend:{display:false}}, scales:{...base.scales, y:{...base.scales.y, max: 1, ticks:{...base.scales.y.ticks, callback: v => `${(v*100)}%`}}}}});
+        
         document.getElementById('questions-evolution-toggle').addEventListener('change', e => {
             this.state.questionsEvolutionView = e.target.value;
             this.updateQuestionsEvolutionChart(this.state.studyData);
@@ -2913,6 +3126,11 @@
         this.updateQuestionsEvolutionChart(allData);
         this.updateActivityDistributionChart(data);
         this.updateFlowVsPerformanceChart(data);
+        // Chamar updates dos novos gráficos
+        this.updateMoodCountChart(data);
+        this.updateFlowCountChart(data);
+        this.updateFocusPercentageChart(data);
+        this.updatePerformanceByActivityChart(data);
       },
       updateHoursBySubjectChart(data){
         const filterSubject = document.getElementById('filter-subject').value;
@@ -2924,21 +3142,26 @@
             map = data.filter(i => i.subject === filterSubject)
                         .reduce((acc, i) => { 
                             const key = i.subtopic || 'Geral';
-                            acc[key] = (acc[key] || 0) + (i.duration / 3600); 
+                            acc[key] = (acc[key] || 0) + i.duration; 
                             return acc; 
                         }, {});
             labels = Object.keys(map);
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
         } else {
             document.getElementById('hours-by-subject-title').textContent = 'Distribuição de horas por disciplina';
-            map = data.reduce((acc,i)=>{ acc[i.subject]=(acc[i.subject]||0)+(i.duration/3600); return acc; },{});
+            map = data.reduce((acc,i)=>{ acc[i.subject]=(acc[i.subject]||0)+i.duration; return acc; },{});
             labels = Object.keys(map);
             bgColors = labels.map(label => this.state.parameters.subjectColors[label] || '#cccccc');
         }
         
         values = Object.values(map);
-        ch.data.labels = labels;
-        ch.data.datasets = [{ label:'Horas de estudo', data:values, borderColor:'#fff', borderWidth:2, backgroundColor: bgColors }];
+        ch.data.labels = labels.map(l => `${l} (${this.formatTime(map[l])})`);
+        ch.data.datasets = [{ label:'Horas de estudo', data:values, borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff', borderWidth:2, backgroundColor: bgColors }];
+        ch.options.plugins.tooltip.callbacks.label = (context) => {
+            const label = context.chart.data.labels[context.dataIndex];
+            const value = context.chart.data.datasets[0].data[context.dataIndex];
+            return `${label.split(' (')[0]}: ${this.formatTime(value)}`;
+        };
         ch.update();
       },
       updatePerformanceBySubjectChart(data){
@@ -2959,7 +3182,6 @@
             bgColors = labels.map((_, index) => this.state.COLOR_PALETTE[index % this.state.COLOR_PALETTE.length]);
         } else {
             document.getElementById('performance-by-subject-title').textContent = 'Desempenho médio por disciplina';
-            // CORREÇÃO: Usar 'typeof d.accuracy === "number"' para filtrar corretamente.
             data.filter(d => typeof d.accuracy === "number").forEach(i=>{
               if(!perf[i.subject]) perf[i.subject]={sum:0,cnt:0};
               perf[i.subject].sum += i.accuracy;
@@ -2980,10 +3202,10 @@
         const ch = this.state.charts.strengthsWeaknesses;
         const labels = this.state.parameters.subjects.map(s => s.name);
         
-        const totalHoursAll = allData.reduce((sum, s) => sum + s.duration, 0) / 3600;
+        const totalHoursAll = allData.reduce((sum, s) => sum + s.duration, 0);
 
         const hoursData = labels.map(subject => {
-            const subjectHours = allData.filter(s => s.subject === subject).reduce((sum, s) => sum + s.duration, 0) / 3600;
+            const subjectHours = allData.filter(s => s.subject === subject).reduce((sum, s) => sum + s.duration, 0);
             return totalHoursAll > 0 ? (subjectHours / totalHoursAll) * 100 : 0;
         });
 
@@ -3033,14 +3255,14 @@
             const el = document.createElement('div');
             el.innerHTML = `
                 <div class="flex justify-between items-center text-sm mb-1">
-                    <span class="font-semibold text-gray-700">${subject.name}</span>
-                    <span class="text-xs text-gray-500">${totalQuestions} questões</span>
+                    <span class="font-semibold">${subject.name}</span>
+                    <span class="text-xs text-[var(--text-muted)]">${totalQuestions} questões</span>
                 </div>
                 <div class="performance-bar">
                     <div class="bar-correct" style="width: ${correctPercent}%"></div>
                     <div class="bar-incorrect" style="width: ${incorrectPercent}%"></div>
                 </div>
-                <div class="flex justify-between items-center text-xs text-gray-600 mt-1">
+                <div class="flex justify-between items-center text-xs text-[var(--text-muted)] mt-1">
                     <span>Desempenho: <span class="font-bold text-green-600">${performance.toFixed(0)}%</span></span>
                     <span>${correctQuestions} acertos / ${incorrectQuestions} erros</span>
                 </div>
@@ -3049,20 +3271,22 @@
         });
 
         if (container.innerHTML === '') {
-            container.innerHTML = `<p class="text-sm text-gray-500 text-center">Sem dados de exercícios ou simulados para exibir.</p>`;
+            container.innerHTML = `<p class="text-sm text-[var(--text-muted)] text-center">Sem dados de exercícios ou simulados para exibir.</p>`;
         }
       },
       updateStudyEvolutionChart(data){
-        const map = data.reduce((acc,i)=>{ acc[i.date]=(acc[i.date]||0)+(i.duration); return acc; },{});
+        const map = data.reduce((acc,i)=>{ acc[i.date]=(acc[i.date]||0)+i.duration; return acc; },{});
         const dates = Object.keys(map).sort((a,b)=> new Date(a)-new Date(b));
         const ch = this.state.charts.studyEvolution;
         ch.data.labels = dates.map(d=> new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit', timeZone:'UTC'}));
-        ch.data.datasets = [{ label:'Horas estudadas', data: dates.map(d=> map[d]/3600), borderColor:'#81B29A', backgroundColor:'rgba(129,178,154,.12)', fill:true, pointBackgroundColor:'#81B29A', pointRadius:4, pointHoverRadius:6 }];
+        ch.data.datasets = [{ label:'Horas estudadas', data: dates.map(d=> map[d]), borderColor:'#81B29A', backgroundColor:'rgba(129,178,154,.12)', fill:true, pointBackgroundColor:'#81B29A', pointRadius:4, pointHoverRadius:6 }];
+        ch.options.scales.y.ticks.callback = (value) => this.formatTime(value);
+        ch.options.plugins.tooltip.callbacks.label = (context) => `Tempo: ${this.formatTime(context.raw)}`;
         ch.update();
         const totalSec = data.reduce((s,i)=>s+i.duration,0);
         const uniqueDays = new Set(data.map(i=> i.date)).size;
         const avg = uniqueDays? totalSec/uniqueDays : 0;
-        document.getElementById('average-time-display').textContent = this.fmtHM(avg);
+        document.getElementById('average-time-display').textContent = this.formatTime(avg);
       },
       updateQuestionsEvolutionChart(allData) {
         const ch = this.state.charts.questionsEvolution;
@@ -3114,10 +3338,12 @@
       },
       updateProductivityByDayChart(data){
         const arr = [0,0,0,0,0,0,0];
-        data.forEach(i=>{ const d=new Date(i.date).getUTCDay(); arr[d]+= (i.duration/3600); });
+        data.forEach(i=>{ const d=new Date(i.date).getUTCDay(); arr[d]+= i.duration; });
         const ch = this.state.charts.productivityByDay;
         ch.data.labels = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
         ch.data.datasets = [{ label:'Horas', data:arr, backgroundColor:'#F2CC8F'}];
+        ch.options.scales.y.ticks.callback = (value) => this.formatTime(value);
+        ch.options.plugins.tooltip.callbacks.label = (context) => `Tempo: ${this.formatTime(context.raw)}`;
         ch.update();
       },
       updateMoodVsPerformanceChart(data){
@@ -3148,10 +3374,12 @@
             return acc;
         }, {});
         const labels = Object.keys(map).sort();
-        const values = labels.map(m => map[m] / 3600);
+        const values = labels.map(m => map[m]);
         const ch = this.state.charts.monthlyStudyEvolution;
         ch.data.labels = labels;
         ch.data.datasets = [{ label: 'Horas Estudadas', data: values, backgroundColor: '#3D405B' }];
+        ch.options.scales.y.ticks.callback = (value) => this.formatTime(value);
+        ch.options.plugins.tooltip.callbacks.label = (context) => `Tempo: ${this.formatTime(context.raw)}`;
         ch.update();
       },
       updatePerformanceByTimeOfDayChart(data) {
@@ -3192,14 +3420,14 @@
 
             weeksData.push({
                 period: `${startDate.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})} - ${endDate.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})}`,
-                hours: this.fmtHM(hours),
+                hours: this.formatTime(hours),
                 questions: totalQ,
                 accuracy: `${accuracy.toFixed(0)}%`
             });
         }
         
-        let tableHTML = `<table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        let tableHTML = `<table class="w-full text-sm text-left text-[var(--text-muted)]">
+            <thead class="text-xs text-[var(--text-primary)] uppercase bg-[var(--bg)]">
                 <tr>
                     <th scope="col" class="px-6 py-3">Período</th>
                     <th scope="col" class="px-6 py-3">Horas</th>
@@ -3209,8 +3437,8 @@
             </thead>
             <tbody>`;
         weeksData.forEach(w => {
-            tableHTML += `<tr class="bg-white border-b">
-                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${w.period}</td>
+            tableHTML += `<tr class="border-b border-[var(--border-color)]">
+                <td class="px-6 py-4 font-medium text-[var(--text-secondary)] whitespace-nowrap">${w.period}</td>
                 <td class="px-6 py-4">${w.hours}</td>
                 <td class="px-6 py-4">${w.questions}</td>
                 <td class="px-6 py-4">${w.accuracy}</td>
@@ -3226,23 +3454,27 @@
             return acc;
         }, {});
         const labels = Object.keys(map);
-        const values = labels.map(l => map[l] / 3600);
+        const values = Object.values(map);
         const ch = this.state.charts.activityDistribution;
         ch.data.labels = labels;
         ch.data.datasets = [{
             label: 'Horas por Atividade',
             data: values,
             backgroundColor: ['#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA'],
-            borderColor: '#fff',
+            borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
             borderWidth: 2
         }];
+        ch.options.plugins.tooltip.callbacks.label = (context) => {
+            const label = context.chart.data.labels[context.dataIndex];
+            const value = context.chart.data.datasets[0].data[context.dataIndex];
+            return `${label}: ${this.formatTime(value)}`;
+        };
         ch.update();
       },
 
       updateFlowVsPerformanceChart(data) {
-        // ALTERAÇÃO: Lógica para agrupar dados por flow e calcular a média
         const ch = this.state.charts.flowVsPerformance;
-        const perfByFlow = {}; // { '1': { sum: 0, cnt: 0 }, '2': ..., etc. }
+        const perfByFlow = {}; 
 
         data.filter(s => s.flowScore && typeof s.accuracy === 'number').forEach(s => {
             const score = s.flowScore;
@@ -3270,6 +3502,119 @@
         ch.update();
       },
 
+      updateMoodCountChart(data) {
+        const ch = this.state.charts.moodCount;
+        const counts = { bom: 0, medio: 0, ruim: 0, 'N/A': 0 };
+        data.forEach(s => {
+            if (s.mood) counts[s.mood]++;
+            else counts['N/A']++;
+        });
+
+        const total = data.length;
+        const labelsWithPercentages = {
+            'Bom': `Bom (${total > 0 ? (counts.bom / total * 100).toFixed(0) : 0}%)`,
+            'Médio': `Médio (${total > 0 ? (counts.medio / total * 100).toFixed(0) : 0}%)`,
+            'Ruim': `Ruim (${total > 0 ? (counts.ruim / total * 100).toFixed(0) : 0}%)`,
+            'N/A': `N/A (${total > 0 ? (counts['N/A'] / total * 100).toFixed(0) : 0}%)`
+        };
+
+        ch.data.labels = [labelsWithPercentages.Bom, labelsWithPercentages.Médio, labelsWithPercentages.Ruim, labelsWithPercentages['N/A']];
+        ch.data.datasets = [{
+            data: [counts.bom, counts.medio, counts.ruim, counts['N/A']],
+            backgroundColor: ['#90EE90', '#FFD700', '#F08080', '#D3D3D3'],
+            borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
+            borderWidth: 2
+        }];
+         ch.options.plugins.tooltip.callbacks.label = (context) => {
+            const label = context.label.split(' (')[0];
+            const value = context.raw;
+            const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+            return `${label}: ${value} sessões (${percentage}%)`;
+        };
+        ch.update();
+      },
+
+      updateFlowCountChart(data) {
+        const ch = this.state.charts.flowCount;
+        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 'N/A': 0};
+        const total = data.filter(s => s.sessionType === 'focada').length;
+
+        data.forEach(s => {
+            if (s.flowScore) counts[s.flowScore]++;
+            else counts['N/A']++;
+        });
+        
+        const labelsWithPercentages = [1,2,3,4,5,'N/A'].map(level => {
+            const count = counts[level];
+            const percentage = total > 0 ? (count / total * 100).toFixed(0) : 0;
+            return `Flow ${level} (${percentage}%)`;
+        });
+
+        ch.data.labels = labelsWithPercentages;
+        ch.data.datasets = [{
+            data: [counts[1], counts[2], counts[3], counts[4], counts[5], counts['N/A']],
+            backgroundColor: ['#ffc09f', '#ffc58a', '#ffee93', '#d9f9a5', '#adf7b6', '#D3D3D3'],
+            borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
+            borderWidth: 2
+        }];
+        ch.options.plugins.tooltip.callbacks.label = (context) => {
+            const label = context.label.split(' (')[0];
+            const value = context.raw;
+            const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+            return `${label}: ${value} sessões (${percentage}%)`;
+        };
+        ch.update();
+      },
+      
+      updateFocusPercentageChart(data) {
+          const ch = this.state.charts.focusPercentage;
+          const totalDuration = data.reduce((sum, s) => sum + (s.duration || 0), 0);
+          const totalPause = data.reduce((sum, s) => sum + (s.pauseDuration || 0), 0);
+          const focusTime = totalDuration - totalPause;
+
+          if (totalDuration > 0) {
+              ch.data.labels = [`Foco (${this.formatTime(focusTime)})`, `Pausa (${this.formatTime(totalPause)})`];
+              ch.data.datasets = [{
+                  data: [focusTime, totalPause],
+                  backgroundColor: ['#81B29A', '#E07A5F'],
+                  borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
+                  borderWidth: 2
+              }];
+          } else {
+              ch.data.labels = ['Sem dados'];
+              ch.data.datasets = [{
+                  data: [1],
+                  backgroundColor: ['#9ca3af'],
+                  borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
+                  borderWidth: 2
+              }];
+          }
+          ch.update();
+      },
+
+      updatePerformanceByActivityChart(data) {
+        const ch = this.state.charts.performanceByActivity;
+        const perf = {};
+
+        const activitiesWithQuestions = data.filter(s => typeof s.accuracy === 'number');
+        activitiesWithQuestions.forEach(s => {
+            if(!perf[s.activity]) perf[s.activity] = { sum: 0, count: 0 };
+            perf[s.activity].sum += s.accuracy;
+            perf[s.activity].count++;
+        });
+
+        const labels = Object.keys(perf);
+        const values = labels.map(activity => perf[activity].sum / perf[activity].count);
+        
+        ch.data.labels = labels;
+        ch.data.datasets = [{
+            label: 'Desempenho Médio',
+            data: values,
+            backgroundColor: '#89B0AE',
+        }];
+        ch.update();
+      },
+
       generateInsights(data, allData) {
         const container = document.getElementById('insights-container');
         container.innerHTML = '';
@@ -3279,7 +3624,7 @@
             const hoursBySubject = data.reduce((acc, i) => { acc[i.subject] = (acc[i.subject] || 0) + i.duration; return acc; }, {});
             if(Object.keys(hoursBySubject).length > 0) {
                 const [topSubject, topHours] = Object.entries(hoursBySubject).sort(([,a],[,b]) => b-a)[0];
-                insights.push({title: 'Foco Principal', text: `Sua disciplina mais estudada foi <strong>${topSubject}</strong> com ${this.fmtHM(topHours)}.`});
+                insights.push({title: 'Foco Principal', text: `Sua disciplina mais estudada foi <strong>${topSubject}</strong> com ${this.formatTime(topHours)}.`});
             }
 
             const hoursByDay = [0,0,0,0,0,0,0];
@@ -3338,8 +3683,8 @@
             container.innerHTML = `<p class="col-span-full text-center text-gray-500">Registre mais sessões para receber insights detalhados.</p>`;
         } else {
             insights.sort(() => 0.5 - Math.random());
-            container.innerHTML = insights.slice(0,3).map(i => `<div class="border-l-4 border-[color:var(--c2)] pl-3 py-1 bg-green-50 rounded-r-md">
-                <h4 class="font-semibold text-gray-800">${i.title}</h4>
+            container.innerHTML = insights.slice(0,3).map(i => `<div class="border-l-4 border-[color:var(--c2)] pl-3 py-1 bg-[var(--c2)]/10 rounded-r-md">
+                <h4 class="font-semibold text-[var(--text-secondary)]">${i.title}</h4>
                 <p>${i.text}</p>
             </div>`).join('');
         }
@@ -3348,8 +3693,8 @@
       renderDetailedLog(data, searchTerm = '') {
         const container = document.getElementById('detailed-log-table-container');
         container.innerHTML = `
-            <table class="w-full text-left text-gray-600">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+            <table class="w-full text-left text-[var(--text-muted)]">
+                <thead class="text-xs text-[var(--text-primary)] uppercase bg-[var(--bg)] sticky top-0">
                     <tr>
                         <th class="px-4 py-3">Data</th>
                         <th class="px-4 py-3">Disciplina/Assunto</th>
@@ -3385,12 +3730,12 @@
         const fragment = document.createDocumentFragment();
         filteredData.sort((a, b) => b.id - a.id).forEach(s => {
             const row = document.createElement('tr');
-            row.className = 'bg-white border-b hover:bg-gray-50 text-sm';
-            const subtopicText = s.subtopic ? `<br><span class="text-xs text-gray-500">${s.subtopic}</span>` : '';
+            row.className = 'border-b border-[var(--border-color)] hover:bg-[var(--bg)] text-sm';
+            const subtopicText = s.subtopic ? `<br><span class="text-xs text-[var(--text-muted)]">${s.subtopic}</span>` : '';
             row.innerHTML = `
                 <td class="px-4 py-3">${new Date(s.date).toLocaleDateString('pt-BR', {timeZone:'UTC'})}</td>
                 <td class="px-4 py-3 font-semibold">${s.subject}${subtopicText}</td>
-                <td class="px-4 py-3">${this.fmtHM(s.duration)}</td>
+                <td class="px-4 py-3">${this.formatTime(s.duration)}</td>
                 <td class="px-4 py-3">${s.activity}</td>
                 <td class="px-4 py-3">${s.totalQuestions > 0 ? `${s.correctQuestions}/${s.totalQuestions}` : '-'}</td>
                 <td class="px-4 py-3">${typeof s.accuracy === 'number' ? `${(s.accuracy*100).toFixed(0)}%` : '-'}</td>
@@ -3426,9 +3771,81 @@
         y += 10;
         
         const data = this.getFilteredData();
+        const totalSec = data.reduce((s, i) => s + i.duration, 0);
 
+        addTitle('Novas estatísticas do período');
+        // Taxa de Revisão
+        const reviewTime = data.filter(s => s.activity === 'Revisão').reduce((sum, s) => sum + s.duration, 0);
+        const reviewRate = totalSec > 0 ? (reviewTime / totalSec) * 100 : 0;
+        // Eficiência das Sessões (questões/hora)
+        const questionTimeHours = data.filter(s => ['Exercícios', 'Simulado'].includes(s.activity)).reduce((sum, s) => sum + s.duration, 0) / 3600;
+        const totalQuestions = data.reduce((sum, s) => sum + (s.totalQuestions || 0), 0);
+        const efficiency = questionTimeHours > 0 ? (totalQuestions / questionTimeHours) : 0;
+
+        doc.autoTable({
+            ...tableOptions,
+            startY: y,
+            head: [['Estatística', 'Valor']],
+            body: [
+                ['Taxa de Revisão', `${reviewRate.toFixed(1)}% do tempo total`],
+                ['Eficiência (Questões)', `${efficiency.toFixed(1)} questões por hora`],
+            ]
+        });
+        y = doc.lastAutoTable.finalY + 25;
+
+        // Ranking Pessoal de Disciplinas
+        addTitle('Ranking pessoal de disciplinas');
+        const subjectStats = {};
+        this.state.parameters.subjects.forEach(s => subjectStats[s.name] = { time: 0, accuracy: [], totalQ: 0 });
+        data.forEach(s => {
+            subjectStats[s.subject].time += s.duration;
+            if (typeof s.accuracy === 'number') subjectStats[s.subject].accuracy.push(s.accuracy);
+            subjectStats[s.subject].totalQ += s.totalQuestions || 0;
+        });
+
+        const maxTime = Math.max(...Object.values(subjectStats).map(s => s.time));
+        const rankedSubjects = Object.entries(subjectStats)
+            .filter(([,stats]) => stats.time > 0)
+            .map(([name, stats]) => {
+                const avgAccuracy = stats.accuracy.length > 0 ? stats.accuracy.reduce((a, b) => a + b, 0) / stats.accuracy.length : 0;
+                const normalizedTime = maxTime > 0 ? (stats.time / maxTime) : 0;
+                const score = (normalizedTime * 0.4) + (avgAccuracy * 0.6); // Ponderado 40% tempo, 60% acerto
+                return { name, score, time: stats.time, accuracy: avgAccuracy, totalQ: stats.totalQ };
+            })
+            .sort((a, b) => b.score - a.score);
+
+        doc.autoTable({
+            ...tableOptions,
+            startY: y,
+            head: [['#', 'Disciplina', 'Pontuação', 'Tempo', '% Acertos', 'Questões']],
+            body: rankedSubjects.map((s, i) => [
+                i + 1,
+                s.name,
+                s.score.toFixed(2),
+                this.formatTime(s.time),
+                `${(s.accuracy * 100).toFixed(0)}%`,
+                s.totalQ
+            ])
+        });
+        y = doc.lastAutoTable.finalY + 25;
+
+        // Sessões por Humor e Flow
+        if (y > doc.internal.pageSize.getHeight() - 150) { doc.addPage(); y = margin; }
+        const moodCounts = data.reduce((acc, s) => { acc[s.mood || 'N/A'] = (acc[s.mood || 'N/A'] || 0) + 1; return acc; }, {});
+        const flowCounts = data.reduce((acc, s) => { acc[s.flowScore || 'N/A'] = (acc[s.flowScore || 'N/A'] || 0) + 1; return acc; }, {});
+        
+        addTitle('Sessões por humor');
+        doc.autoTable({ ...tableOptions, startY: y, head: [['Humor', 'Nº de Sessões']], body: Object.entries(moodCounts) });
+        y = doc.lastAutoTable.finalY + 25;
+
+        addTitle('Sessões por flow');
+        doc.autoTable({ ...tableOptions, startY: y, head: [['Nível de Flow', 'Nº de Sessões']], body: Object.entries(flowCounts).sort() });
+        y = doc.lastAutoTable.finalY + 25;
+        
+        doc.addPage();
+        y = margin;
+        
         addTitle('Indicadores chave do período');
-        const totalSec = data.reduce((s,i)=>s+i.duration,0);
         const sessionsWithAcc = data.filter(i => typeof i.accuracy === 'number');
         const accAvg = sessionsWithAcc.length ? (sessionsWithAcc.reduce((s,i)=>s+i.accuracy,0)/sessionsWithAcc.length) : 0;
         const avgSessSec = data.length ? totalSec/data.length : 0;
@@ -3438,9 +3855,9 @@
             startY: y,
             head: [['Indicador', 'Valor']],
             body: [
-                ['Total de horas', this.fmtHM(totalSec)],
+                ['Total de horas', this.formatTime(totalSec)],
                 ['Média de acertos', `${(accAvg*100).toFixed(0)}%`],
-                ['Sessão média', this.fmtHM(avgSessSec)],
+                ['Sessão média', this.formatTime(avgSessSec)],
                 ['Total de questões', data.reduce((s, i) => s + (i.totalQuestions || 0), 0).toString()],
             ]
         });
@@ -3458,7 +3875,7 @@
         });
         const subjectRows = Object.entries(perSubject).map(([sub, stats]) => {
             const acc = stats.qTotal > 0 ? (stats.qCorrect / stats.qTotal * 100).toFixed(0) + '%' : 'N/A';
-            return [sub, this.fmtHM(stats.sec), stats.sessions, stats.qTotal, acc];
+            return [sub, this.formatTime(stats.sec), stats.sessions, stats.qTotal, acc];
         }).filter(row => row[2] > 0);
 
         doc.autoTable({
@@ -3483,7 +3900,7 @@
             const stats = byDate[date];
             const acc = stats.qTotal > 0 ? (stats.qCorrect / stats.qTotal * 100).toFixed(0) + '%' : 'N/A';
             const fDate = new Date(date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-            return [fDate, this.fmtHM(stats.sec), stats.qTotal, acc];
+            return [fDate, this.formatTime(stats.sec), stats.qTotal, acc];
         });
         doc.autoTable({
             ...tableOptions,
@@ -3500,3 +3917,5 @@
   </script>
 </body>
 </html>
+
+
