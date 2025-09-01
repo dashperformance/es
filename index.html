@@ -425,12 +425,6 @@
               </div>
           </div>
           
-          <div class="space-y-6">
-              <div class="card p-4 sm:p-6">
-                  <h3 id="progress-goals-title" class="text-lg font-semibold text-center text-[var(--text-secondary)]">Progresso em relação às metas semanais</h3>
-                  <div id="progress-goals-table-container" class="overflow-x-auto mt-4"></div>
-              </div>
-          </div>
 
           <div>
             <h2 class="text-xl font-bold text-[var(--text-secondary)] mb-4 flex justify-between items-center">
@@ -2758,7 +2752,6 @@
         }
 
         const metrics = this.precomputeMetrics(data, allData);
-
         document.getElementById('total-hours').textContent = this.formatTime(metrics.totalSec);
         document.getElementById('avg-accuracy').textContent = `${(metrics.accAvg*100).toFixed(0)}%`;
         document.getElementById('avg-session-duration').textContent = this.formatTime(metrics.avgSessSec);
@@ -2767,14 +2760,13 @@
         this.updatePersonalBests(allData);
         this.updateWeeklyGoals(allData);
         this.updateStreaksAndHeatmap(allData);
-        this.updateProgressTable(allData);
+        // this.updateProgressTable(allData); // Linha removida/comentada
         this.updateCharts(data, allData);
         this.updateStrengthsWeaknessesDetails(allData);
         this.generateInsights(data, allData);
         this.renderDetailedLog(data);
         this.renderBackupList();
-      },
-      
+      },      
       precomputeMetrics(data, allData) {
         const totalSec = data.reduce((s,i)=>s+i.duration,0);
         
@@ -3399,9 +3391,10 @@
         ch.data.datasets = [{
             label: '% de Acertos',
             data: values,
-            backgroundColor: ['#ef4444', '#f59e0b', '#10b981']
+            backgroundColor: ['#E07A5F', '#F2CC8F', '#81B29A'] // <-- CORES ATUALIZADAS
         }];
         ch.update();
+       
       },
       updateMonthlyStudyEvolutionChart(data) {
         const map = data.reduce((acc, i) => {
@@ -3552,11 +3545,10 @@
             if (s.mood) counts[s.mood]++;
             else counts['N/A']++;
         });
-
         const totalWithMood = counts.bom + counts.medio + counts.ruim;
-        if (totalWithMood === 0 && counts['N/A'] > 0) { // Se só tiver N/A
+        if (totalWithMood === 0 && counts['N/A'] > 0) { 
             ch.data.labels = ['N/A (100%)'];
-            ch.data.datasets = [{ data: [counts['N/A']], backgroundColor: ['#d3d3d3'] }];
+            ch.data.datasets = [{ data: [counts['N/A']], backgroundColor: ['#a9a9a9'] }]; // Cor cinza para N/A
         } else {
             const labelsWithPercentages = {
                 'Bom': `Bom (${totalWithMood > 0 ? (counts.bom / totalWithMood * 100).toFixed(0) : 0}%)`,
@@ -3566,13 +3558,12 @@
              ch.data.labels = [labelsWithPercentages.Bom, labelsWithPercentages.Médio, labelsWithPercentages.Ruim];
              ch.data.datasets = [{
                 data: [counts.bom, counts.medio, counts.ruim],
-                backgroundColor: ['#b2f2bb', '#fffacd', '#ffb6c1'], // CORES MAIS CLARAS
+                backgroundColor: ['#81B29A', '#F2CC8F', '#E07A5F'], // <-- CORES ATUALIZADAS E NA ORDEM CORRETA
                 borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
                 borderWidth: 2
             }];
         }
-        
-         ch.options.plugins.tooltip.callbacks.label = (context) => {
+        ch.options.plugins.tooltip.callbacks.label = (context) => {
             const label = context.label.split(' (')[0];
             const value = context.raw;
             const percentage = totalWithMood > 0 ? (value / totalWithMood * 100).toFixed(1) : 0;
@@ -3581,7 +3572,7 @@
         ch.update();
       },
 
-      updateFlowCountChart(data) {
+     updateFlowCountChart(data) {
         const ch = this.state.charts.flowCount;
         const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
         const sessionsWithFlow = data.filter(s => s.sessionType === 'focada' && s.flowScore);
@@ -3590,7 +3581,7 @@
         sessionsWithFlow.forEach(s => {
             if (s.flowScore) counts[s.flowScore]++;
         });
-        
+
         const labelsWithPercentages = [1,2,3,4,5].map(level => {
             const count = counts[level];
             const percentage = total > 0 ? (count / total * 100).toFixed(0) : 0;
@@ -3600,7 +3591,8 @@
         ch.data.labels = labelsWithPercentages;
         ch.data.datasets = [{
             data: [counts[1], counts[2], counts[3], counts[4], counts[5]],
-            backgroundColor: ['#ffc09f', '#ffc58a', '#ffee93', '#d9f9a5', '#adf7b6'],
+            // Paleta de cores que representa a progressão de foco
+            backgroundColor: ['#E07A5F', '#F2CC8F', '#BEE3DB', '#81B29A', '#3D405B'], // <-- CORES ATUALIZADAS
             borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff',
             borderWidth: 2
         }];
