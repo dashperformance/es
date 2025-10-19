@@ -117,9 +117,10 @@ modalSection.classList.toggle('hidden', !needed); ['modal-questions-total','moda
 bindPomodoro(){ document.getElementById('pomodoro-start-pause').addEventListener('click', ()=> this.togglePomodoro()); document.getElementById('pomodoro-reset').addEventListener('click', ()=> this.resetPomodoro(true)); document.getElementById('pomodoro-skip').addEventListener('click', ()=> this.skipPomodoro()); document.getElementById('pomodoro-subject').addEventListener('change', () => this.populateSubtopicDropdown('pomodoro-subject', 'pomodoro-subtopic')); ['pomodoro-work-duration','pomodoro-short-break-duration','pomodoro-long-break-duration', 'pomodoro-alert-time', 'pomodoro-sound-select'].forEach(id=>{ const el = document.getElementById(id); if (el) el.addEventListener('change', ()=> this.savePomodoroSettings()); }); document.getElementById('pomodoro-auto-start').addEventListener('change', ()=> this.savePomodoroSettings()); }, updateAllSubjectDropdowns(){ const subjects = this.state.parameters.subjects.map(s => s.name); const opts = subjects.map(d=> `<option value="${d}">${d}</option>`).join(''); document.getElementById('subject').innerHTML = opts; this.populateSubtopicDropdown('subject', 'subtopic');
 document.getElementById('pomodoro-subject').innerHTML = opts; this.populateSubtopicDropdown('pomodoro-subject', 'pomodoro-subtopic');
 document.getElementById('stopwatch-subject').innerHTML = opts; this.populateSubtopicDropdown('stopwatch-subject', 'stopwatch-subtopic');
-document.getElementById('filter-subject').innerHTML = '<option value="all">Todas as disciplinas</option>'+opts; }, populateSubtopicDropdown(subjectDropdownId, subtopicDropdownId) { const subjectName = document.getElementById(subjectDropdownId).value; const subtopicDropdown = document.getElementById(subtopicDropdownId); const subject = this.state.parameters.subjects.find(s => s.name === subjectName); subtopicDropdown.innerHTML = '<option value="">Nenhum</option>'; if(subject && subject.subtopics && subject.subtopics.length > 0) { const opts = subject.subtopics.map(sub => `<option value="${sub}">${sub}</option>`).join(''); subtopicDropdown.innerHTML += opts; subtopicDropdown.disabled = false; } else { subtopicDropdown.disabled = true; } }, updateActivityDropdowns(){ const a = this.state.parameters.tiposDeAtividade; const opts = a.map(d=> `<option value="${d}">${d}</option>`).join(''); document.getElementById('activity-type').innerHTML = opts; document.getElementById('modal-activity-type').innerHTML = opts; document.getElementById('filter-activity').innerHTML = '<option value="all">Todos os tipos</option>'+opts; }, bindSubjectManagement() { document.getElementById('add-subject-btn').addEventListener('click', ()=>{ const input = document.getElementById('new-subject-input'); const name = input.value.trim(); const subjects = this.state.parameters.subjects; if(name && !subjects.find(s => s.name === name)){ subjects.push({ name: name, subtopics: [] }); this.ensureSubjectColors(); this.saveData(true, `Matéria "${name}" adicionada.`); this.renderSubjectsManagement(); this.updateAllSubjectDropdowns(); input.value=''; }else{ this.toast('Matéria já existe ou é inválida.', false); } });
+document.getElementById('filter-subject').innerHTML = '<option value="all">Todas as disciplinas</option>'+opts; }, populateSubtopicDropdown(subjectDropdownId, subtopicDropdownId) { const subjectName = document.getElementById(subjectDropdownId).value; const subtopicDropdown = document.getElementById(subtopicDropdownId); const subject = this.state.parameters.subjects.find(s => s.name === subjectName); subtopicDropdown.innerHTML = '<option value="">Nenhum</option>'; if(subject && subject.subtopics && subject.subtopics.length > 0) { const opts = subject.subtopics.map(sub => { const name = typeof sub === 'string' ? sub : sub.name; return `<option value="${name}">${name}</option>`; }).join(''); subtopicDropdown.innerHTML += opts; subtopicDropdown.disabled = false; } else { subtopicDropdown.disabled = true; } }, updateActivityDropdowns(){ const a = this.state.parameters.tiposDeAtividade; const opts = a.map(d=> `<option value="${d}">${d}</option>`).join(''); document.getElementById('activity-type').innerHTML = opts; document.getElementById('modal-activity-type').innerHTML = opts; document.getElementById('filter-activity').innerHTML = '<option value="all">Todos os tipos</option>'+opts; }, bindSubjectManagement() { document.getElementById('add-subject-btn').addEventListener('click', ()=>{ const input = document.getElementById('new-subject-input'); const name = input.value.trim(); const subjects = this.state.parameters.subjects; if(name && !subjects.find(s => s.name === name)){ subjects.push({ name: name, subtopics: [] }); this.ensureSubjectColors(); this.saveData(true, `Matéria "${name}" adicionada.`); this.renderSubjectsManagement(); this.updateAllSubjectDropdowns(); input.value=''; }else{ this.toast('Matéria já existe ou é inválida.', false); } });
 const container = document.getElementById('subjects-management-container'); container.addEventListener('click', (e) => { const subjectCard = e.target.closest('[data-subject-name]'); if (!subjectCard) return; const subjectName = subjectCard.dataset.subjectName;
-if (e.target.classList.contains('toggle-subtopics-btn')) { const subtopicsContainer = subjectCard.querySelector('.subtopics-container'); if (subtopicsContainer.style.maxHeight) { subtopicsContainer.style.maxHeight = null; } else { subtopicsContainer.style.maxHeight = subtopicsContainer.scrollHeight + "px"; } }
+const shouldToggle = e.target.classList.contains('toggle-subtopics-btn') || (e.target.closest('.subject-header') && !e.target.closest('button, input, .drag-handle'));
+if (shouldToggle) { const subtopicsContainer = subjectCard.querySelector('.subtopics-container'); if (subtopicsContainer.style.maxHeight) { subtopicsContainer.style.maxHeight = null; } else { subtopicsContainer.style.maxHeight = subtopicsContainer.scrollHeight + "px"; } }
 if (e.target.classList.contains('remove-subject-btn')) { if(confirm(`Tem certeza que deseja remover a disciplina "${subjectName}" e TODOS os seus dados e assuntos associados?`)){ this.state.studyData = this.state.studyData.filter(d => d.subject !== subjectName); this.state.parameters.subjects = this.state.parameters.subjects.filter(s => s.name !== subjectName); delete this.state.parameters.subjectColors[subjectName]; this.saveData(true, `"${subjectName}" removida.`); this.renderSubjectsManagement(); this.updateAllSubjectDropdowns(); if (this.state.currentView === 'dashboard') this.updateDashboard(); } }
 if (e.target.classList.contains('add-subtopic-btn')) { const input = container.querySelector(`input[data-subtopic-input-for="${subjectName}"]`); const subtopicName = input.value.trim(); const subject = this.state.parameters.subjects.find(s => s.name === subjectName); if (subtopicName && subject && !subject.subtopics.includes(subtopicName)) { subject.subtopics.push(subtopicName); subject.subtopics.sort(); this.saveData(true, `Assunto "${subtopicName}" adicionado.`); this.renderSubjectsManagement(); this.updateAllSubjectDropdowns(); input.value = ''; } else { this.toast('Assunto já existe ou é inválido.', false); } } if (e.target.classList.contains('remove-subtopic-btn')) { const subtopicName = e.target.dataset.subtopicName; const subject = this.state.parameters.subjects.find(s => s.name === subjectName); if (subject) { subject.subtopics = subject.subtopics.filter(st => st !== subtopicName); this.saveData(true, 'Assunto removido.'); this.renderSubjectsManagement(); this.updateAllSubjectDropdowns(); } } }); container.addEventListener('input', (e) => { if (e.target.classList.contains('subject-color-input')) { const subject = e.target.dataset.subject; const color = e.target.value; this.state.parameters.subjectColors[subject] = color; this.saveData(); this.updateCharts(this.getFilteredData()); } });
 let draggedItem = null;
@@ -136,70 +137,11 @@ const itemType = draggedItem.dataset.itemType; if (itemType === 'subject') { con
 this.renderSubjectsManagement(); this.updateAllSubjectDropdowns(); });
 const weekStartSelect = document.getElementById('week-start-day'); weekStartSelect.value = this.state.parameters.weekStartDay; weekStartSelect.addEventListener('change', (e) => { this.state.parameters.weekStartDay = parseInt(e.target.value, 10); this.saveData(true, 'Início da semana atualizado!'); this.updateDashboard(); });
 document.getElementById('reset-all-data-btn').addEventListener('click', ()=>{ if(confirm('ATENÇÃO: Isso apagará TODOS os seus dados de estudo da NUVEM permanentemente. Deseja continuar?')){ const conf = prompt("Para confirmar, digite 'EXCLUIR' em maiúsculas."); if(conf==='EXCLUIR'){ if(this.state.userId) { this.state.db.ref('users/' + this.state.userId).remove() .then(() => { localStorage.removeItem('studyDashBackupsV30'); localStorage.removeItem('darkMode'); location.reload(); }) .catch(e => this.toast('Erro ao excluir dados da nuvem.', false)); } }else{ this.toast('Ação cancelada.', false); } } }); },
-renderSubjectsManagement(){
-    const container = document.getElementById('subjects-management-container');
-    const openSubjects = new Set();
-    container.querySelectorAll('.subtopics-container').forEach(cont => {
-        if (cont.style.maxHeight && cont.style.maxHeight !== '0px') {
-            const subjectCard = cont.closest('[data-subject-name]');
-            if (subjectCard) {
-                openSubjects.add(subjectCard.dataset.subjectName);
-            }
-        }
-    });
-
-    container.innerHTML='';
-    this.state.parameters.subjects.forEach(subject => {
-        const color = this.state.parameters.subjectColors[subject.name] || '#cccccc';
-        const subjectEl = document.createElement('div');
-        subjectEl.className = 'bg-[var(--bg)] p-3 rounded-md border border-[var(--border-color)]';
-        subjectEl.dataset.subjectName = subject.name;
-        subjectEl.dataset.itemType = 'subject';
-        subjectEl.draggable = true;
-        subjectEl.innerHTML = `
-            <div class="flex items-center justify-between">
-                <span class="flex items-center gap-3 font-semibold">
-                    <i class="fa-solid fa-grip-vertical text-[var(--text-muted)] drag-handle"></i>
-                    <input type="color" value="${color}" data-subject="${subject.name}" class="subject-color-input w-6 h-6 p-0 border-none rounded cursor-pointer">
-                    ${subject.name}
-                </span>
-                <div>
-                    <button class="toggle-subtopics-btn btn btn-secondary text-xs py-1 px-2 mr-2">Assuntos</button>
-                    <button data-subject="${subject.name}" class="remove-subject-btn btn btn-danger text-xs py-1 px-2">Remover</button>
-                </div>
-            </div>
-            <div class="subtopics-container">
-                <div class="pl-8 mt-3 pt-3 border-t">
-                    <div class="flex items-center gap-2">
-                        <input type="text" data-subtopic-input-for="${subject.name}" placeholder="Novo assunto" class="flex-grow text-sm shadow-sm">
-                        <button class="add-subtopic-btn btn btn-secondary text-xs py-1 px-2">Adicionar</button>
-                    </div>
-                    <ul class="mt-2 space-y-1 text-sm text-[var(--text-muted)] subtopics-list" data-parent-subject="${subject.name}">
-                        ${subject.subtopics.map(st => `
-                            <li class="flex justify-between items-center p-1 rounded-md hover:bg-[var(--border-color)]" draggable="true" data-item-type="subtopic" data-subtopic-name="${st}">
-                                <span class="flex items-center gap-2">
-                                    <i class="fa-solid fa-grip-vertical text-[var(--text-muted)] drag-handle"></i>
-                                    ${st}
-                                </span>
-                                <button data-subtopic-name="${st}" class="remove-subtopic-btn text-red-500 hover:text-red-700 text-xs font-bold p-1">&times;</button>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            </div>
-        `;
-        container.appendChild(subjectEl);
-
-        if (openSubjects.has(subject.name)) {
-            const subtopicsContainer = subjectEl.querySelector('.subtopics-container');
-            setTimeout(() => {
-                if (subtopicsContainer) {
-                    subtopicsContainer.style.maxHeight = subtopicsContainer.scrollHeight + "px";
-                }
-            }, 0);
-        }
-    });
-},
+renderSubjectsManagement(){ const container = document.getElementById('subjects-management-container'); const openSubjects = new Set(); container.querySelectorAll('.subtopics-container').forEach(cont => { if (cont.style.maxHeight && cont.style.maxHeight !== '0px') { const subjectCard = cont.closest('[data-subject-name]'); if (subjectCard) { openSubjects.add(subjectCard.dataset.subjectName); } } });
+container.innerHTML=''; this.state.parameters.subjects.forEach(subject => { const color = this.state.parameters.subjectColors[subject.name] || '#cccccc'; const subjectEl = document.createElement('div'); subjectEl.className = 'bg-[var(--bg)] p-3 rounded-md border border-[var(--border-color)]'; subjectEl.dataset.subjectName = subject.name; subjectEl.dataset.itemType = 'subject'; subjectEl.draggable = true;
+const subtopicsHTML = subject.subtopics.map(st => { const name = typeof st === 'string' ? st : (st.name || ''); return ` <li class="flex justify-between items-center p-1 rounded-md hover:bg-[var(--border-color)]" draggable="true" data-item-type="subtopic" data-subtopic-name="${name}"> <span class="flex items-center gap-2"> <i class="fa-solid fa-grip-vertical text-[var(--text-muted)] drag-handle"></i> ${name} </span> <button data-subtopic-name="${name}" class="remove-subtopic-btn text-red-500 hover:text-red-700 text-xs font-bold p-1">&times;</button> </li> `; }).join('');
+subjectEl.innerHTML = ` <div class="flex items-center justify-between subject-header cursor-pointer"> <span class="flex items-center gap-3 font-semibold"> <i class="fa-solid fa-grip-vertical text-[var(--text-muted)] drag-handle"></i> <input type="color" value="${color}" data-subject="${subject.name}" class="subject-color-input w-6 h-6 p-0 border-none rounded cursor-pointer"> ${subject.name} </span> <div> <button class="toggle-subtopics-btn btn btn-secondary text-xs py-1 px-2 mr-2">Assuntos</button> <button data-subject="${subject.name}" class="remove-subject-btn btn btn-danger text-xs py-1 px-2">Remover</button> </div> </div> <div class="subtopics-container"> <div class="pl-8 mt-3 pt-3 border-t"> <div class="flex items-center gap-2"> <input type="text" data-subtopic-input-for="${subject.name}" placeholder="Novo assunto" class="flex-grow text-sm shadow-sm"> <button class="add-subtopic-btn btn btn-secondary text-xs py-1 px-2">Adicionar</button> </div> <ul class="mt-2 space-y-1 text-sm text-[var(--text-muted)] subtopics-list" data-parent-subject="${subject.name}"> ${subtopicsHTML} </ul> </div> </div> `; container.appendChild(subjectEl);
+if (openSubjects.has(subject.name)) { const subtopicsContainer = subjectEl.querySelector('.subtopics-container'); setTimeout(() => { if (subtopicsContainer) { subtopicsContainer.style.maxHeight = subtopicsContainer.scrollHeight + "px"; } }, 0); } }); },
 async initAudio() { if (this.state.audioInitialized || typeof Tone === 'undefined') return; try { await Tone.start(); this.state.synth = new Tone.Synth().toDestination(); this.state.audioInitialized = true; this.state.backgroundAudio.volume = new Tone.Volume(-20).toDestination(); console.log('Audio context started.'); } catch(e) { console.error("Could not start audio context:", e); } },
 playNotificationSound(timerType = 'pomodoro') { if (!this.state.audioInitialized || !this.state.synth) return; try { const soundSettings = timerType === 'pomodoro' ? this.state.pomodoro.settings : this.state.stopwatch.settings; const selectedSound = soundSettings.sound || 'notification'; const sequence = this.state.soundOptions[selectedSound]; const now = Tone.now(); sequence.forEach((note, i) => { this.state.synth.triggerAttackRelease(note, "8n", now + i * 0.2); }); } catch (e) { console.error("Error playing sound:", e); } },
 resetPomodoro(resetCycles=false){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning=false; p.isSessionActive=false; p.mode='work'; p.timeLeft = (p.settings.work*60); p.totalPauseTime = 0; p.pauseStartTime = null; p.currentTaskId = null; if(resetCycles){ p.cyclesCompleted = 0; p.pendingLogDuration = 0; } this.renderPomodoro(); this.renderTasks(); if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } }, savePomodoroSettings(){ const p = this.state.pomodoro; p.settings.work = parseInt(document.getElementById('pomodoro-work-duration').value, 10)||25; p.settings.shortBreak = parseInt(document.getElementById('pomodoro-short-break-duration').value, 10)||5; p.settings.longBreak = parseInt(document.getElementById('pomodoro-long-break-duration').value, 10)||15; p.settings.alertTime = parseInt(document.getElementById('pomodoro-alert-time').value, 10) || null; p.settings.sound = document.getElementById('pomodoro-sound-select').value; p.settings.autoStart = document.getElementById('pomodoro-auto-start').checked; this.saveData(); if(!p.isRunning){ if(p.mode==='work') p.timeLeft=p.settings.work*60; else if(p.mode==='short') p.timeLeft=p.settings.shortBreak*60; else if(p.mode==='long') p.timeLeft=p.settings.longBreak*60; this.renderPomodoro(); } }, togglePomodoro(){ this.initAudio(); const p = this.state.pomodoro; p.isRunning = !p.isRunning;
@@ -271,7 +213,7 @@ if(this.state.youtubePlayer && typeof this.state.youtubePlayer.loadVideoById ===
 stopYouTubeVideo(){ if(this.state.youtubePlayer && typeof this.state.youtubePlayer.stopVideo === 'function'){ this.state.youtubePlayer.stopVideo(); this.state.currentMusicId = null; this.renderYouTubeMusicList(); } },
 onPlayerStateChange(event) { if (event.data === YT.PlayerState.ENDED) { this.playNextYouTubeVideo(); } },
 playNextYouTubeVideo() { const musicList = this.state.parameters.youtubeMusic; if (musicList.length === 0) return; const currentIndex = musicList.findIndex(m => m.id === this.state.currentMusicId); let nextIndex = currentIndex + 1; if (nextIndex >= musicList.length) { nextIndex = 0; } if(musicList[nextIndex]) { const nextMusic = musicList[nextIndex]; this.playYouTubeVideo(nextMusic.videoId, nextMusic.id); } },
-extractYouTubeVideoID(url) { const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?/; const match = url.match(regex); return match ? match[1] : null; },
+extractYouTubeVideoID(url) { const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?/; const match = url.match(regex); return match ? match[1] : null; },
 renderSessionHistory() { const listContainer = document.getElementById('session-history-list'); if (!listContainer) return; listContainer.innerHTML = '';
 const sortedData = [...this.state.studyData].sort((a, b) => b.id - a.id);
 if (sortedData.length === 0) { listContainer.innerHTML = '<p class="text-sm text-[var(--text-muted)]">Nenhuma sessão registrada ainda.</p>'; return; }
@@ -416,4 +358,3 @@ function onYouTubeIframeAPIReady() {
 }
 
 window.addEventListener('DOMContentLoaded', ()=> App.init()); </script></body></html>
-
