@@ -1,3 +1,4 @@
+
 <!DOCTYPE html><html lang="pt-BR"><head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Dashboard de Performance</title> <script src="https://cdn.tailwindcss.com"></script> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script> <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> <style> :root{ --c1:#3D405B; --c2:#81B29A; --c3:#F2CC8F; --c4:#E07A5F; --bg:#F7F9FC; --card-bg: #FFFFFF; --text-primary: #1f2937; --text-secondary: #3D405B; --text-muted: #6B7280; --border-color: #E5E7EB; } .dark-mode:root { --c1:#4a4e69; --c2:#6a994e; --c3:#f2cc8f; --c4:#e07a5f; --bg:#121212; --card-bg: #1e1e1e; --text-primary: #e0e0e0; --text-secondary: #f2f2f2; --text-muted: #9ca3af; --border-color: #374151; }
@@ -6,8 +7,10 @@ input, select, textarea { background-color: var(--card-bg); color: var(--text-pr
 .nav-link{ position: relative; border-bottom:2px solid transparent; transition:all .25s ease; padding-bottom: 4px; color: var(--text-muted); } .nav-link:hover, .nav-link.active { color: var(--text-primary); } .nav-link:after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 50%; background-color: var(--c2); transition: all 0.3s ease; } .nav-link:hover:after { width: 100%; left: 0; } .nav-link.active{ border-bottom-color:var(--c2); font-weight:600; } .nav-link.active:after { width: 0; }
 .chart-container{position:relative;width:100%;height:320px;max-height:420px} @media (min-width: 768px){.chart-container{height:360px}} .progress-bar{background:var(--border-color);border-radius:9999px;overflow:hidden;height:.75rem} .progress-fill{height:100%;background:var(--c2);transition:width .5s} .mood-square-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; } .mood-square{width:42px;height:42px;border-radius:.5rem;border:2px solid transparent;opacity:.7;transition:.2s; cursor: pointer;} .mood-square.selected{opacity:1;outline:2px solid var(--text-secondary);outline-offset:2px} .mood-red{background:#ef4444} .mood-yellow{background:#f59e0b} .mood-green{background:#10b981} .cycle-dot{width:10px;height:10px;border-radius:9999px;background:var(--border-color)} .cycle-dot.done{background:var(--c2)} .cycle-dot.active{background:#3b82f6} .pill{font-size:.75rem;background:var(--card-bg);color:var(--text-muted);border:1px solid var(--border-color);border-radius:9999px;padding:.375rem .75rem; transition: all 0.2s ease; cursor: pointer;} .pill:hover { background-color: var(--border-color); } .pill.active { background-color: var(--c1); color: white; font-weight: 600; } .kpi h3{color:var(--text-muted);font-size:.85rem; text-transform: uppercase; letter-spacing: 0.5px;} .kpi p{font-weight:700;font-size:1.75rem; color: var(--text-secondary);} .kpi .record-date { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); margin-top: -4px; } .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0} #session-modal-backdrop.hidden, #notification-modal-backdrop.hidden { display: none; } #session-modal-panel.hidden, #notification-modal-panel.hidden { transform: translateY(100%); opacity: 0; } .heatmap-level-0 { background-color: #37415140; } .dark-mode .heatmap-level-0 { background-color: #374151; } .heatmap-level-1 { background-color: #cce2d4; } .heatmap-level-2 { background-color: #a3cdb4; } .heatmap-level-3 { background-color: var(--c2); } .heatmap-level-4 { background-color: #5d8e76; } .performance-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background-color: var(--border-color); } .bar-correct { background-color: #10b981; } .bar-incorrect { background-color: #ef4444; } .chart-toggle-label { cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background-color 0.2s; } .chart-toggle-input:checked + .chart-toggle-label { background-color: var(--c1); color: white; } .day-tracker-dot { width: 24px; height: 24px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; background-color: var(--border-color); color: var(--text-muted); } .day-tracker-dot.done { background-color: var(--c2); color: white; } .day-tracker-dot.missed { background-color: #fee2e2; color: #b91c1c; } .dark-mode .day-tracker-dot.missed { background-color: #450a0a; color: #fecaca; } .day-tracker-dot.today { outline: 2px solid #3b82f6; outline-offset: 2px; } .flow-slider-container { position: relative; } .flow-slider-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); padding: 0 5px; } .subtopics-container { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; } .timer-pause-display { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; height: 1.5rem; /* prevent layout shift */ } .collapse-toggle-btn { transition: transform 0.3s; } .collapsible-content.hidden { display: none; } #pomodoro-timer-display, #stopwatch-display { color: var(--c1); } .dark-mode #pomodoro-timer-display, .dark-mode #stopwatch-display { color: var(--text-primary); }
 .drag-handle { cursor: move; touch-action: none; } .dragging { opacity: 0.5; background: var(--border-color); }
-.task-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--bg); transition: all 0.2s ease; } .task-item.selected { border-color: var(--c2); box-shadow: 0 0 0 2px rgba(129, 178, 154, 0.3); } .task-item .task-name { flex-grow: 1; cursor: pointer; } .task-item.completed .task-name { text-decoration: line-through; color: var(--text-muted); } .task-item-pomodoros { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; } .task-complete-btn { width: 24px; height: 24px; border-radius: 9999px; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; flex-shrink: 0; } .task-complete-btn:hover { border-color: var(--c2); } .task-item.completed .task-complete-btn { background-color: var(--c2); border-color: var(--c2); color: white; } .task-actions button { color: var(--text-muted); padding: 4px; border-radius: 4px; } .task-actions button:hover { background-color: var(--border-color); color: var(--text-primary); } .youtube-music-item.active { background-color: var(--c2) !important; color: white !important; } .youtube-music-item.active span { color: white !important; } </style></head><body class="antialiased">
-<div id="app" class="min-h-screen flex flex-col"> <header class="bg-[var(--card-bg)]/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-[var(--border-color)]"> <nav class="container mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex items-center justify-between h-16"> <div class="flex items-center gap-3"> <div class="w-8 h-8 rounded-xl bg-[color:var(--c2)] flex items-center justify-center"> <i class="fa-solid fa-chart-line text-white"></i> </div> <h1 class="text-2xl font-bold tracking-tight text-[var(--text-secondary)]">Dashboard de performance</h1> </div> <div id="main-nav" class="hidden md:flex items-center gap-6"> <a href="#" data-view="dashboard" class="nav-link text-sm">Dashboard</a> <a href="#" data-view="foco" class="nav-link text-sm">Foco e registro</a> <button id="dark-mode-toggle" class="p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"> <i class="fa-solid fa-moon"></i> </button> <button id="logout-btn" class="btn btn-secondary py-1 px-3 text-sm">Sair</button> </div> <button id="mobile-menu-button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100"> <span class="sr-only">abrir menu</span> <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/> </svg> </button> </div> <div id="mobile-menu" class="md:hidden hidden pb-3"> <a href="#" data-view="dashboard" class="block nav-link px-3 py-2 text-base">Dashboard</a> <a href="#" data-view="foco" class="block nav-link px-3 py-2 text-base">Foco e registro</a> <button id="dark-mode-toggle-mobile" class="mt-2 w-full btn btn-secondary py-2"> <i class="fa-solid fa-moon mr-2"></i>Modo Escuro </button> <button id="logout-btn-mobile" class="mt-2 w-full btn btn-secondary py-2">Sair</button> </div> </nav> </header>
+.task-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--bg); transition: all 0.2s ease; } .task-item.selected { border-color: var(--c2); box-shadow: 0 0 0 2px rgba(129, 178, 154, 0.3); } .task-item .task-name { flex-grow: 1; cursor: pointer; } .task-item.completed .task-name { text-decoration: line-through; color: var(--text-muted); } .task-item-pomodoros { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; } .task-complete-btn { width: 24px; height: 24px; border-radius: 9999px; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; flex-shrink: 0; } .task-complete-btn:hover { border-color: var(--c2); } .task-item.completed .task-complete-btn { background-color: var(--c2); border-color: var(--c2); color: white; } .task-actions button { color: var(--text-muted); padding: 4px; border-radius: 4px; } .task-actions button:hover { background-color: var(--border-color); color: var(--text-primary); } .youtube-music-item.active { background-color: var(--c2) !important; color: white !important; } .youtube-music-item.active span { color: white !important; }
+/* Estilos específicos para Lei Seca */
+.lei-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; } .artigo-square { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; aspect-ratio: 1 / 1; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); background-color: var(--bg); } .artigo-square:hover { transform: scale(1.08); box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 10; } .tooltip { position: relative; } .tooltip .tooltip-text { visibility: hidden; width: 140px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 10; bottom: 125%; left: 50%; margin-left: -70px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; font-weight: 500; } .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; } .category-content.collapsed { display: none; } </style></head><body class="antialiased">
+<div id="app" class="min-h-screen flex flex-col"> <header class="bg-[var(--card-bg)]/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-[var(--border-color)]"> <nav class="container mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex items-center justify-between h-16"> <div class="flex items-center gap-3"> <div class="w-8 h-8 rounded-xl bg-[color:var(--c2)] flex items-center justify-center"> <i class="fa-solid fa-chart-line text-white"></i> </div> <h1 class="text-2xl font-bold tracking-tight text-[var(--text-secondary)]">Dashboard de performance</h1> </div> <div id="main-nav" class="hidden md:flex items-center gap-6"> <a href="#" data-view="dashboard" class="nav-link text-sm">Dashboard</a> <a href="#" data-view="foco" class="nav-link text-sm">Foco e registro</a> <a href="#" data-view="lei-seca" class="nav-link text-sm">Lei Seca</a> <button id="dark-mode-toggle" class="p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]"> <i class="fa-solid fa-moon"></i> </button> <button id="logout-btn" class="btn btn-secondary py-1 px-3 text-sm">Sair</button> </div> <button id="mobile-menu-button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100"> <span class="sr-only">abrir menu</span> <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/> </svg> </button> </div> <div id="mobile-menu" class="md:hidden hidden pb-3"> <a href="#" data-view="dashboard" class="block nav-link px-3 py-2 text-base">Dashboard</a> <a href="#" data-view="foco" class="block nav-link px-3 py-2 text-base">Foco e registro</a> <a href="#" data-view="lei-seca" class="block nav-link px-3 py-2 text-base">Lei Seca</a> <button id="dark-mode-toggle-mobile" class="mt-2 w-full btn btn-secondary py-2"> <i class="fa-solid fa-moon mr-2"></i>Modo Escuro </button> <button id="logout-btn-mobile" class="mt-2 w-full btn btn-secondary py-2">Sair</button> </div> </nav> </header>
 <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8"> <div id="auth-view" class="hidden"> <div class="max-w-md mx-auto mt-10"> <div class="card p-8"> <form id="login-form"> <h2 class="text-2xl font-bold text-center mb-6">Entrar</h2> <div class="space-y-4"> <div> <label for="login-email" class="block text-sm font-medium text-[var(--text-muted)]">Email</label> <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm"> </div> <div> <label for="login-password" class="block text-sm font-medium text-[var(--text-muted)]">Senha</label> <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm"> </div> <div class="flex items-center justify-end"> <div class="text-sm"> <a href="#" id="forgot-password-link" class="font-medium text-[color:var(--c2)] hover:underline">Esqueceu a senha?</a> </div> </div> <p id="login-error" class="text-sm text-red-600 h-5"></p> <div> <button type="submit" class="w-full btn btn-primary py-2">Entrar</button> </div> </div> <p class="mt-4 text-center text-sm"> Não tem uma conta? <a href="#" id="show-register" class="font-medium text-[color:var(--c2)] hover:underline">Cadastre-se</a> </p> </form>
 <form id="register-form" class="hidden"> <h2 class="text-2xl font-bold text-center mb-6">Criar Conta</h2> <div class="space-y-4"> <div> <label for="register-email" class="block text-sm font-medium text-[var(--text-muted)]">Email</label> <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm"> </div> <div> <label for="register-password" class="block text-sm font-medium text-[var(--text-muted)]">Senha (mínimo 6 caracteres)</label> <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 shadow-sm placeholder-gray-400 sm:text-sm"> </div> <p id="register-error" class="text-sm text-red-600 h-5"></p> <div> <button type="submit" class="w-full btn btn-primary py-2">Criar conta</button> </div> </div> <p class="mt-4 text-center text-sm"> Já tem uma conta? <a href="#" id="show-login" class="font-medium text-[color:var(--c2)] hover:underline">Entrar</a> </p> </form> </div> </div> </div>
 <div id="loading-view" class="text-center py-20"> <p class="text-lg font-semibold text-gray-600">Conectando...</p> </div>
@@ -45,18 +48,484 @@ input, select, textarea { background-color: var(--card-bg); color: var(--text-pr
 <div class="flex justify-end gap-3 pt-4"> <button type="button" id="cancel-edit-btn" class="btn btn-secondary py-2 px-4 hidden">Cancelar edição</button> <button type="submit" class="btn btn-primary py-2 px-4">Salvar sessão</button> </div> </form> </div>
 <div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Histórico de sessões recentes</h3> <div id="session-history-list" class="mt-4 space-y-3 max-h-96 overflow-y-auto"> </div> </div> <div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Gerenciar matérias e assuntos</h3> <div class="mt-4 flex items-center gap-3"> <input type="text" id="new-subject-input" placeholder="Nome da nova matéria" class="flex-grow shadow-sm"> <button id="add-subject-btn" class="btn btn-primary py-2 px-3">Adicionar matéria</button> </div> <div id="subjects-management-container" class="mt-4 space-y-4"> </div> </div>
 
-<div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Configurações gerais</h3> <div class="mt-6 pt-6 border-t border-[var(--border-color)] space-y-4"> <div> <label for="week-start-day" class="block text-sm font-medium text-[var(--text-muted)]">Início da semana</label> <select id="week-start-day" class="mt-1 block w-full shadow-sm"> <option value="1">Segunda-feira</option> <option value="0">Domingo</option> </select> </div> <div> <h4 class="text-md font-semibold">Resetar todos os dados</h4> <p class="text-xs text-[var(--text-muted)]">Cuidado: esta ação é irreversível e apagará todos os seus dados da nuvem.</p> <button id="reset-all-data-btn" class="btn btn-danger mt-2 py-2 px-3 w-full">Resetar todos os dados da nuvem</button> </div> </div> </div> </div> </div> </section> </div> </main>
+<div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Configurações gerais</h3> <div class="mt-6 pt-6 border-t border-[var(--border-color)] space-y-4"> <div> <label for="week-start-day" class="block text-sm font-medium text-[var(--text-muted)]">Início da semana</label> <select id="week-start-day" class="mt-1 block w-full shadow-sm"> <option value="1">Segunda-feira</option> <option value="0">Domingo</option> </select> </div> <div> <h4 class="text-md font-semibold">Resetar todos os dados</h4> <p class="text-xs text-[var(--text-muted)]">Cuidado: esta ação é irreversível e apagará todos os seus dados da nuvem.</p> <button id="reset-all-data-btn" class="btn btn-danger mt-2 py-2 px-3 w-full">Resetar todos os dados da nuvem</button> </div> </div> </div> </div> </div> </section>
+<section id="lei-seca-view" class="hidden space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-[var(--text-secondary)]">Guia de Lei Seca</h2>
+            <p class="text-sm text-[var(--text-muted)]">Acompanhe suas leituras e revisões dos artigos.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="lei-seca-search" placeholder="Buscar por lei..." class="shadow-sm w-48 text-sm">
+            <button id="add-lei-btn" class="btn btn-primary py-2 px-4">Adicionar Lei</button>
+        </div>
+    </div>
+    <div id="laws-container" class="space-y-6">
+        <!-- As leis serão renderizadas aqui pelo JavaScript -->
+    </div>
+</section> </div> </main>
 <footer class="bg-[var(--card-bg)] border-t border-[var(--border-color)]"> <div class="container mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-sm text-[var(--text-muted)]"> <p>Feito para transformar estudo em resultado.</p> </div> </footer> </div>
-<div id="toast" class="fixed bottom-5 right-5 bg-[color:var(--c1)] text-white py-2 px-4 rounded-lg shadow-lg opacity-0 translate-y-2 transition-all duration-300">ok</div> <div id="session-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden"></div> <div id="session-modal-panel" class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden"> <form id="modal-session-form" class="max-w-xl mx-auto space-y-4"> <h3 class="text-lg font-semibold text-center">Como foi a sua sessão de foco?</h3> <p id="modal-session-info" class="text-center text-[var(--text-muted)]"></p> <div> <label for="modal-activity-type" class="block text-sm font-medium text-[var(--text-muted)]">Tipo de atividade</label> <select id="modal-activity-type" required class="mt-1 block w-full shadow-sm"></select> </div>
+<div id="toast" class="fixed bottom-5 right-5 bg-[color:var(--c1)] text-white py-2 px-4 rounded-lg shadow-lg opacity-0 translate-y-2 transition-all duration-300">ok</div>
+<!-- Modal de Sessão -->
+<div id="session-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden"></div> <div id="session-modal-panel" class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden"> <form id="modal-session-form" class="max-w-xl mx-auto space-y-4"> <h3 class="text-lg font-semibold text-center">Como foi a sua sessão de foco?</h3> <p id="modal-session-info" class="text-center text-[var(--text-muted)]"></p> <div> <label for="modal-activity-type" class="block text-sm font-medium text-[var(--text-muted)]">Tipo de atividade</label> <select id="modal-activity-type" required class="mt-1 block w-full shadow-sm"></select> </div>
 <div id="modal-questions-section" class="hidden space-y-4"> <div class="grid grid-cols-1 sm:grid-cols-2 gap-6"> <div> <label for="modal-questions-total" class="block text-sm font-medium text-[var(--text-muted)]">Nº de questões</label> <input type="number" id="modal-questions-total" min="0" class="modal-question-input mt-1 block w-full shadow-sm"> <div class="flex flex-wrap justify-center gap-1 mt-1"> <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button> <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button> <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button> <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button> <button type="button" class="modal-question-btn-total btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button> </div> </div> <div> <label for="modal-questions-correct" class="block text-sm font-medium text-[var(--text-muted)]">Nº de acertos</label> <input type="number" id="modal-questions-correct" min="0" class="modal-question-input mt-1 block w-full shadow-sm"> <div class="flex flex-wrap justify-center gap-1 mt-1"> <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="5">+5</button> <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="10">+10</button> <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="25">+25</button> <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="50">+50</button> <button type="button" class="modal-question-btn-correct btn btn-secondary py-1 px-2 text-xs" data-q="100">+100</button> </div> </div> </div> </div>
 <div class="flex justify-between items-center gap-6"> <div class="flex-grow"> <span class="block text-sm text-center mb-2">Como foi seu estudo?</span> <div id="modal-mood-tracker" class="flex items-start justify-center gap-4"> <div class="mood-square-wrapper"> <button type="button" class="mood-square mood-red" data-mood="ruim"></button> <span class="text-xs mt-1">Ruim</span> </div> <div class="mood-square-wrapper"> <button type="button" class="mood-square mood-yellow" data-mood="medio"></button> <span class="text-xs mt-1">Médio</span> </div> <div class="mood-square-wrapper"> <button type="button" class="mood-square mood-green" data-mood="bom"></button> <span class="text-xs mt-1">Bom</span> </div> </div> <input type="hidden" id="modal-mood-input" name="mood"> </div> <div class="space-y-2 w-1/2"> <label for="modal-flow-score" class="block text-sm">Nível de flow</label> <div class="flow-slider-container"> <input type="range" id="modal-flow-score" min="1" max="5" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"> <div class="flow-slider-labels"> <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span> </div> </div> </div> </div>
 <div class="flex justify-end gap-3 pt-4"> <button type="button" id="modal-cancel-btn" class="btn btn-secondary py-2 px-4">Cancelar</button> <button type="submit" class="btn btn-primary py-2 px-4">Salvar sessão</button> </div> </form> </div>
+<!-- Modal de Notificação -->
 <div id="notification-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden"></div> <div id="notification-modal-panel" class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden text-center"> <h3 id="notification-title" class="text-xl font-bold"></h3> <p id="notification-message" class="text-[var(--text-muted)] mt-2"></p> <button id="notification-ok-btn" class="btn btn-primary mt-6 py-2 px-8">OK</button> </div> <input type="file" id="backup-file-input" class="hidden" accept=".json">
+<!-- Modal para Adicionar Lei Seca -->
+<div id="add-lei-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 hidden"></div>
+<div id="add-lei-modal-panel" class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] p-6 rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out hidden transform translate-y-full">
+    <form id="add-lei-form" class="max-w-xl mx-auto space-y-4">
+        <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Adicionar Nova Lei</h3>
+        <div>
+            <label for="lei-nome-input" class="block text-sm font-medium text-[var(--text-muted)]">Nome da Lei</label>
+            <input type="text" id="lei-nome-input" required class="mt-1 block w-full shadow-sm" placeholder="Ex: Constituição Federal">
+        </div>
+        <div>
+            <label for="lei-artigos-input" class="block text-sm font-medium text-[var(--text-muted)]">Número de Artigos</label>
+            <input type="number" id="lei-artigos-input" required min="1" class="mt-1 block w-full shadow-sm" placeholder="Ex: 250">
+        </div>
+        <div>
+            <label for="lei-categoria-input" class="block text-sm font-medium text-[var(--text-muted)]">Categoria</label>
+            <input type="text" id="lei-categoria-input" class="mt-1 block w-full shadow-sm" placeholder="Ex: Direito Constitucional" list="lei-categorias-datalist">
+            <datalist id="lei-categorias-datalist"></datalist>
+        </div>
+        <div class="flex justify-end gap-3 pt-4">
+            <button type="button" id="add-lei-modal-cancel-btn" class="btn btn-secondary py-2 px-4">Cancelar</button>
+            <button type="submit" class="btn btn-primary py-2 px-4">Adicionar</button>
+        </div>
+    </form>
+</div>
 <video id="pip-video" class="hidden" muted playsinline></video> <canvas id="pip-canvas" width="300" height="200" class="hidden"></canvas><div id="youtube-player" class="fixed top-[-9999px] left-[-9999px]"></div><script> const firebaseConfig = { apiKey: "AIzaSyD0ZFxuLY452R6JENiRk-m3zJsuhj5GJaw", authDomain: "dashboard-b436d.firebaseapp.com", databaseURL: "https://dashboard-b436d-default-rtdb.firebaseio.com", projectId: "dashboard-b436d", storageBucket: "dashboard-b436d.firebasestorage.app", messagingSenderId: "501090317163", appId: "1:501090317163:web:a69822ae2e161a1bc3522e" };
-const App = { state: { currentView: 'dashboard', charts: {}, studyData: [], backups: [], parameters: { subjects: [ { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] }, { name: "Raciocínio Lógico", subtopics: [] }, { name: "Português", subtopics: [] }, { name: "Direito Administrativo", subtopics: [] } ], tasks: [], youtubeMusic: [], subjectColors: {}, tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado", "Lei Seca", "Jurisprudência", "Subjetivas", "Prova Oral"], weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 }, weekStartDay: 1, concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }, darkMode: false, }, db: null, auth: null, userId: null, dataLoaded: false, COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ], soundOptions: { notification: ["C5", "G5"], chime: ["C6", "E6", "G6"], simple: ["G5"] }, pomodoro: { isRunning: false, isSessionActive: false, mode: 'work', timeLeft: 25*60, cycleStart: null, intervalId: null, totalCycles: 4, cyclesCompleted: 0, settings: { work: 25, shortBreak: 5, longBreak: 15, autoStart: false, alertTime: null, sound: 'notification' }, sessionSubject: '', sessionSubtopic: '', pendingLogDuration: 0, totalPauseTime: 0, pauseStartTime: null, currentTaskId: null, }, stopwatch: { isRunning: false, startTime: null, elapsedTime: 0, intervalId: null, subject: '', subtopic: '', alertTime: null, alertTriggered: false, settings: { sound: 'notification' }, totalPauseTime: 0, pauseStartTime: null, }, pip: { canvas: null, video: null, ctx: null, isActive: false, }, backgroundAudio: { player: null, volume: null, }, youtubePlayer: null, currentMusicId: null, editingId: null, pendingSession: null, audioInitialized: false, synth: null, activeQuestionInputId: 'questions-total', activeModalQuestionInputId: 'modal-questions-total', questionsEvolutionView: 'relative', debounceTimer: null, lastBackupTime: 0, },
+class LeiSecaController {
+    constructor(app) {
+        this.app = app;
+        this.GREEN_SCALE = [
+            '#E9FBE8','#D5F5D1','#C0EFBA','#ACE9A3','#98E38D',
+            '#84DD76','#70D760','#5DD24A','#4ACD34','#37C71E',
+            '#2FB91B','#29A918','#239915','#1E8913','#197911',
+            '#14690F','#0F590D','#0A490B','#053909','#002F07'
+        ];
+        this.selectors = {
+            addBtn: '#add-lei-btn',
+            searchInput: '#lei-seca-search',
+            addForm: '#add-lei-form',
+            cancelBtn: '#add-lei-modal-cancel-btn',
+            backdrop: '#add-lei-modal-backdrop',
+            container: '#laws-container',
+            modal: '#add-lei-modal-panel'
+        };
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        this.getEl(this.selectors.addBtn)?.addEventListener('click', () => this.openAddLeiModal());
+        this.getEl(this.selectors.searchInput)?.addEventListener('input', (e) => this.handleLeiSecaSearch(e));
+        this.getEl(this.selectors.addForm)?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleAddNewLei();
+        });
+        this.getEl(this.selectors.cancelBtn)?.addEventListener('click', () => this.closeAddLeiModal());
+        this.getEl(this.selectors.backdrop)?.addEventListener('click', () => this.closeAddLeiModal());
+
+        const container = this.getEl(this.selectors.container);
+        if (container) {
+            container.addEventListener('click', (e) => this.handleContainerClick(e));
+            container.addEventListener('contextmenu', (e) => this.handleContainerRightClick(e));
+        }
+    }
+
+    handleContainerClick(e) {
+        const square = e.target.closest('.artigo-square');
+        if (square) {
+            this.handleArticleClick(
+                parseInt(square.dataset.lawId, 10),
+                parseInt(square.dataset.articleNum, 10)
+            );
+            return;
+        }
+
+        const button = e.target.closest('button[data-action]');
+        if (button) this.handleButtonAction(button);
+    }
+
+    handleContainerRightClick(e) {
+        const square = e.target.closest('.artigo-square');
+        if (square) {
+            e.preventDefault();
+            this.handleArticleRightClick(
+                parseInt(square.dataset.lawId, 10),
+                parseInt(square.dataset.articleNum, 10)
+            );
+        }
+    }
+
+    handleButtonAction(button) {
+        const action = button.dataset.action;
+        const lawId = parseInt(button.dataset.lawId, 10);
+
+        const actions = {
+            'delete-law': () => this.deleteLaw(lawId),
+            'mark-all-read': () => this.updateArticles(lawId, 'mark-all'),
+            'reset-all': () => this.updateArticles(lawId, 'reset'),
+            'mark-interval': () => this.markInterval(lawId, button),
+            'toggle-category': () => this.toggleCategory(button)
+        };
+
+        actions[action]?.();
+    }
+    
+    openAddLeiModal() {
+        this.getEl(this.selectors.addForm)?.reset();
+        this.populateCategoryDatalist();
+        this.showElement(this.selectors.backdrop);
+        this.getEl(this.selectors.modal)?.classList.remove('hidden', 'translate-y-full');
+    }
+
+    closeAddLeiModal() {
+        this.hideElement(this.selectors.backdrop);
+        this.getEl(this.selectors.modal)?.classList.add('translate-y-full');
+        // Add a delay to allow the animation to finish before hiding
+        setTimeout(() => this.getEl(this.selectors.modal)?.classList.add('hidden'), 300);
+    }
+
+    populateCategoryDatalist() {
+        const datalist = this.getEl('#lei-categorias-datalist');
+        const laws = this.app.state.parameters.leiSeca?.laws || [];
+        const categories = [...new Set(laws.map(l => l.category).filter(Boolean))];
+        
+        if (datalist) {
+            datalist.innerHTML = categories
+                .map(c => `<option value="${c}">`)
+                .join('');
+        }
+    }
+
+    handleAddNewLei() {
+        const name = this.getEl('#lei-nome-input')?.value.trim();
+        const count = parseInt(this.getEl('#lei-artigos-input')?.value, 10);
+        const category = this.getEl('#lei-categoria-input')?.value.trim() || 'Geral';
+
+        if (!name || isNaN(count) || count <= 0) {
+            this.app.toast('Nome e/ou número de artigos inválido.', false);
+            return;
+        }
+
+        const newLaw = this.createLawObject(name, count, category);
+        this.addLawToState(newLaw);
+        this.app.saveData(true, `Lei "${name}" adicionada.`);
+        this.renderLeiSecaView();
+        this.closeAddLeiModal();
+    }
+
+    createLawObject(name, count, category) {
+        return {
+            id: Date.now(),
+            name,
+            articleCount: count,
+            category,
+            articles: Array.from({ length: count }, (_, i) => ({
+                num: i + 1,
+                reads: 0
+            }))
+        };
+    }
+
+    addLawToState(law) {
+        if (!this.app.state.parameters.leiSeca) {
+            this.app.state.parameters.leiSeca = { laws: [] };
+        }
+        if (!this.app.state.parameters.leiSeca.laws) {
+            this.app.state.parameters.leiSeca.laws = [];
+        }
+        this.app.state.parameters.leiSeca.laws.push(law);
+    }
+
+    deleteLaw(lawId) {
+        if (confirm('Tem certeza que deseja excluir esta lei e todos os seus dados?')) {
+            this.app.state.parameters.leiSeca.laws = 
+                this.app.state.parameters.leiSeca.laws.filter(l => l.id !== lawId);
+            this.app.saveData(true, 'Lei excluída.');
+            this.renderLeiSecaView();
+        }
+    }
+
+    handleArticleClick(lawId, articleNum) {
+        const article = this.findArticle(lawId, articleNum);
+        if (article) {
+            article.reads++;
+            this.app.saveData();
+            this.updateLeiSecaDOM(lawId, articleNum);
+        }
+    }
+
+    handleArticleRightClick(lawId, articleNum) {
+        const article = this.findArticle(lawId, articleNum);
+        if (article && article.reads > 0) {
+            article.reads = 0;
+            this.app.saveData();
+            this.updateLeiSecaDOM(lawId, articleNum);
+        }
+    }
+
+    findArticle(lawId, articleNum) {
+        return this.app.state.parameters.leiSeca?.laws
+            .find(l => l.id === lawId)
+            ?.articles.find(a => a.num === articleNum);
+    }
+
+    updateArticles(lawId, mode, value = null) {
+        const law = this.app.state.parameters.leiSeca?.laws.find(l => l.id === lawId);
+        if (!law) return;
+
+        const modes = {
+            'mark-all': () => law.articles.forEach(a => a.reads = 20),
+            'reset': () => law.articles.forEach(a => a.reads = 0),
+            'interval': () => this.processInterval(law, value)
+        };
+
+        modes[mode]?.();
+
+        if (modes[mode]) {
+            this.app.saveData(true, 'Artigos atualizados.');
+            this.renderLeiSecaView();
+        }
+    }
+
+    processInterval(law, value) {
+        const parts = value.split('-').map(s => parseInt(s.trim(), 10));
+        const [start, end = start] = parts;
+
+        if (isNaN(start) || isNaN(end) || start > end || start < 1) {
+            this.app.toast('Intervalo inválido.', false);
+            return;
+        }
+
+        law.articles.forEach(a => {
+            if (a.num >= start && a.num <= end) a.reads++;
+        });
+    }
+
+    markInterval(lawId, button) {
+        const input = this.getEl(`#interval-input-${lawId}`);
+        if (input?.value) {
+            this.updateArticles(lawId, 'interval', input.value);
+        }
+    }
+
+    getArticleStyle(readCount) {
+        if (readCount === 0) return { bgColor: '', textColor: '' };
+        
+        const index = Math.min(readCount - 1, this.GREEN_SCALE.length - 1);
+        return {
+            bgColor: this.GREEN_SCALE[index],
+            textColor: index >= 10 ? '#fff' : ''
+        };
+    }
+
+    updateLeiSecaDOM(lawId, articleNum) {
+        const article = this.findArticle(lawId, articleNum);
+        const square = this.getEl(
+            `.artigo-square[data-law-id='${lawId}'][data-article-num='${articleNum}']`
+        );
+
+        if (article && square) {
+            const style = this.getArticleStyle(article.reads);
+            square.style.backgroundColor = style.bgColor;
+            square.classList.toggle('text-white', style.textColor === '#fff');
+            
+            const tooltip = square.querySelector('.tooltip-text');
+            if (tooltip) {
+                tooltip.textContent = `Lido ${article.reads} vez(es)${
+                    article.reads >= 20 ? ' (Avançado)' : ''
+                }`;
+            }
+        }
+        this.updateLeiPanelSummary(lawId);
+    }
+
+    updateLeiPanelSummary(lawId) {
+        const summaryEl = this.getEl(`#summary-${lawId}`);
+        const law = this.app.state.parameters.leiSeca?.laws.find(l => l.id === lawId);
+
+        if (!summaryEl || !law) return;
+
+        const stats = this.calculateLawStats(law);
+        summaryEl.innerHTML = `Artigos lidos: <strong>${stats.readArticles}</strong> de ${law.articleCount} (${stats.percentage}%) &mdash; Leituras: <strong>${stats.totalReads}</strong>`;
+    }
+
+    calculateLawStats(law) {
+        const readArticles = law.articles.filter(a => a.reads > 0).length;
+        const totalReads = law.articles.reduce((sum, a) => sum + a.reads, 0);
+        const percentage = law.articleCount > 0
+            ? (readArticles / law.articleCount * 100).toFixed(0)
+            : 0;
+
+        return { readArticles, totalReads, percentage };
+    }
+    
+    handleLeiSecaSearch(event) {
+        const searchTerm = event.target.value.toLowerCase();
+        const laws = this.app.state.parameters.leiSeca?.laws || [];
+        const container = this.getEl(this.selectors.container);
+        if (!container) return;
+
+        if (!searchTerm) {
+            this.renderLeiSecaView();
+            return;
+        }
+
+        const filteredLaws = laws.filter(law => law.name.toLowerCase().includes(searchTerm));
+        const grouped = this.groupLawsByCategory(filteredLaws);
+        container.innerHTML = '';
+        if (Object.keys(grouped).length === 0) {
+             container.innerHTML = `
+            <div class="text-center text-[var(--text-muted)] card p-8">
+                <h3 class="font-semibold text-lg">Nenhuma lei encontrada.</h3>
+                <p class="mt-2">Verifique o termo buscado ou adicione novas leis.</p>
+            </div>
+            `;
+            return;
+        }
+        this.renderCategoryContainers(container, grouped);
+    }
+
+    toggleCategory(button) {
+        const categoryName = button.dataset.category;
+        const content = this.getEl(
+            `.category-content[data-category-content="${categoryName}"]`
+        );
+        if (content) {
+            content.classList.toggle('collapsed');
+            const icon = button.querySelector('i');
+            icon?.classList.toggle('fa-chevron-up');
+            icon?.classList.toggle('fa-chevron-down');
+        }
+    }
+
+    renderLeiSecaView() {
+        const container = this.getEl(this.selectors.container);
+        if (!container) return;
+
+        container.innerHTML = '';
+        
+        const laws = this.app.state.parameters.leiSeca?.laws || [];
+        if (laws.length === 0) {
+            this.renderEmptyState(container);
+            return;
+        }
+
+        const grouped = this.groupLawsByCategory(laws);
+        this.renderCategoryContainers(container, grouped);
+    }
+
+    renderEmptyState(container) {
+        container.innerHTML = `
+            <div class="text-center text-[var(--text-muted)] card p-8">
+                <h3 class="font-semibold text-lg">Nenhuma lei adicionada.</h3>
+                <p class="mt-2">Clique em "Adicionar Lei" para começar.</p>
+            </div>
+        `;
+    }
+
+    groupLawsByCategory(laws) {
+        return laws.reduce((acc, law) => {
+            const cat = law.category || 'Geral';
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(law);
+            return acc;
+        }, {});
+    }
+
+    renderCategoryContainers(container, grouped) {
+        Object.keys(grouped).sort().forEach(category => {
+            const catContainer = document.createElement('div');
+            catContainer.className = 'category-container';
+            catContainer.innerHTML = `
+                <div class="category-header flex justify-between items-center p-3 rounded-lg bg-[var(--card-bg)] border border-[var(--border-color)] cursor-pointer" data-action="toggle-category" data-category="${category}">
+                    <h3 class="text-lg font-semibold text-[var(--text-secondary)]">${category}</h3>
+                    <button data-action="toggle-category" data-category="${category}" class="collapse-toggle-btn p-2 rounded-full hover:bg-[var(--border-color)] text-[var(--text-muted)]">
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </button>
+                </div>
+                <div class="category-content space-y-4 pt-4" data-category-content="${category}">
+                    ${grouped[category].map(law => this.renderLeiPanel(law)).join('')}
+                </div>
+            `;
+            container.appendChild(catContainer);
+            catContainer.querySelector('.category-header').addEventListener('click', (e) => {
+                if(e.target === e.currentTarget) {
+                   this.toggleCategory(e.currentTarget.querySelector('button'));
+                }
+            })
+        });
+    }
+
+    renderLeiPanel(law) {
+        const stats = this.calculateLawStats(law);
+        const gridHTML = law.articles
+            .map(article => this.renderArticleSquare(law.id, article))
+            .join('');
+
+        return `
+            <div class="card p-4 sm:p-6 lei-panel" id="lei-panel-${law.id}" data-law-id="${law.id}">
+                <div class="lei-panel-header flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-[var(--text-secondary)]">${law.name}</h3>
+                        <p id="summary-${law.id}" class="text-sm text-[var(--text-muted)] mt-1">
+                            Artigos lidos: <strong>${stats.readArticles}</strong> de ${law.articleCount} (${stats.percentage}%) &mdash; Leituras: <strong>${stats.totalReads}</strong>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <input type="text" id="interval-input-${law.id}" placeholder="Ex: 1-45" class="shadow-sm w-24 text-sm">
+                        <button data-action="mark-interval" data-law-id="${law.id}" class="btn btn-secondary text-xs py-1 px-2">Marcar</button>
+                        <button data-action="mark-all-read" data-law-id="${law.id}" class="btn btn-secondary text-xs py-1 px-2">Avançado</button>
+                        <button data-action="reset-all" data-law-id="${law.id}" class="btn btn-secondary text-xs py-1 px-2">Resetar</button>
+                        <button data-action="delete-law" data-law-id="${law.id}" class="btn btn-danger text-xs py-1 px-2">Excluir</button>
+                    </div>
+                </div>
+                <div class="lei-grid" data-grid-for-law="${law.id}">${gridHTML}</div>
+            </div>
+        `;
+    }
+
+    renderArticleSquare(lawId, article) {
+        const style = this.getArticleStyle(article.reads);
+        return `
+            <div class="artigo-square tooltip ${style.textColor === '#fff' ? 'text-white' : ''}" 
+                 style="background-color: ${style.bgColor || ''}"
+                 data-law-id="${lawId}" data-article-num="${article.num}">
+                <span>${article.num}</span>
+                <span class="tooltip-text">Lido ${article.reads} vez(es)${
+                    article.reads >= 20 ? ' (Avançado)' : ''
+                }</span>
+            </div>
+        `;
+    }
+
+    getEl(selector) {
+        return document.querySelector(selector);
+    }
+
+    showElement(selector) {
+        this.getEl(selector)?.classList.remove('hidden');
+    }
+
+    hideElement(selector) {
+        this.getEl(selector)?.classList.add('hidden');
+    }
+}
+
+const App = { state: { currentView: 'dashboard', charts: {}, studyData: [], backups: [], parameters: { subjects: [ { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] }, { name: "Raciocínio Lógico", subtopics: [] }, { name: "Português", subtopics: [] }, { name: "Direito Administrativo", subtopics: [] } ], tasks: [], youtubeMusic: [], subjectColors: {}, tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado", "Lei Seca", "Jurisprudência", "Subjetivas", "Prova Oral"], weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 }, weekStartDay: 1, concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }, darkMode: false, leiSeca: { laws: [] } }, db: null, auth: null, userId: null, dataLoaded: false, COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ], soundOptions: { notification: ["C5", "G5"], chime: ["C6", "E6", "G6"], simple: ["G5"] }, pomodoro: { isRunning: false, isSessionActive: false, mode: 'work', timeLeft: 25*60, cycleStart: null, intervalId: null, totalCycles: 4, cyclesCompleted: 0, settings: { work: 25, shortBreak: 5, longBreak: 15, autoStart: false, alertTime: null, sound: 'notification' }, sessionSubject: '', sessionSubtopic: '', pendingLogDuration: 0, totalPauseTime: 0, pauseStartTime: null, currentTaskId: null, }, stopwatch: { isRunning: false, startTime: null, elapsedTime: 0, intervalId: null, subject: '', subtopic: '', alertTime: null, alertTriggered: false, settings: { sound: 'notification' }, totalPauseTime: 0, pauseStartTime: null, }, pip: { canvas: null, video: null, ctx: null, isActive: false, }, backgroundAudio: { player: null, volume: null, }, youtubePlayer: null, currentMusicId: null, editingId: null, pendingSession: null, audioInitialized: false, synth: null, activeQuestionInputId: 'questions-total', activeModalQuestionInputId: 'modal-questions-total', questionsEvolutionView: 'relative', debounceTimer: null, lastBackupTime: 0, },
 init(){ this.initFirebase(); this.bindAuthForms(); this.checkInitialDarkMode(); },
 initFirebase() { try { firebase.initializeApp(firebaseConfig); this.state.db = firebase.database(); this.state.auth = firebase.auth();
 this.state.auth.onAuthStateChanged(user => { if (user) { this.state.userId = user.uid; document.getElementById('loading-view').classList.remove('hidden'); document.getElementById('auth-view').classList.add('hidden'); document.getElementById('main-nav').style.display = 'flex'; if (!this.state.dataLoaded) { this.loadData(); } } else { this.state.userId = null; this.state.dataLoaded = false; this.resetState(); document.getElementById('loading-view').classList.add('hidden'); document.getElementById('main-content').classList.add('hidden'); document.getElementById('main-nav').style.display = 'none'; document.getElementById('auth-view').classList.remove('hidden'); } }); } catch (e) { console.error("Erro ao inicializar o Firebase:", e); alert("Erro na configuração do Firebase. Verifique o objeto 'firebaseConfig' no código e se os scripts do Firebase foram carregados."); } }, initializeApp() { document.getElementById('loading-view').classList.add('hidden'); document.getElementById('main-content').classList.remove('hidden');
+this.leiSecaController = new LeiSecaController(this);
 this.bindNav(); this.bindFilters(); this.bindGeneralActions(); this.bindBackup(); this.bindRegistro(); this.bindPomodoro(); this.bindStopwatch(); this.bindModal(); this.bindNotificationModal(); this.bindConcurso(); this.bindPip(); this.bindBackgroundSounds(); this.initCharts(); this.bindCollapsibleSections(); this.updateAllSubjectDropdowns(); this.updateActivityDropdowns(); this.renderSubjectsManagement(); this.bindSubjectManagement(); this.bindTasks(); this.renderTasks(); this.bindYouTubeMusic(); this.renderYouTubeMusicList(); this.resetPomodoro(true); this.setFilterPeriod('week'); this.navigateTo('dashboard'); this.scheduleDailyBackup(); this.renderBackupList();
 const searchInput = document.getElementById('log-search-input'); searchInput.addEventListener('input', (e) => { clearTimeout(this.state.debounceTimer); this.state.debounceTimer = setTimeout(() => { this.renderDetailedLog(this.getFilteredData(), e.target.value); }, 300); }); },
 bindCollapsibleSections() { document.querySelectorAll('.collapse-toggle-btn').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); const header = e.currentTarget.parentElement; const content = header.nextElementSibling; const icon = e.currentTarget.querySelector('i'); if (content && content.classList.contains('collapsible-content')) { content.classList.toggle('hidden'); icon.classList.toggle('fa-chevron-up'); icon.classList.toggle('fa-chevron-down'); } }); }); },
@@ -70,7 +539,7 @@ if (!email) { errorP.textContent = 'Por favor, insira seu email para redefinir a
 this.state.auth.sendPasswordResetEmail(email) .then(() => { this.toast('Email de redefinição de senha enviado!'); }) .catch(error => { console.error("Erro ao enviar email de redefinição:", error); errorP.textContent = 'Falha ao enviar. Verifique o email digitado.'; }); },
 handleRegister(email, password) { const errorP = document.getElementById('register-error'); errorP.textContent = ''; this.state.auth.createUserWithEmailAndPassword(email, password) .catch(error => { console.error("Erro de cadastro:", error.message); if (error.code == 'auth/weak-password') { errorP.textContent = 'A senha precisa ter no mínimo 6 caracteres.'; } else if (error.code == 'auth/email-already-in-use') { errorP.textContent = 'Este email já está em uso.'; } else { errorP.textContent = 'Ocorreu um erro ao criar a conta.'; } }); },
 handleLogout() { this.state.auth.signOut(); },
-resetState() { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; this.state.studyData = []; this.state.parameters = { subjects: [ { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] }, { name: "Raciocínio Lógico", subtopics: [] }, { name: "Português", subtopics: [] }, { name: "Direito Administrativo", subtopics: [] } ], tasks: [], youtubeMusic: [], subjectColors: {}, tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado", "Lei Seca", "Jurisprudência", "Subjetivas", "Prova Oral"], weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 }, weekStartDay: 1, concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }, darkMode: localStorage.getItem('darkMode') === 'true' || (localStorage.getItem('darkMode') === null && prefersDark) }; },
+resetState() { const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; this.state.studyData = []; this.state.parameters = { subjects: [ { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] }, { name: "Raciocínio Lógico", subtopics: [] }, { name: "Português", subtopics: [] }, { name: "Direito Administrativo", subtopics: [] } ], tasks: [], youtubeMusic: [], subjectColors: {}, tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado", "Lei Seca", "Jurisprudência", "Subjetivas", "Prova Oral"], weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 }, weekStartDay: 1, concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }, darkMode: localStorage.getItem('darkMode') === 'true' || (localStorage.getItem('darkMode') === null && prefersDark), leiSeca: { laws: [] } }; },
 saveData(showToast = false, toastMessage = 'Dados salvos na nuvem!'){ if (!this.state.userId) { if (showToast) this.toast('Erro: Usuário não autenticado. Não foi possível salvar.', false); return; } const dataToSave = { studyData: this.state.studyData, parameters: this.state.parameters, }; this.state.db.ref('users/' + this.state.userId).set(dataToSave) .then(() => { if (showToast) { this.toast(toastMessage); } }) .catch(error => { console.error("Falha ao salvar dados no Firebase:", error); if (showToast) this.toast('Erro ao salvar na nuvem.', false); });
 try { localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups)); } catch(e){ console.error("Falha ao salvar backups locais:", e); } },
 loadData(){ if (!this.state.userId) return;
@@ -86,9 +555,9 @@ if (this.state.parameters.tiposDeAtividade && Array.isArray(this.state.parameter
     this.state.parameters.tiposDeAtividade = defaultActivities;
 }
 
-if(!this.state.parameters.tasks) this.state.parameters.tasks = []; if(!this.state.parameters.youtubeMusic) this.state.parameters.youtubeMusic = []; if (this.state.parameters.subjects && typeof this.state.parameters.subjects === 'object' && !Array.isArray(this.state.parameters.subjects)) { console.warn("'subjects' foi carregado como um objeto, convertendo para array."); this.state.parameters.subjects = Object.values(this.state.parameters.subjects); } if (Array.isArray(this.state.parameters.subjects)) { this.state.parameters.subjects.forEach(subject => { if (!subject.subtopics || !Array.isArray(subject.subtopics)) { subject.subtopics = []; } }); } } } this.ensureSubjectColors(); this.setDarkMode(this.state.parameters.darkMode, false); this.state.dataLoaded = true; this.initializeApp(); }); },
+if(!this.state.parameters.tasks) this.state.parameters.tasks = []; if(!this.state.parameters.youtubeMusic) this.state.parameters.youtubeMusic = []; if(!this.state.parameters.leiSeca) this.state.parameters.leiSeca = { laws: [] }; if (this.state.parameters.subjects && typeof this.state.parameters.subjects === 'object' && !Array.isArray(this.state.parameters.subjects)) { console.warn("'subjects' foi carregado como um objeto, convertendo para array."); this.state.parameters.subjects = Object.values(this.state.parameters.subjects); } if (Array.isArray(this.state.parameters.subjects)) { this.state.parameters.subjects.forEach(subject => { if (!subject.subtopics || !Array.isArray(subject.subtopics)) { subject.subtopics = []; } }); } } } this.ensureSubjectColors(); this.setDarkMode(this.state.parameters.darkMode, false); this.state.dataLoaded = true; this.initializeApp(); }); },
 ensureSubjectColors() { if (!this.state.parameters.subjectColors) { this.state.parameters.subjectColors = {}; } const subjects = this.state.parameters.subjects.map(s => s.name); let colorIndex = 0; subjects.forEach(subjectName => { if (!this.state.parameters.subjectColors[subjectName]) { this.state.parameters.subjectColors[subjectName] = this.state.COLOR_PALETTE[colorIndex % this.state.COLOR_PALETTE.length]; colorIndex++; } }); },
-bindNav(){ document.querySelectorAll('.nav-link').forEach(link=>{ link.addEventListener('click', (e)=>{ e.preventDefault(); this.navigateTo(e.target.dataset.view); document.getElementById('mobile-menu').classList.add('hidden'); }); }); document.getElementById('mobile-menu-button').addEventListener('click', ()=>{ document.getElementById('mobile-menu').classList.toggle('hidden'); }); document.getElementById('dark-mode-toggle').addEventListener('click', () => this.toggleDarkMode()); document.getElementById('dark-mode-toggle-mobile').addEventListener('click', () => this.toggleDarkMode()); }, navigateTo(view){ this.state.currentView = view; document.querySelectorAll('section[id$="-view"]').forEach(s=>s.classList.add('hidden')); document.getElementById(`${view}-view`).classList.remove('hidden'); document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active', l.dataset.view===view)); if(view==='dashboard'){ this.updateDashboard(); } if(view==='foco'){ this.renderSessionHistory(); this.renderTasks(); this.resetForm(); } }, checkInitialDarkMode() { const savedMode = localStorage.getItem('darkMode'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; const useDark = savedMode === 'true' || (savedMode === null && prefersDark); this.setDarkMode(useDark, false); },
+bindNav(){ document.querySelectorAll('.nav-link').forEach(link=>{ link.addEventListener('click', (e)=>{ e.preventDefault(); this.navigateTo(e.target.dataset.view); document.getElementById('mobile-menu').classList.add('hidden'); }); }); document.getElementById('mobile-menu-button').addEventListener('click', ()=>{ document.getElementById('mobile-menu').classList.toggle('hidden'); }); document.getElementById('dark-mode-toggle').addEventListener('click', () => this.toggleDarkMode()); document.getElementById('dark-mode-toggle-mobile').addEventListener('click', () => this.toggleDarkMode()); }, navigateTo(view){ this.state.currentView = view; document.querySelectorAll('section[id$="-view"]').forEach(s=>s.classList.add('hidden')); document.getElementById(`${view}-view`).classList.remove('hidden'); document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active', l.dataset.view===view)); if(view==='dashboard'){ this.updateDashboard(); } if(view==='foco'){ this.renderSessionHistory(); this.renderTasks(); this.resetForm(); } if(view==='lei-seca') { this.leiSecaController.renderLeiSecaView(); } }, checkInitialDarkMode() { const savedMode = localStorage.getItem('darkMode'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; const useDark = savedMode === 'true' || (savedMode === null && prefersDark); this.setDarkMode(useDark, false); },
 setDarkMode(isDark, shouldSave = true) { this.state.parameters.darkMode = isDark; const icon = isDark ? 'fa-sun' : 'fa-moon'; document.documentElement.classList.toggle('dark-mode', isDark); document.querySelectorAll('#dark-mode-toggle i, #dark-mode-toggle-mobile i').forEach(el => { el.classList.remove('fa-moon', 'fa-sun'); el.classList.add(icon); }); if (shouldSave) { localStorage.setItem('darkMode', isDark); this.saveData(); } if (this.state.dataLoaded) { Object.values(this.state.charts).forEach(chart => { if(chart) chart.destroy(); }); this.initCharts(); this.updateDashboard(); } },
 toggleDarkMode() { this.setDarkMode(!this.state.parameters.darkMode); },
 bindConcurso() { const fields = ['concurso-nome', 'concurso-cargo', 'concurso-inicio', 'concurso-prova']; const concursoInfo = this.state.parameters.concursoInfo;
@@ -369,6 +838,3 @@ function onYouTubeIframeAPIReady() {
 }
 
 window.addEventListener('DOMContentLoaded', ()=> App.init()); </script></body></html>
-
-
-
