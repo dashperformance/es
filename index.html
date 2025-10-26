@@ -1496,6 +1496,11 @@ const EditalManager = {
     this.topicSortables = [];
     this.saveFeedbackTimeout = null;
     this.sourceLinkEl = null;
+    this.autoSaveTimeout = null;
+    this.autoSaveDelay = 1500;
+    this.pendingDeletes = new Set();
+    this.isFlushingDeletes = false;
+    this.hasAttemptedRemoteSync = false;
 
     this.bindEvents();
     this.attachAppIntegration();
@@ -1540,6 +1545,7 @@ const EditalManager = {
     if (this.offlineMode) {
       this.stopRealtimeListener();
       this.userId = newUserId;
+      this.hasAttemptedRemoteSync = false;
       if (!this.savedEditais.length) {
         this.loadSavedEditais();
       }
@@ -1549,12 +1555,15 @@ const EditalManager = {
     if (!newUserId) {
       this.stopRealtimeListener();
       this.userId = null;
+      this.hasAttemptedRemoteSync = false;
+      this.pendingDeletes.clear();
       this.applySavedEditais([], { skipLocalSync: true });
       return;
     }
 
     if (this.userId !== newUserId || !this.firebaseRef) {
       this.userId = newUserId;
+      this.hasAttemptedRemoteSync = false;
       this.startRealtimeListener();
     }
   },
@@ -1564,19 +1573,29 @@ const EditalManager = {
     this.stopRealtimeListener();
     this.firebaseRef = this.db.ref(`editalManager/${this.userId}/items`);
     const handler = (snapshot) => {
+      const previousLocal = Array.isArray(this.savedEditais)
+        ? this.savedEditais.map((item) => ({ ...item }))
+        : [];
       const value = snapshot.val();
-      const items = [];
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          if (item && item.id) items.push(item);
-        });
-      } else if (value && typeof value === 'object') {
-        Object.entries(value).forEach(([id, payload]) => {
-          if (payload && typeof payload === 'object') {
-            items.push({ id, ...payload });
-          }
-        });
+      const items = this.normalizeSnapshot(value);
+
+      if (!this.offlineMode && !this.hasAttemptedRemoteSync && !items.length && previousLocal.length) {
+        this.syncLocalStateToRemote(previousLocal);
+        return;
       }
+
+      this.hasAttemptedRemoteSync = true;
+      let skipApply = false;
+      if (!this.offlineMode && items.length) {
+        skipApply = this.reconcileLocalChanges(previousLocal, items);
+      }
+
+      if (!this.offlineMode) {
+        this.flushPendingDeletes();
+      }
+
+      if (skipApply) return;
+
       this.applySavedEditais(items);
     };
     this.firebaseListener = handler;
@@ -1598,6 +1617,116 @@ const EditalManager = {
     }
     this.firebaseRef = null;
     this.firebaseListener = null;
+  },
+
+  normalizeSnapshot(value) {
+    const items = [];
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item && typeof item === 'object' && item.id) {
+          items.push(JSON.parse(JSON.stringify(item)));
+        }
+      });
+    } else if (value && typeof value === 'object') {
+      Object.entries(value).forEach(([id, payload]) => {
+        if (payload && typeof payload === 'object') {
+          const base = { id, ...payload };
+          if (!base.id) base.id = id;
+          items.push(JSON.parse(JSON.stringify(base)));
+        }
+      });
+    }
+    return items;
+  },
+
+  syncLocalStateToRemote(localItems) {
+    if (!this.db || !this.userId || this.offlineMode) {
+      this.hasAttemptedRemoteSync = true;
+      return;
+    }
+
+    const payload = {};
+    localItems.forEach((item) => {
+      if (item && item.id) {
+        payload[item.id] = JSON.parse(JSON.stringify(item));
+      }
+    });
+
+    if (!Object.keys(payload).length) {
+      this.hasAttemptedRemoteSync = true;
+      return;
+    }
+
+    this.db
+      .ref(`editalManager/${this.userId}/items`)
+      .set(payload)
+      .then(() => {
+        this.hasAttemptedRemoteSync = true;
+      })
+      .catch((error) => {
+        console.error('Erro ao sincronizar editais locais com o Firebase', error);
+        this.hasAttemptedRemoteSync = true;
+        if (typeof this.toast === 'function') {
+          this.toast('Não foi possível sincronizar seus editais salvos localmente.', false);
+        }
+      });
+  },
+
+  reconcileLocalChanges(previousLocal, remoteItems) {
+    if (!this.db || !this.userId || this.offlineMode) return false;
+    const updates = {};
+    const remoteMap = new Map(remoteItems.map((item) => [item.id, item]));
+
+    previousLocal.forEach((item) => {
+      if (!item || !item.id) return;
+      const remote = remoteMap.get(item.id);
+      const localUpdated = item.updatedAt || 0;
+      const remoteUpdated = remote?.updatedAt || 0;
+      if (!remote || localUpdated > remoteUpdated) {
+        updates[item.id] = JSON.parse(JSON.stringify(item));
+      }
+    });
+
+    const hasUpdates = Object.keys(updates).length > 0;
+    if (hasUpdates) {
+      this.db
+        .ref(`editalManager/${this.userId}/items`)
+        .update(updates)
+        .catch((error) => {
+          console.error('Erro ao atualizar editais no Firebase', error);
+          if (typeof this.toast === 'function') {
+            this.toast('Não foi possível sincronizar alterações recentes na nuvem.', false);
+          }
+        });
+    }
+
+    return hasUpdates;
+  },
+
+  flushPendingDeletes() {
+    if (!this.pendingDeletes || !this.pendingDeletes.size) return;
+    if (!this.db || !this.userId || this.offlineMode || this.isFlushingDeletes) return;
+
+    this.isFlushingDeletes = true;
+    const ids = Array.from(this.pendingDeletes);
+    const tasks = ids.map((id) =>
+      this.db
+        .ref(`editalManager/${this.userId}/items/${id}`)
+        .remove()
+        .then(() => {
+          this.pendingDeletes.delete(id);
+        })
+        .catch((error) => {
+          console.error('Erro ao remover edital no Firebase', error);
+          if (typeof this.toast === 'function') {
+            this.toast('Não foi possível remover um edital na nuvem.', false);
+          }
+        })
+    );
+
+    Promise.all(tasks).finally(() => {
+      this.isFlushingDeletes = false;
+    });
   },
 
   applySavedEditais(list, { skipLocalSync = false } = {}) {
@@ -1638,27 +1767,40 @@ const EditalManager = {
   },
 
   persistEdital(edital) {
-    if (!edital || !edital.id) return;
+    if (!edital || !edital.id) return Promise.resolve();
+    const payload = JSON.parse(JSON.stringify(edital));
     this.saveLocalBackup();
     if (this.db && this.userId && !this.offlineMode) {
-      this.db.ref(`editalManager/${this.userId}/items/${edital.id}`).set(edital).catch((error) => {
-        console.error('Erro ao salvar edital no Firebase', error);
-        if (typeof this.toast === 'function') {
-          this.toast('Não foi possível sincronizar o edital na nuvem.', false);
-        }
-      });
+      return this.db
+        .ref(`editalManager/${this.userId}/items/${payload.id}`)
+        .set(payload)
+        .catch((error) => {
+          console.error('Erro ao salvar edital no Firebase', error);
+          if (typeof this.toast === 'function') {
+            this.toast('Não foi possível sincronizar o edital na nuvem.', false);
+          }
+        });
     }
+    return Promise.resolve();
   },
 
   removeEditalRemote(editalId) {
+    if (!editalId) return;
     this.saveLocalBackup();
     if (this.db && this.userId && !this.offlineMode) {
-      this.db.ref(`editalManager/${this.userId}/items/${editalId}`).remove().catch((error) => {
-        console.error('Erro ao remover edital no Firebase', error);
-        if (typeof this.toast === 'function') {
-          this.toast('Não foi possível remover o edital na nuvem.', false);
-        }
-      });
+      this.pendingDeletes.delete(editalId);
+      this.db
+        .ref(`editalManager/${this.userId}/items/${editalId}`)
+        .remove()
+        .catch((error) => {
+          console.error('Erro ao remover edital no Firebase', error);
+          this.pendingDeletes.add(editalId);
+          if (typeof this.toast === 'function') {
+            this.toast('Não foi possível remover o edital na nuvem.', false);
+          }
+        });
+    } else {
+      this.pendingDeletes.add(editalId);
     }
   },
 
@@ -2508,6 +2650,7 @@ const EditalManager = {
     }
     if (this.saveLabel) this.saveLabel.textContent = 'Salvar alterações';
     this.updateSaveButtonState();
+    this.scheduleAutoSave();
   },
 
   clearDirty() {
@@ -2516,7 +2659,24 @@ const EditalManager = {
       clearTimeout(this.saveFeedbackTimeout);
       this.saveFeedbackTimeout = null;
     }
+    if (this.autoSaveTimeout) {
+      clearTimeout(this.autoSaveTimeout);
+      this.autoSaveTimeout = null;
+    }
     this.updateSaveButtonState();
+  },
+
+  scheduleAutoSave() {
+    if (!this.currentEdital) return;
+    if (this.autoSaveTimeout) {
+      clearTimeout(this.autoSaveTimeout);
+    }
+    const delay = typeof this.autoSaveDelay === 'number' ? this.autoSaveDelay : 1500;
+    this.autoSaveTimeout = setTimeout(() => {
+      this.autoSaveTimeout = null;
+      if (!this.isDirty || !this.currentEdital) return;
+      this.saveCurrent({ silent: true });
+    }, Math.max(800, delay));
   },
 
   updateSaveButtonState() {
@@ -2545,8 +2705,12 @@ const EditalManager = {
     }, 2000);
   },
 
-  saveCurrent() {
+  saveCurrent(options = {}) {
     if (!this.currentEdital) return;
+    if (this.autoSaveTimeout) {
+      clearTimeout(this.autoSaveTimeout);
+      this.autoSaveTimeout = null;
+    }
     this.syncMetaFromInputs();
     this.syncDataFromDom();
     const now = Date.now();
@@ -2562,7 +2726,11 @@ const EditalManager = {
     }
 
     this.applySavedEditais(this.savedEditais, { skipLocalSync: true });
-    this.showSaveFeedback();
+    if (options.silent) {
+      this.updateSaveButtonState();
+    } else {
+      this.showSaveFeedback();
+    }
     this.persistEdital(payload);
   },
 
