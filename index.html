@@ -785,7 +785,7 @@ DIREITO ADMINISTRATIVO
 <section id="foco-view" class="hidden space-y-8"> <div class="max-w-7xl mx-auto space-y-8"> <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 <div class="card p-6"> <h3 class="text-lg font-semibold text-center mb-6 text-[var(--text-secondary)]">Timer pomodoro</h3> <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6"> <div> <label for="pomodoro-subject" class="block text-sm font-medium text-[var(--text-muted)]">Matéria</label> <select id="pomodoro-subject" class="mt-1 block w-full shadow-sm"></select> </div> <div> <label for="pomodoro-subtopic" class="block text-sm font-medium text-[var(--text-muted)]">Assunto (opcional)</label> <select id="pomodoro-subtopic" class="mt-1 block w-full shadow-sm"></select> </div> <div> <label for="pomodoro-cycles" class="block text-sm font-medium text-[var(--text-muted)]">Ciclos (p/ pausa longa)</label> <input type="number" id="pomodoro-cycles" value="4" min="1" class="mt-1 block w-full shadow-sm"> </div> </div>
 <div class="flex flex-col items-center gap-2"> <div id="pomodoro-timer-display" class="text-8xl font-black tracking-tighter">25:00</div> <div id="pomodoro-status" class="text-lg font-medium text-[var(--text-muted)]">Pronto para focar?</div> <div id="pomodoro-pause-display" class="timer-pause-display"></div> <div id="pomodoro-end-time" class="text-sm text-gray-400 h-5"></div> <div class="flex gap-1.5 items-center mt-2" id="pomodoro-cycle-dots"></div> <div id="current-task-display" class="mt-4 text-center text-lg font-semibold text-[var(--text-muted)] h-7"> </div> </div>
-<div class="mt-8 flex flex-wrap justify-center items-center gap-4"> <button id="pomodoro-start-pause" class="btn btn-primary py-2 px-6">Iniciar</button> <button id="pomodoro-skip" class="btn btn-secondary py-2 px-6">Pular</button> <button id="pomodoro-reset" class="btn btn-secondary py-2 px-6">Resetar</button> <button id="pomodoro-open-mini" class="btn btn-secondary py-2 px-4" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button> </div>
+    <div class="mt-8 flex flex-wrap justify-center items-center gap-4"> <button id="pomodoro-start-pause" class="btn btn-primary py-2 px-6">Iniciar</button> <button id="pomodoro-log-now" class="btn btn-secondary py-2 px-6">Registrar agora</button> <button id="pomodoro-skip" class="btn btn-secondary py-2 px-6">Pular</button> <button id="pomodoro-reset" class="btn btn-secondary py-2 px-6">Resetar</button> <button id="pomodoro-open-mini" class="btn btn-secondary py-2 px-4" title="Abrir timer flutuante"><i class="fa-solid fa-window-restore"></i></button> </div>
 <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-8 pt-6 border-t border-[var(--border-color)]"> <div> <label for="pomodoro-work-duration" class="block text-sm font-medium text-[var(--text-muted)]">Foco (min)</label> <input type="number" id="pomodoro-work-duration" value="25" class="mt-1 block w-full shadow-sm"> </div> <div> <label for="pomodoro-short-break-duration" class="block text-sm font-medium text-[var(--text-muted)]">Pausa curta</label> <input type="number" id="pomodoro-short-break-duration" value="5" class="mt-1 block w-full shadow-sm"> </div> <div> <label for="pomodoro-long-break-duration" class="block text-sm font-medium text-[var(--text-muted)]">Pausa longa</label> <input type="number" id="pomodoro-long-break-duration" value="15" class="mt-1 block w-full shadow-sm"> </div> <div> <label for="pomodoro-alert-time" class="block text-sm font-medium text-[var(--text-muted)]">Alerta (min)</label> <input type="number" id="pomodoro-alert-time" placeholder="Opcional" class="mt-1 block w-full shadow-sm"> </div> <div> <label for="pomodoro-sound-select" class="block text-sm font-medium text-[var(--text-muted)]">Som do alerta</label> <select id="pomodoro-sound-select" class="mt-1 block w-full shadow-sm"> <option value="notification">Notificação</option> <option value="chime">Sino</option> <option value="simple">Simples</option> </select> </div> </div> <div class="mt-4 flex items-center justify-center gap-2"> <input id="pomodoro-auto-start" type="checkbox" class="h-4 w-4 text-[color:var(--c2)] rounded border-[var(--border-color)] focus:ring-[color:var(--c2)]"> <label for="pomodoro-auto-start" class="text-sm">Iniciar próximo ciclo automaticamente</label> </div> </div>
 <div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Tarefas do Dia</h3> <form id="add-task-form" class="mt-4 flex items-center gap-3"> <input type="text" id="new-task-input" placeholder="Adicionar uma tarefa..." class="flex-grow shadow-sm"> <input type="number" id="new-task-pomodoros" min="1" value="1" class="w-20 text-center shadow-sm" title="Pomodoros estimados"> <button type="submit" class="btn btn-primary py-2 px-3 whitespace-nowrap">Adicionar</button> </form> <div id="task-list-container" class="mt-4 space-y-2 max-h-96 overflow-y-auto"> </div> <div class="mt-4 pt-4 border-t border-[var(--border-color)] flex justify-end gap-2 text-sm"> <button id="clear-completed-tasks-btn" class="btn btn-secondary py-1 px-3"><i class="fa-solid fa-check-double mr-2"></i>Limpar concluídas</button> <button id="clear-all-tasks-btn" class="btn btn-danger py-1 px-3"><i class="fa-solid fa-trash mr-2"></i>Limpar tudo</button> </div> </div>
 <div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Cronômetro contínuo</h3> <p class="text-sm text-[var(--text-muted)] text-center">Use para sessões de estudo com tempo livre.</p> <div class="text-center my-6"> <div id="stopwatch-display" class="text-6xl md:text-7xl font-black tracking-tighter">00:00:00</div> <div id="stopwatch-pause-display" class="timer-pause-display"></div> <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-lg mx-auto mt-4"> <div> <label for="stopwatch-subject" class="sr-only">Matéria do cronômetro</label> <select id="stopwatch-subject" class="block w-full shadow-sm"></select> </div> <div> <label for="stopwatch-subtopic" class="sr-only">Assunto do cronômetro</label> <select id="stopwatch-subtopic" class="block w-full shadow-sm"></select> </div> </div> </div>
@@ -1483,6 +1483,11 @@ const EditalManager = {
 
     this.currentEdital = null;
     this.savedEditais = [];
+    this.userId = null;
+    this.db = null;
+    this.firebaseRef = null;
+    this.firebaseListener = null;
+    this.offlineMode = false;
     this.isInputCollapsed = false;
     this.isDirty = false;
     this.topicCounter = 0;
@@ -1493,6 +1498,7 @@ const EditalManager = {
     this.sourceLinkEl = null;
 
     this.bindEvents();
+    this.attachAppIntegration();
     this.loadSavedEditais();
     this.updateInputPanelVisibility();
     this.updateSaveButtonState();
@@ -1509,6 +1515,151 @@ const EditalManager = {
     this.savedListEl?.addEventListener('click', (evt) => this.handleSavedListClick(evt));
     this.nameInput?.addEventListener('input', () => this.handleMetaInput());
     this.sourceInput?.addEventListener('input', () => this.handleMetaInput());
+  },
+
+  attachAppIntegration() {
+    const app = window.App;
+    if (!app || !app.state) return;
+    if (!this.toast && typeof app.toast === 'function') {
+      this.toast = app.toast.bind(app);
+    }
+    try {
+      const userId = app.state.userId;
+      const user = userId ? { uid: userId } : null;
+      this.handleAuthChange(user, app.state);
+    } catch (error) {
+      console.error('Erro ao sincronizar estado inicial dos editais:', error);
+    }
+  },
+
+  handleAuthChange(user, appState = {}) {
+    this.offlineMode = !!appState.offlineMode;
+    this.db = appState.db || null;
+    const newUserId = user && user.uid ? user.uid : null;
+
+    if (this.offlineMode) {
+      this.stopRealtimeListener();
+      this.userId = newUserId;
+      if (!this.savedEditais.length) {
+        this.loadSavedEditais();
+      }
+      return;
+    }
+
+    if (!newUserId) {
+      this.stopRealtimeListener();
+      this.userId = null;
+      this.applySavedEditais([], { skipLocalSync: true });
+      return;
+    }
+
+    if (this.userId !== newUserId || !this.firebaseRef) {
+      this.userId = newUserId;
+      this.startRealtimeListener();
+    }
+  },
+
+  startRealtimeListener() {
+    if (!this.db || !this.userId) return;
+    this.stopRealtimeListener();
+    this.firebaseRef = this.db.ref(`editalManager/${this.userId}/items`);
+    const handler = (snapshot) => {
+      const value = snapshot.val();
+      const items = [];
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (item && item.id) items.push(item);
+        });
+      } else if (value && typeof value === 'object') {
+        Object.entries(value).forEach(([id, payload]) => {
+          if (payload && typeof payload === 'object') {
+            items.push({ id, ...payload });
+          }
+        });
+      }
+      this.applySavedEditais(items);
+    };
+    this.firebaseListener = handler;
+    this.firebaseRef.on('value', handler, (error) => {
+      console.error('Erro ao ler editais do Firebase:', error);
+      if (typeof this.toast === 'function') {
+        this.toast('Não foi possível sincronizar os editais.', false);
+      }
+    });
+  },
+
+  stopRealtimeListener() {
+    if (this.firebaseRef) {
+      if (this.firebaseListener) {
+        this.firebaseRef.off('value', this.firebaseListener);
+      } else {
+        this.firebaseRef.off();
+      }
+    }
+    this.firebaseRef = null;
+    this.firebaseListener = null;
+  },
+
+  applySavedEditais(list, { skipLocalSync = false } = {}) {
+    const items = Array.isArray(list) ? list.map(item => ({ ...item })) : [];
+    items.sort((a, b) => (b?.updatedAt || 0) - (a?.updatedAt || 0));
+    this.savedEditais = items;
+    let nextEdital = null;
+    if (items.length > 0) {
+      const currentId = this.currentEdital?.id;
+      nextEdital = items.find(item => item.id === currentId) || items[0];
+    }
+    this.currentEdital = nextEdital ? JSON.parse(JSON.stringify(nextEdital)) : null;
+
+    if (this.currentEdital) {
+      this.populateFormFields();
+      this.renderCurrentEdital();
+      this.hideInputPanel();
+      this.clearDirty();
+    } else {
+      this.renderPlaceholder();
+      this.clearDirty();
+      this.updateProgress();
+    }
+
+    this.renderSavedList();
+    this.updateSaveButtonState();
+    if (!skipLocalSync) {
+      this.saveLocalBackup();
+    }
+  },
+
+  saveLocalBackup() {
+    try {
+      localStorage.setItem('editalManager.saved', JSON.stringify(this.savedEditais));
+    } catch (error) {
+      console.error('Erro ao salvar editais localmente', error);
+    }
+  },
+
+  persistEdital(edital) {
+    if (!edital || !edital.id) return;
+    this.saveLocalBackup();
+    if (this.db && this.userId && !this.offlineMode) {
+      this.db.ref(`editalManager/${this.userId}/items/${edital.id}`).set(edital).catch((error) => {
+        console.error('Erro ao salvar edital no Firebase', error);
+        if (typeof this.toast === 'function') {
+          this.toast('Não foi possível sincronizar o edital na nuvem.', false);
+        }
+      });
+    }
+  },
+
+  removeEditalRemote(editalId) {
+    this.saveLocalBackup();
+    if (this.db && this.userId && !this.offlineMode) {
+      this.db.ref(`editalManager/${this.userId}/items/${editalId}`).remove().catch((error) => {
+        console.error('Erro ao remover edital no Firebase', error);
+        if (typeof this.toast === 'function') {
+          this.toast('Não foi possível remover o edital na nuvem.', false);
+        }
+      });
+    }
   },
 
   toggleInputPanel() {
@@ -2410,47 +2561,26 @@ const EditalManager = {
       this.savedEditais.push(payload);
     }
 
-    this.persistSaved();
-    this.renderSavedList();
-    this.clearDirty();
+    this.applySavedEditais(this.savedEditais, { skipLocalSync: true });
     this.showSaveFeedback();
-  },
-
-  persistSaved() {
-    try {
-      localStorage.setItem('editalManager.saved', JSON.stringify(this.savedEditais));
-    } catch (error) {
-      console.error('Erro ao salvar edital', error);
-    }
+    this.persistEdital(payload);
   },
 
   loadSavedEditais() {
+    let localItems = [];
     try {
       const raw = localStorage.getItem('editalManager.saved');
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          this.savedEditais = parsed;
+          localItems = parsed;
         }
       }
     } catch (error) {
       console.error('Erro ao carregar editais salvos', error);
-      this.savedEditais = [];
     }
 
-    if (this.savedEditais.length) {
-      this.savedEditais.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-      this.currentEdital = JSON.parse(JSON.stringify(this.savedEditais[0]));
-      this.populateFormFields();
-      this.renderCurrentEdital();
-      this.hideInputPanel();
-      this.clearDirty();
-      this.updateProgress();
-    } else {
-      this.renderPlaceholder();
-    }
-
-    this.renderSavedList();
+    this.applySavedEditais(localItems, { skipLocalSync: true });
   },
 
   renderSavedList() {
@@ -2517,26 +2647,8 @@ const EditalManager = {
     }
 
     this.savedEditais.splice(index, 1);
-    this.persistSaved();
-
-    if (this.currentEdital && this.currentEdital.id === editalId) {
-      if (this.savedEditais.length) {
-        const next = JSON.parse(JSON.stringify(this.savedEditais[0]));
-        this.currentEdital = next;
-        this.populateFormFields();
-        this.renderCurrentEdital();
-        this.hideInputPanel();
-        this.clearDirty();
-        this.updateProgress();
-        this.renderSavedList();
-      } else {
-        this.currentEdital = null;
-        this.clear();
-      }
-    } else {
-      this.renderSavedList();
-      this.updateSaveButtonState();
-    }
+    this.applySavedEditais(this.savedEditais, { skipLocalSync: true });
+    this.removeEditalRemote(editalId);
   },
 
   editCurrent() {
@@ -2635,6 +2747,9 @@ initFirebase() {
                 this.hideMainNav();
                 document.getElementById('auth-view').classList.remove('hidden');
             }
+            if (window.EditalManager && typeof EditalManager.handleAuthChange === 'function') {
+                EditalManager.handleAuthChange(user, this.state);
+            }
         });
     } catch (e) {
         console.error("Erro ao inicializar o Firebase:", e);
@@ -2713,6 +2828,9 @@ enableOfflineMode(error, message = 'Modo offline ativado.') {
   if (mainContent) mainContent.classList.remove('hidden');
   this.showMainNav();
   this.initializeApp();
+  if (window.EditalManager && typeof EditalManager.handleAuthChange === 'function') {
+    EditalManager.handleAuthChange(null, this.state);
+  }
   if (typeof this.toast === 'function') {
     this.toast(message, false);
   }
@@ -3519,12 +3637,12 @@ document.querySelectorAll('#mood-tracker .mood-square-wrapper').forEach(wrapper 
 form.addEventListener('submit', (e)=>{ e.preventDefault(); const hours = parseInt(form['manual-duration-hours'].value, 10) || 0; const minutes = parseInt(form['manual-duration-minutes'].value, 10) || 0; const dur = (hours * 3600) + (minutes * 60);
 if(dur <= 0) return this.toast('A duração deve ser maior que zero.', false);
 const totalQ = parseInt(form['questions-total'].value, 10)||0; const correctQ = parseInt(form['questions-correct'].value, 10)||0; if(correctQ>totalQ) return this.toast('Nº de acertos não pode ser maior que o total.', false); const date = form.date.value; const timestamp = new Date(date); const timeOfDay = form['time-of-day'].value; if (timeOfDay === 'madrugada') timestamp.setHours(3, 0, 0, 0); else if (timeOfDay === 'manha') timestamp.setHours(9, 0, 0, 0); else if (timeOfDay === 'tarde') timestamp.setHours(15, 0, 0, 0); else if (timeOfDay === 'noite') timestamp.setHours(21, 0, 0, 0);
-const itemData = { date: date, subject: form.subject.value, subtopic: form.subtopic.value || null, duration: dur, pauseDuration: 0, activity: form['activity-type'].value, totalQuestions: totalQ, correctQuestions: correctQ, accuracy: totalQ > 0 ? correctQ / totalQ : null, mood: form.mood.value || null, sessionType: form['session-type'].value, flowScore: form['session-type'].value === 'focada' ? parseInt(form['flow-score'].value, 10) : null, timestamp: timestamp.getTime(), timeOfDay: timeOfDay };
+const itemData = { date: date, subject: form.subject.value, subtopic: form.subtopic.value || null, duration: dur, pauseDuration: 0, effectiveDuration: dur, activity: form['activity-type'].value, totalQuestions: totalQ, correctQuestions: correctQ, accuracy: totalQ > 0 ? correctQ / totalQ : null, mood: form.mood.value || null, sessionType: form['session-type'].value, flowScore: form['session-type'].value === 'focada' ? parseInt(form['flow-score'].value, 10) : null, timestamp: timestamp.getTime(), timeOfDay: timeOfDay };
 if(this.state.editingId) { const index = this.state.studyData.findIndex(s => s.id === this.state.editingId); if (index !== -1) { this.state.studyData[index] = { ...this.state.studyData[index], ...itemData }; } this.saveData(true, 'Sessão atualizada!'); this.resetForm(); } else { this.state.studyData.push({ ...itemData, id: Date.now() }); this.saveData(true, 'Sessão registrada!'); this.resetForm(); } this.renderSessionHistory(); if (this.state.currentView === 'dashboard') { this.updateDashboard(); } }); cancelBtn.addEventListener('click', () => this.resetForm()); }, resetForm() { const form = document.getElementById('study-form'); form.reset(); this.state.editingId = null; form.querySelector('button[type="submit"]').textContent = 'Salvar sessão'; document.getElementById('cancel-edit-btn').classList.add('hidden'); document.getElementById('mood-input').value=''; document.querySelectorAll('#mood-tracker .mood-square').forEach(b=> b.classList.remove('selected')); form.date.value = new Date().toISOString().split('T')[0]; this.populateSubtopicDropdown('subject', 'subtopic'); const hour = new Date().getHours(); const select = document.getElementById('time-of-day'); if(hour >= 0 && hour < 6) select.value = 'madrugada'; else if(hour >= 6 && hour < 12) select.value = 'manha'; else if(hour >= 12 && hour < 18) select.value = 'tarde'; else select.value = 'noite';
 this.toggleQuestionsSection(); this.toggleFlowSection(); },
 toggleQuestionsSection(){ const activity = document.getElementById('activity-type').value; const section = document.getElementById('questions-section'); const modalSection = document.getElementById('modal-questions-section'); const needed = (activity==='Exercícios' || activity==='Simulado'); section.classList.toggle('hidden', !needed); ['questions-total','questions-correct'].forEach(id=>{ const el = document.getElementById(id); el.required = needed; if(!needed){ el.value=''; } });
 modalSection.classList.toggle('hidden', !needed); ['modal-questions-total','modal-questions-correct'].forEach(id=>{ const el = document.getElementById(id); el.required = needed; if(!needed){ el.value=''; } }); }, toggleFlowSection(){ const type = document.getElementById('session-type').value; document.getElementById('flow-score-section').classList.toggle('hidden', type!=='focada'); },
-bindPomodoro(){ document.getElementById('pomodoro-start-pause').addEventListener('click', ()=> this.togglePomodoro()); document.getElementById('pomodoro-reset').addEventListener('click', ()=> this.resetPomodoro(true)); document.getElementById('pomodoro-skip').addEventListener('click', ()=> this.skipPomodoro()); document.getElementById('pomodoro-subject').addEventListener('change', () => this.populateSubtopicDropdown('pomodoro-subject', 'pomodoro-subtopic')); ['pomodoro-work-duration','pomodoro-short-break-duration','pomodoro-long-break-duration', 'pomodoro-alert-time', 'pomodoro-sound-select'].forEach(id=>{ const el = document.getElementById(id); if (el) el.addEventListener('change', ()=> this.savePomodoroSettings()); }); document.getElementById('pomodoro-auto-start').addEventListener('change', ()=> this.savePomodoroSettings()); }, updateAllSubjectDropdowns(){ const subjects = this.state.parameters.subjects.map(s => s.name); const opts = subjects.map(d=> `<option value="${d}">${d}</option>`).join(''); document.getElementById('subject').innerHTML = opts; this.populateSubtopicDropdown('subject', 'subtopic');
+bindPomodoro(){ document.getElementById('pomodoro-start-pause').addEventListener('click', ()=> this.togglePomodoro()); document.getElementById('pomodoro-log-now').addEventListener('click', () => this.logPomodoroNow()); document.getElementById('pomodoro-reset').addEventListener('click', ()=> this.resetPomodoro(true)); document.getElementById('pomodoro-skip').addEventListener('click', ()=> this.skipPomodoro()); document.getElementById('pomodoro-subject').addEventListener('change', () => this.populateSubtopicDropdown('pomodoro-subject', 'pomodoro-subtopic')); ['pomodoro-work-duration','pomodoro-short-break-duration','pomodoro-long-break-duration', 'pomodoro-alert-time', 'pomodoro-sound-select'].forEach(id=>{ const el = document.getElementById(id); if (el) el.addEventListener('change', ()=> this.savePomodoroSettings()); }); document.getElementById('pomodoro-auto-start').addEventListener('change', ()=> this.savePomodoroSettings()); }, updateAllSubjectDropdowns(){ const subjects = this.state.parameters.subjects.map(s => s.name); const opts = subjects.map(d=> `<option value="${d}">${d}</option>`).join(''); document.getElementById('subject').innerHTML = opts; this.populateSubtopicDropdown('subject', 'subtopic');
 document.getElementById('pomodoro-subject').innerHTML = opts; this.populateSubtopicDropdown('pomodoro-subject', 'pomodoro-subtopic');
 document.getElementById('stopwatch-subject').innerHTML = opts; this.populateSubtopicDropdown('stopwatch-subject', 'stopwatch-subtopic');
         document.getElementById('filter-subject').innerHTML = '<option value="all">Todas as disciplinas</option>'+opts; }, populateSubtopicDropdown(subjectDropdownId, subtopicDropdownId) { const subjectName = document.getElementById(subjectDropdownId).value; const subtopicDropdown = document.getElementById(subtopicDropdownId); const subject = this.state.parameters.subjects.find(s => s.name === subjectName); subtopicDropdown.innerHTML = '<option value="">Nenhum</option>'; if(subject && subject.subtopics && subject.subtopics.length > 0) { const opts = subject.subtopics.map(sub => { const name = typeof sub === 'string' ? sub : sub.name; return `<option value="${name}">${name}</option>`; }).join(''); subtopicDropdown.innerHTML += opts; subtopicDropdown.disabled = false; } else { subtopicDropdown.disabled = true; } }, updateActivityDropdowns(){ const a = this.state.parameters.tiposDeAtividade; const opts = a.map(d=> `<option value="${d}">${d}</option>`).join(''); document.getElementById('activity-type').innerHTML = opts; document.getElementById('modal-activity-type').innerHTML = opts; document.getElementById('filter-activity').innerHTML = '<option value="all">Todos os tipos</option>'+opts; }, bindSubjectManagement() {
@@ -3661,7 +3779,9 @@ if (openSubjects.has(subject.name)) { const subtopicsContainer = subjectEl.query
 async initAudio() { if (this.state.audioInitialized || typeof Tone === 'undefined') return; try { await Tone.start(); this.state.synth = new Tone.Synth().toDestination(); this.state.audioInitialized = true; this.state.backgroundAudio.volume = new Tone.Volume(-20).toDestination(); console.log('Audio context started.'); } catch(e) { console.error("Could not start audio context:", e); } },
 playNotificationSound(timerType = 'pomodoro') { if (!this.state.audioInitialized || !this.state.synth) return; try { const soundSettings = timerType === 'pomodoro' ? this.state.pomodoro.settings : this.state.stopwatch.settings; const selectedSound = soundSettings.sound || 'notification'; const sequence = this.state.soundOptions[selectedSound]; const now = Tone.now(); sequence.forEach((note, i) => { this.state.synth.triggerAttackRelease(note, "8n", now + i * 0.2); }); } catch (e) { console.error("Error playing sound:", e); } },
 resetPomodoro(resetCycles=false){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning=false; p.isSessionActive=false; p.mode='work'; p.timeLeft = (p.settings.work*60); p.totalPauseTime = 0; p.pauseStartTime = null; p.currentTaskId = null; if(resetCycles){ p.cyclesCompleted = 0; p.pendingLogDuration = 0; } this.renderPomodoro(); this.renderTasks(); if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } }, savePomodoroSettings(){ const p = this.state.pomodoro; p.settings.work = parseInt(document.getElementById('pomodoro-work-duration').value, 10)||25; p.settings.shortBreak = parseInt(document.getElementById('pomodoro-short-break-duration').value, 10)||5; p.settings.longBreak = parseInt(document.getElementById('pomodoro-long-break-duration').value, 10)||15; p.settings.alertTime = parseInt(document.getElementById('pomodoro-alert-time').value, 10) || null; p.settings.sound = document.getElementById('pomodoro-sound-select').value; p.settings.autoStart = document.getElementById('pomodoro-auto-start').checked; this.saveData(); if(!p.isRunning){ if(p.mode==='work') p.timeLeft=p.settings.work*60; else if(p.mode==='short') p.timeLeft=p.settings.shortBreak*60; else if(p.mode==='long') p.timeLeft=p.settings.longBreak*60; this.renderPomodoro(); } }, togglePomodoro(){ this.initAudio(); const p = this.state.pomodoro; p.isRunning = !p.isRunning;
-if(p.isRunning){ if(p.pauseStartTime) { p.totalPauseTime += Date.now() - p.pauseStartTime; p.pauseStartTime = null; } if(!p.isSessionActive){ p.isSessionActive=true; p.cycleStart = Date.now(); p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4; p.sessionSubject = document.getElementById('pomodoro-subject').value; p.sessionSubtopic = document.getElementById('pomodoro-subtopic').value; } this.playNotificationSound('pomodoro'); p.intervalId = setInterval(()=> this.tickPomodoro(), 1000); }else{ clearInterval(p.intervalId); p.pauseStartTime = Date.now(); } this.renderPomodoro(); }, skipPomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; this.playNotificationSound('pomodoro'); if(p.isSessionActive && p.mode === 'work'){ this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa pulada!', ''); this.advancePomodoro(); } }, tickPomodoro(){ const p = this.state.pomodoro; if (!p.isRunning) return;
+if(p.isRunning){ if(p.pauseStartTime) { p.totalPauseTime += Date.now() - p.pauseStartTime; p.pauseStartTime = null; } if(!p.isSessionActive){ p.isSessionActive=true; p.cycleStart = Date.now(); p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4; p.sessionSubject = document.getElementById('pomodoro-subject').value; p.sessionSubtopic = document.getElementById('pomodoro-subtopic').value; } this.playNotificationSound('pomodoro'); p.intervalId = setInterval(()=> this.tickPomodoro(), 1000); }else{ clearInterval(p.intervalId); p.pauseStartTime = Date.now(); } this.renderPomodoro(); }, skipPomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; this.playNotificationSound('pomodoro'); if(p.isSessionActive && p.mode === 'work'){ this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa pulada!', ''); this.advancePomodoro(); } },
+logPomodoroNow(){ const p = this.state.pomodoro; if(!p.isSessionActive){ this.toast('Inicie uma sessão de Pomodoro para registrar.', false); return; } const now = Date.now(); if(p.pauseStartTime){ p.totalPauseTime += now - p.pauseStartTime; p.pauseStartTime = now; } const pauseSeconds = Math.floor(p.totalPauseTime / 1000); let effectiveSeconds = p.pendingLogDuration; if(p.mode === 'work'){ const cycleSeconds = p.settings.work * 60; const elapsed = Math.max(cycleSeconds - p.timeLeft, 0); effectiveSeconds += Math.min(elapsed, cycleSeconds); } if(effectiveSeconds <= 0){ this.toast('É necessário acumular algum tempo de foco antes de registrar.', false); return; } const totalDuration = effectiveSeconds + pauseSeconds; if(totalDuration < 60){ this.toast('A sessão precisa ter no mínimo 1 minuto de tempo total.', false); return; } clearInterval(p.intervalId); p.intervalId = null; p.isRunning = false; p.pauseStartTime = null; const subject = p.sessionSubject || document.getElementById('pomodoro-subject')?.value || 'Pomodoro'; const subtopic = p.sessionSubtopic || document.getElementById('pomodoro-subtopic')?.value || ''; this.playNotificationSound('pomodoro'); this.openSessionModal(totalDuration, subject, subtopic, pauseSeconds, effectiveSeconds); this.resetPomodoro(true); p.sessionSubject = subject; p.sessionSubtopic = subtopic; },
+tickPomodoro(){ const p = this.state.pomodoro; if (!p.isRunning) return;
 p.timeLeft--; const alertTimeInSeconds = p.settings.alertTime ? p.settings.alertTime * 60 : null; if(alertTimeInSeconds && p.timeLeft === alertTimeInSeconds) { this.playNotificationSound('pomodoro'); this.showNotificationModal('Atenção!', `Faltam ${p.settings.alertTime} minutos para acabar o ${p.mode === 'work' ? 'foco' : 'descanso'}.`); } if(p.timeLeft <= 0){ p.timeLeft = 0; this.renderPomodoro(); clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; this.playNotificationSound('pomodoro'); if (p.mode === 'work') { this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa finalizada!', 'Hora de voltar ao foco.'); this.advancePomodoro(); if(p.settings.autoStart){ setTimeout(() => this.togglePomodoro(), 500); } } return; } this.renderPomodoro(); }, handlePomodoroWorkEnd() { const p = this.state.pomodoro; const durationOfWorkCycle = p.settings.work * 60; p.pendingLogDuration += durationOfWorkCycle;
 if(p.currentTaskId) { const task = this.state.parameters.tasks.find(t => t.id === p.currentTaskId); if(task) { task.completedPomodoros = (task.completedPomodoros || 0) + 1; if(task.completedPomodoros >= task.estPomodoros && !task.isComplete) { this.toggleTaskComplete(task.id); this.toast(`Tarefa "${task.name}" concluída!`);
 const tasks = this.state.parameters.tasks; const currentIndex = tasks.findIndex(t => t.id === task.id); let nextTask = null;
@@ -3670,7 +3790,7 @@ if (!nextTask) { for (let i = 0; i < currentIndex; i++) { if (!tasks[i].isComple
 if (nextTask) { p.currentTaskId = nextTask.id; this.toast(`Próxima tarefa: ${nextTask.name}`); } else { p.currentTaskId = null; } } this.renderTasks(); this.saveData(); } } this.advancePomodoro();
 if(p.settings.autoStart && p.mode !== 'work'){ setTimeout(() => this.togglePomodoro(), 500); } }, advancePomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; p.cycleStart = Date.now();
 if(p.mode==='work'){ p.cyclesCompleted++; const isLongBreak = (p.cyclesCompleted > 0 && p.cyclesCompleted % p.totalCycles === 0); p.mode = isLongBreak ? 'long' : 'short'; if (isLongBreak && p.pendingLogDuration > 0) {
-const totalDurationInSeconds = p.pendingLogDuration + (p.totalPauseTime / 1000); const pauseDurationInSeconds = p.totalPauseTime / 1000; this.openSessionModal(totalDurationInSeconds, p.sessionSubject, p.sessionSubtopic, pauseDurationInSeconds); p.pendingLogDuration = 0; p.totalPauseTime = 0; }
+const totalDurationInSeconds = p.pendingLogDuration + (p.totalPauseTime / 1000); const pauseDurationInSeconds = p.totalPauseTime / 1000; this.openSessionModal(totalDurationInSeconds, p.sessionSubject, p.sessionSubtopic, pauseDurationInSeconds, p.pendingLogDuration); p.pendingLogDuration = 0; p.totalPauseTime = 0; }
 } else { p.mode='work'; } p.timeLeft = this.modeSeconds(p.mode); this.renderPomodoro(); }, modeSeconds(mode){ const s = this.state.pomodoro.settings; if(mode==='work') return s.work*60; if(mode==='short') return s.shortBreak*60; if(mode==='long') return s.longBreak*60; return 0; }, renderPomodoro(){ const p = this.state.pomodoro; document.getElementById('pomodoro-timer-display').textContent = this.formatTime(p.timeLeft, 'ms'); if(p.isRunning || p.isSessionActive) { document.title = `${this.formatTime(p.timeLeft, 'ms')} - ${p.mode==='work' ? 'Foco' : 'Pausa'}`; } else if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } const pauseDisplay = document.getElementById('pomodoro-pause-display'); if (p.totalPauseTime > 0 || p.pauseStartTime) { let currentPause = p.totalPauseTime; if (p.pauseStartTime) currentPause += Date.now() - p.pauseStartTime; pauseDisplay.textContent = `Pausa total: ${this.formatTime(currentPause / 1000, 'hms_seconds')}`; } else { pauseDisplay.textContent = ''; }
 let statusText = 'Pronto para começar'; if(p.isSessionActive) { if (p.mode === 'work') statusText = 'Foco'; else if (p.mode === 'short') statusText = 'Pausa Curta'; else if (p.mode === 'long') statusText = 'Pausa Longa'; } document.getElementById('pomodoro-status').textContent = statusText;
 if(p.isRunning){ document.getElementById('pomodoro-start-pause').textContent='Pausar'; const end = new Date(Date.now()+p.timeLeft*1000); const hh = String(end.getHours()).padStart(2,'0'); const mm2 = String(end.getMinutes()).padStart(2,'0'); document.getElementById('pomodoro-end-time').textContent = `Termina às ${hh}:${mm2}`; }else{ document.getElementById('pomodoro-start-pause').textContent= p.isSessionActive ? 'Retomar' : 'Iniciar'; document.getElementById('pomodoro-end-time').textContent = ''; }
@@ -3679,7 +3799,7 @@ const currentTaskDisplay = document.getElementById('current-task-display'); if(p
 this.updatePipView(); }, bindStopwatch() { document.getElementById('stopwatch-start-pause').addEventListener('click', () => this.toggleStopwatch()); document.getElementById('stopwatch-log').addEventListener('click', () => this.logStopwatch()); document.getElementById('stopwatch-reset').addEventListener('click', () => this.resetStopwatch()); document.getElementById('stopwatch-subject').addEventListener('change', () => this.populateSubtopicDropdown('stopwatch-subject', 'stopwatch-subtopic')); document.getElementById('stopwatch-alert-hours').addEventListener('change', () => this.setStopwatchAlert()); document.getElementById('stopwatch-alert-minutes').addEventListener('change', () => this.setStopwatchAlert()); document.getElementById('stopwatch-sound-select').addEventListener('change', (e) => { this.state.stopwatch.settings.sound = e.target.value; this.saveData(); }); }, toggleStopwatch() { this.initAudio(); const sw = this.state.stopwatch; sw.isRunning = !sw.isRunning; if (sw.isRunning) { if(sw.pauseStartTime) { const pauseDuration = Date.now() - sw.pauseStartTime; sw.totalPauseTime += pauseDuration; sw.startTime += pauseDuration; sw.pauseStartTime = null; } else { if(sw.elapsedTime === 0){ this.playNotificationSound('stopwatch'); } sw.startTime = Date.now() - sw.elapsedTime; } sw.intervalId = setInterval(() => this.tickStopwatch(), 1000); document.getElementById('stopwatch-start-pause').textContent = 'Pausar'; } else { clearInterval(sw.intervalId); sw.pauseStartTime = Date.now(); document.getElementById('stopwatch-start-pause').textContent = 'Retomar'; } }, resetStopwatch() { const sw = this.state.stopwatch; clearInterval(sw.intervalId); sw.isRunning = false; sw.elapsedTime = 0; sw.alertTime = null; sw.alertTriggered = false; sw.totalPauseTime = 0; sw.pauseStartTime = null; this.renderStopwatch(); document.getElementById('stopwatch-start-pause').textContent = 'Iniciar'; document.getElementById('stopwatch-alert-hours').value = ''; document.getElementById('stopwatch-alert-minutes').value = ''; document.title = 'Dashboard de Performance'; }, tickStopwatch() { const sw = this.state.stopwatch; if (!sw.isRunning) return; sw.elapsedTime = Date.now() - sw.startTime; if (sw.alertTime && !sw.alertTriggered && (sw.elapsedTime / 1000) >= sw.alertTime) { this.playNotificationSound('stopwatch'); this.showNotificationModal('Cronômetro', 'O tempo definido foi atingido!'); sw.alertTriggered = true; } this.renderStopwatch(); }, renderStopwatch() { const sw = this.state.stopwatch; const time = sw.elapsedTime; const timeString = this.formatTime(time / 1000, 'hms_seconds'); document.getElementById('stopwatch-display').textContent = timeString;
 const pauseDisplay = document.getElementById('stopwatch-pause-display'); if (sw.totalPauseTime > 0 || sw.pauseStartTime) { let currentPause = sw.totalPauseTime; if (sw.pauseStartTime) currentPause += Date.now() - sw.pauseStartTime; pauseDisplay.textContent = `Pausa total: ${this.formatTime(currentPause / 1000, 'hms_seconds')}`; } else { pauseDisplay.textContent = ''; }
 if (sw.isRunning || sw.elapsedTime > 0) { document.title = `${timeString} - Cronômetro`; } else if (!this.state.pomodoro.isRunning && !this.state.pomodoro.isSessionActive) { document.title = 'Dashboard de Performance'; }
-this.updatePipView(); }, logStopwatch() { const sw = this.state.stopwatch; const totalDuration = sw.elapsedTime; if (totalDuration < 60000) return this.toast('A sessão precisa ter no mínimo 1 minuto de tempo total.', false); clearInterval(sw.intervalId); this.playNotificationSound('stopwatch'); const durationInSeconds = Math.floor(totalDuration / 1000); const pauseInSeconds = Math.floor(sw.totalPauseTime / 1000); const subject = document.getElementById('stopwatch-subject').value; const subtopic = document.getElementById('stopwatch-subtopic').value; this.openSessionModal(durationInSeconds, subject, subtopic, pauseInSeconds); this.resetStopwatch(); }, setStopwatchAlert() { const sw = this.state.stopwatch; const hours = parseInt(document.getElementById('stopwatch-alert-hours').value, 10) || 0;
+this.updatePipView(); }, logStopwatch() { const sw = this.state.stopwatch; const totalDuration = sw.elapsedTime; if (totalDuration < 60000) return this.toast('A sessão precisa ter no mínimo 1 minuto de tempo total.', false); clearInterval(sw.intervalId); this.playNotificationSound('stopwatch'); const durationInSeconds = Math.floor(totalDuration / 1000); const pauseInSeconds = Math.floor(sw.totalPauseTime / 1000); const subject = document.getElementById('stopwatch-subject').value; const subtopic = document.getElementById('stopwatch-subtopic').value; this.openSessionModal(durationInSeconds, subject, subtopic, pauseInSeconds, durationInSeconds); this.resetStopwatch(); }, setStopwatchAlert() { const sw = this.state.stopwatch; const hours = parseInt(document.getElementById('stopwatch-alert-hours').value, 10) || 0;
 const minutes = parseInt(document.getElementById('stopwatch-alert-minutes').value, 10) || 0; const totalSeconds = (hours * 3600) + (minutes * 60);
 if (totalSeconds > 0 && totalSeconds > (sw.elapsedTime / 1000)) { sw.alertTime = totalSeconds; sw.alertTriggered = false; this.toast('Alerta definido!'); } else { sw.alertTime = null; sw.alertTriggered = false; if (hours > 0 || minutes > 0) { this.toast('Tempo de alerta inválido ou já passou.', false); } } }, bindModal() { const form = document.getElementById('modal-session-form'); document.getElementById('modal-cancel-btn').addEventListener('click', () => this.closeSessionModal(true)); document.getElementById('session-modal-backdrop').addEventListener('click', () => this.closeSessionModal(true)); document.getElementById('modal-activity-type').addEventListener('change', (e) => { const section = document.getElementById('modal-questions-section'); const needed = (e.target.value === 'Exercícios' || e.target.value === 'Simulado'); section.classList.toggle('hidden', !needed); });
 form.addEventListener('focusin', (e) => { if (e.target.matches('.modal-question-input')) { this.state.activeModalQuestionInputId = e.target.id; } });
@@ -3689,7 +3809,7 @@ form.addEventListener('submit', (e) => { e.preventDefault(); const session = thi
 const totalQ = parseInt(form['modal-questions-total'].value, 10) || 0; const correctQ = parseInt(form['modal-questions-correct'].value, 10) || 0; if (correctQ > totalQ) return this.toast('Nº de acertos não pode ser maior que o total.', false); const hour = new Date().getHours(); let timeOfDay = 'manha'; if(hour >= 0 && hour < 6) timeOfDay = 'madrugada'; else if(hour >= 12 && hour < 18) timeOfDay = 'tarde'; else if (hour >= 18) timeOfDay = 'noite';
 const finalSession = { ...session, activity: form['modal-activity-type'].value, totalQuestions: totalQ, correctQuestions: correctQ, accuracy: totalQ > 0 ? correctQ / totalQ : null, mood: form['modal-mood-input'].value || null, flowScore: parseInt(form['modal-flow-score'].value, 10), sessionType: 'focada', timestamp: Date.now(), timeOfDay: timeOfDay };
 this.state.studyData.push(finalSession); this.saveData(true, 'Sessão registrada com sucesso!'); this.closeSessionModal(false); if (this.state.currentView === 'dashboard') { this.updateDashboard(); } this.renderSessionHistory(); }); },
-openSessionModal(durationInSeconds, subject, subtopic = null, pauseDurationInSeconds = 0) { this.state.pendingSession = { id: Date.now(), date: new Date().toISOString().split('T')[0], duration: durationInSeconds, pauseDuration: pauseDurationInSeconds, subject: subject, subtopic: subtopic || null }; const subtopicText = subtopic ? ` (${subtopic})` : ''; document.getElementById('modal-session-info').textContent = `Registrando ${this.formatTime(durationInSeconds)} para ${subject}${subtopicText}`; document.getElementById('modal-session-form').reset(); document.querySelectorAll('#modal-mood-tracker .mood-square').forEach(b => b.classList.remove('selected')); document.getElementById('modal-questions-section').classList.add('hidden');
+openSessionModal(durationInSeconds, subject, subtopic = null, pauseDurationInSeconds = 0, effectiveDurationInSeconds = null) { const effective = typeof effectiveDurationInSeconds === 'number' ? effectiveDurationInSeconds : Math.max(durationInSeconds - pauseDurationInSeconds, 0); this.state.pendingSession = { id: Date.now(), date: new Date().toISOString().split('T')[0], duration: durationInSeconds, pauseDuration: pauseDurationInSeconds, effectiveDuration: effective, subject: subject, subtopic: subtopic || null }; const subtopicText = subtopic ? ` (${subtopic})` : ''; document.getElementById('modal-session-info').textContent = `Registrando ${this.formatTime(durationInSeconds)} para ${subject}${subtopicText}`; document.getElementById('modal-session-form').reset(); document.querySelectorAll('#modal-mood-tracker .mood-square').forEach(b => b.classList.remove('selected')); document.getElementById('modal-questions-section').classList.add('hidden');
 document.getElementById('session-modal-backdrop').classList.remove('hidden'); document.getElementById('session-modal-panel').classList.remove('hidden'); },
 closeSessionModal(isCancel) { this.state.pendingSession = null; document.getElementById('session-modal-backdrop').classList.add('hidden'); document.getElementById('session-modal-panel').classList.add('hidden'); if (this.state.pomodoro.isSessionActive) { if (isCancel) { this.toast('Sessão não registrada.', false); } if (this.state.pomodoro.settings.autoStart && this.state.pomodoro.mode !== 'work') { this.togglePomodoro(); } } }, bindNotificationModal() { document.getElementById('notification-ok-btn').addEventListener('click', () => this.closeNotificationModal()); document.getElementById('notification-modal-backdrop').addEventListener('click', () => this.closeNotificationModal()); }, showNotificationModal(title, message) { document.getElementById('notification-title').textContent = title; document.getElementById('notification-message').textContent = message; document.getElementById('notification-modal-backdrop').classList.remove('hidden'); document.getElementById('notification-modal-panel').classList.remove('hidden'); }, closeNotificationModal() { document.getElementById('notification-modal-backdrop').classList.add('hidden'); document.getElementById('notification-modal-panel').classList.add('hidden'); },
 bindPip() { const pip = this.state.pip; pip.video = document.getElementById('pip-video'); pip.canvas = document.getElementById('pip-canvas'); pip.ctx = pip.canvas.getContext('2d'); document.getElementById('pomodoro-open-mini').addEventListener('click', () => this.togglePictureInPicture()); document.getElementById('stopwatch-open-mini').addEventListener('click', () => this.togglePictureInPicture());
@@ -4217,12 +4337,20 @@ updateMoodCountChart(data) { const ch = this.state.charts.moodCount; const count
       const numeric = Number(value);
       return Number.isFinite(numeric) && numeric > 0 ? numeric : 0;
     };
+    const getEffectiveSeconds = (session) => {
+      const recorded = parseSeconds(session && session.effectiveDuration);
+      if (recorded > 0) return recorded;
+      const duration = parseSeconds(session && session.duration);
+      const pause = parseSeconds(session && session.pauseDuration);
+      if (duration > 0 && pause === 0) return duration;
+      if (pause > 0 && duration === 0) return 0;
+      return Math.max(duration - pause, 0);
+    };
     const totals = sessions.reduce((acc, session) => {
       if (!session) return acc;
-      const duration = parseSeconds(session.duration);
       const pause = parseSeconds(session.pauseDuration);
-      const focus = Math.max(duration - pause, 0);
-      acc.focus += focus;
+      const effective = getEffectiveSeconds(session);
+      acc.focus += effective;
       acc.pause += pause;
       return acc;
     }, { focus: 0, pause: 0 });
@@ -4230,7 +4358,7 @@ updateMoodCountChart(data) { const ch = this.state.charts.moodCount; const count
     if (totalTime > 0) {
       const focusPercentage = ((totals.focus / totalTime) * 100).toFixed(0);
       const pausePercentage = ((totals.pause / totalTime) * 100).toFixed(0);
-      ch.data.labels = [`Foco (${focusPercentage}%)`, `Pausa (${pausePercentage}%)`];
+      ch.data.labels = [`Tempo efetivo (${focusPercentage}%)`, `Tempo pausado (${pausePercentage}%)`];
       ch.data.datasets = [{ data: [totals.focus, totals.pause], backgroundColor: ['#81B29A', '#E07A5F'], borderColor: this.state.parameters.darkMode ? '#1e1e1e' : '#fff', borderWidth: 2 }];
       const formatTime = this.formatTime.bind(this);
       ch.options.plugins.tooltip.callbacks.label = (context) => {
@@ -4291,6 +4419,3 @@ window.onYouTubeIframeAPIReady = () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => { App.init(); EditalManager.init(); }); </script></body></html>
-
-
-
