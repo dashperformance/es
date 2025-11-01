@@ -19,13 +19,13 @@ input, select, textarea { background-color: var(--card-bg); color: var(--text-pr
 
     .study-tracker-wrapper {
       width: 100%;
-      max-width: 72rem;
-      margin: 0 auto;
+      max-width: none;
+      margin: 0;
     }
 
     @media (min-width: 1536px) {
       .study-tracker-wrapper {
-        max-width: 80rem;
+        max-width: none;
       }
     }
 
@@ -321,11 +321,50 @@ input, select, textarea { background-color: var(--card-bg); color: var(--text-pr
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
+    .study-tracker-drag-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: grab;
+      transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .study-tracker-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .study-tracker-drag-handle:hover {
+      color: var(--text-secondary);
+      border-color: var(--border-color);
+      background-color: rgba(148, 163, 184, 0.18);
+    }
+
+    .study-tracker-drag-handle i {
+      pointer-events: none;
+    }
+
+    .dark-mode .study-tracker-drag-handle {
+      color: #94a3b8;
+    }
+
+    .dark-mode .study-tracker-drag-handle:hover {
+      color: #e2e8f0;
+      border-color: rgba(148, 163, 184, 0.45);
+      background-color: rgba(148, 163, 184, 0.25);
+    }
+
     .study-tracker-topic-cell.topic-main {
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
       text-align: left;
+      cursor: grab;
     }
 
     .study-tracker-topic-row.status-falha .topic-main {
@@ -802,8 +841,9 @@ DIREITO ADMINISTRATIVO
 <div class="card p-6"> <h3 class="text-lg font-semibold text-center text-[var(--text-secondary)]">Configurações gerais</h3> <div class="mt-6 pt-6 border-t border-[var(--border-color)] space-y-4"> <div> <label for="week-start-day" class="block text-sm font-medium text-[var(--text-muted)]">Início da semana</label> <select id="week-start-day" class="mt-1 block w-full shadow-sm"> <option value="1">Segunda-feira</option> <option value="0">Domingo</option> </select> </div> <div> <h4 class="text-md font-semibold">Resetar todos os dados</h4> <p class="text-xs text-[var(--text-muted)]">Cuidado: esta ação é irreversível e apagará todos os seus dados da nuvem.</p> <button id="reset-all-data-btn" class="btn btn-danger mt-2 py-2 px-3 w-full">Resetar todos os dados da nuvem</button> </div> </div> </div> </div> </div> </section>
 
     <section id="study-tracker-view" class="hidden space-y-8">
-      <div class="space-y-6 max-w-7xl mx-auto w-full">
-        <div class="card p-4 sm:p-6">
+      <div class="-mx-4 sm:-mx-6 lg:-mx-8">
+        <div class="space-y-6 w-full">
+          <div class="card p-4 sm:p-6">
           <div class="flex flex-col gap-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <h2 class="text-lg sm:text-xl font-bold text-[var(--text-secondary)]">Rastreador de Estudos</h2>
@@ -840,6 +880,7 @@ DIREITO ADMINISTRATIVO
               </div>
             </div>
             <div id="study-tracker-stats-panel" class="study-tracker-stats-panel"></div>
+          </div>
           </div>
         </div>
       </div>
@@ -1499,7 +1540,9 @@ const EditalManager = {
     this.autoSaveTimeout = null;
     this.autoSaveDelay = 1500;
     this.pendingDeletes = new Set();
+    this.pendingSaves = new Map();
     this.isFlushingDeletes = false;
+    this.isFlushingSaves = false;
     this.hasAttemptedRemoteSync = false;
 
     this.bindEvents();
@@ -1520,6 +1563,17 @@ const EditalManager = {
     this.savedListEl?.addEventListener('click', (evt) => this.handleSavedListClick(evt));
     this.nameInput?.addEventListener('input', () => this.handleMetaInput());
     this.sourceInput?.addEventListener('input', () => this.handleMetaInput());
+
+    if (typeof window !== 'undefined') {
+      if (!this.handleOnlineListener) {
+        this.handleOnlineListener = () => this.handleConnectivityOnline();
+        window.addEventListener('online', this.handleOnlineListener);
+      }
+      if (!this.handleOfflineListener) {
+        this.handleOfflineListener = () => this.handleConnectivityOffline();
+        window.addEventListener('offline', this.handleOfflineListener);
+      }
+    }
   },
 
   attachAppIntegration() {
@@ -1565,7 +1619,31 @@ const EditalManager = {
       this.userId = newUserId;
       this.hasAttemptedRemoteSync = false;
       this.startRealtimeListener();
+      this.flushPendingSaves();
     }
+  },
+
+  handleConnectivityOffline() {
+    this.offlineMode = true;
+    this.stopRealtimeListener();
+    this.hasAttemptedRemoteSync = false;
+  },
+
+  handleConnectivityOnline() {
+    this.offlineMode = false;
+    const app = window.App;
+    const appState = app && app.state ? { ...app.state, offlineMode: false } : {};
+    if (appState.db) {
+      this.db = appState.db;
+    }
+
+    const activeUser = appState.auth?.currentUser || (appState.userId ? { uid: appState.userId } : null);
+    if (activeUser) {
+      this.handleAuthChange(activeUser, appState);
+    }
+
+    this.flushPendingDeletes();
+    this.flushPendingSaves();
   },
 
   startRealtimeListener() {
@@ -1592,6 +1670,7 @@ const EditalManager = {
 
       if (!this.offlineMode) {
         this.flushPendingDeletes();
+        this.flushPendingSaves();
       }
 
       if (skipApply) return;
@@ -1729,6 +1808,32 @@ const EditalManager = {
     });
   },
 
+  flushPendingSaves() {
+    if (!this.pendingSaves || !this.pendingSaves.size) return;
+    if (!this.db || !this.userId || this.offlineMode || this.isFlushingSaves) return;
+
+    this.isFlushingSaves = true;
+    const entries = Array.from(this.pendingSaves.values());
+    const tasks = entries.map((payload) =>
+      this.db
+        .ref(`editalManager/${this.userId}/items/${payload.id}`)
+        .set(payload)
+        .then(() => {
+          this.pendingSaves.delete(payload.id);
+        })
+        .catch((error) => {
+          console.error('Erro ao sincronizar edital pendente no Firebase', error);
+          if (typeof this.toast === 'function') {
+            this.toast('Não foi possível sincronizar alguns editais na nuvem.', false);
+          }
+        })
+    );
+
+    Promise.allSettled(tasks).finally(() => {
+      this.isFlushingSaves = false;
+    });
+  },
+
   applySavedEditais(list, { skipLocalSync = false } = {}) {
     const items = Array.isArray(list) ? list.map(item => ({ ...item })) : [];
     items.sort((a, b) => (b?.updatedAt || 0) - (a?.updatedAt || 0));
@@ -1770,10 +1875,14 @@ const EditalManager = {
     if (!edital || !edital.id) return Promise.resolve();
     const payload = JSON.parse(JSON.stringify(edital));
     this.saveLocalBackup();
+    this.pendingSaves.set(payload.id, payload);
     if (this.db && this.userId && !this.offlineMode) {
       return this.db
         .ref(`editalManager/${this.userId}/items/${payload.id}`)
         .set(payload)
+        .then(() => {
+          this.pendingSaves.delete(payload.id);
+        })
         .catch((error) => {
           console.error('Erro ao salvar edital no Firebase', error);
           if (typeof this.toast === 'function') {
@@ -1993,6 +2102,7 @@ const EditalManager = {
     this.hideInputPanel();
     this.markDirty();
     this.renderSavedList();
+    this.saveCurrent({ silent: true });
   },
 
   parseRaw(raw) {
@@ -2867,8 +2977,8 @@ const EditalManager = {
     }[match] || match));
   }
 };
-const App = { hasInitializedUI: false, youtubeOverlayDefaultPlaceholder: '', youtubePlayer: null, youtubeApiReady: false, youtubeApiScriptRequested: false, pendingYouTubePlayback: null, youtubePlayerContainerEl: null, youtubeFrameEl: null, state: { currentView: 'dashboard', charts: {}, studyData: [], backups: [], parameters: { subjects: [ { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] }, { name: "Raciocínio Lógico", subtopics: [] }, { name: "Português", subtopics: [] }, { name: "Direito Administrativo", subtopics: [] } ], tasks: [], youtubeMusic: [], subjectColors: {}, tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado", "Lei Seca", "Jurisprudência", "Subjetivas", "Prova Oral"], weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 }, weekStartDay: 1, concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }, darkMode: false, leiSeca: { laws: [] }, studyTracker: { subjects: {} } }, db: null, auth: null, authUnsubscribe: null, userId: null, dataLoaded: false, offlineMode: false, COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ], soundOptions: { notification: ["C5", "G5"], chime: ["C6", "E6", "G6"], simple: ["G5"] }, pomodoro: { isRunning: false, isSessionActive: false, mode: 'work', timeLeft: 25*60, cycleStart: null, intervalId: null, totalCycles: 4, cyclesCompleted: 0, settings: { work: 25, shortBreak: 5, longBreak: 15, autoStart: false, alertTime: null, sound: 'notification' }, sessionSubject: '', sessionSubtopic: '', pendingLogDuration: 0, totalPauseTime: 0, pauseStartTime: null, currentTaskId: null, }, stopwatch: { isRunning: false, startTime: null, elapsedTime: 0, intervalId: null, subject: '', subtopic: '', alertTime: null, alertTriggered: false, settings: { sound: 'notification' }, totalPauseTime: 0, pauseStartTime: null, }, pip: { canvas: null, video: null, ctx: null, isActive: false, }, backgroundAudio: { player: null, volume: null, }, youtubePlayerState: 'stopped', currentMusicId: null, editingId: null, pendingSession: null, audioInitialized: false, synth: null, activeQuestionInputId: 'questions-total', activeModalQuestionInputId: 'modal-questions-total', questionsEvolutionView: 'relative', debounceTimer: null, lastBackupTime: 0, studyTracker: { selectedSubject: null }, youtubeOverlay: { visible: false, minimized: false } },
-init(){ this.initFirebase(); this.bindAuthForms(); this.checkInitialDarkMode(); },
+const App = { hasInitializedUI: false, youtubeOverlayDefaultPlaceholder: '', youtubePlayer: null, youtubeApiReady: false, youtubeApiScriptRequested: false, pendingYouTubePlayback: null, youtubePlayerContainerEl: null, youtubeFrameEl: null, handleOnlineListener: null, handleOfflineListener: null, state: { currentView: 'dashboard', charts: {}, studyData: [], backups: [], parameters: { subjects: [ { name: "Direito Constitucional", subtopics: ["Controle de Constitucionalidade", "Direitos Fundamentais"] }, { name: "Raciocínio Lógico", subtopics: [] }, { name: "Português", subtopics: [] }, { name: "Direito Administrativo", subtopics: [] } ], tasks: [], youtubeMusic: [], subjectColors: {}, tiposDeAtividade: ["Teoria","Exercícios","Revisão","Simulado", "Lei Seca", "Jurisprudência", "Subjetivas", "Prova Oral"], weeklyGoals: { hours: 35, questions: 250, accuracy: 80, days: 5 }, weekStartDay: 1, concursoInfo: { nome: '', cargo: '', inicio: '', prova: '' }, darkMode: false, leiSeca: { laws: [] }, studyTracker: { subjects: {} } }, db: null, auth: null, authUnsubscribe: null, userId: null, dataLoaded: false, offlineMode: false, COLOR_PALETTE: ['#3D405B', '#81B29A', '#F2CC8F', '#E07A5F', '#555B6E', '#89B0AE', '#BEE3DB', '#FFD6BA', '#F28F3B', '#C8553D', '#6A7FDB', '#A3A3A3', '#3E5641', '#A24936', '#D36135', '#2E294E', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600', '#488f31', '#de425b', '#69b3a2', '#f4a261', '#e76f51', '#2a9d8f', '#264653', '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#001219', '#005f73', '#0a9396', '#94d2bd', '#e9d8a6', '#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226' ], soundOptions: { notification: ["C5", "G5"], chime: ["C6", "E6", "G6"], simple: ["G5"] }, pomodoro: { isRunning: false, isSessionActive: false, mode: 'work', timeLeft: 25*60, cycleStart: null, intervalId: null, totalCycles: 4, cyclesCompleted: 0, settings: { work: 25, shortBreak: 5, longBreak: 15, autoStart: false, alertTime: null, sound: 'notification' }, sessionSubject: '', sessionSubtopic: '', pendingLogDuration: 0, totalPauseTime: 0, pauseStartTime: null, modePauseAccumulated: 0, currentTaskId: null, }, stopwatch: { isRunning: false, startTime: null, elapsedTime: 0, intervalId: null, subject: '', subtopic: '', alertTime: null, alertTriggered: false, settings: { sound: 'notification' }, totalPauseTime: 0, pauseStartTime: null, }, pip: { canvas: null, video: null, ctx: null, isActive: false, }, backgroundAudio: { player: null, volume: null, }, youtubePlayerState: 'stopped', currentMusicId: null, editingId: null, pendingSession: null, audioInitialized: false, synth: null, activeQuestionInputId: 'questions-total', activeModalQuestionInputId: 'modal-questions-total', questionsEvolutionView: 'relative', debounceTimer: null, lastBackupTime: 0, studyTracker: { selectedSubject: null }, youtubeOverlay: { visible: false, minimized: false } }, studyTrackerTopicSortable: null,
+init(){ this.initFirebase(); this.bindAuthForms(); this.checkInitialDarkMode(); this.bindConnectivityWatchers(); },
 showMainNav() {
     const nav = document.getElementById('main-nav');
     if (nav) nav.classList.add('nav-visible');
@@ -2981,8 +3091,47 @@ initializeApp() {
         this.renderDetailedLog(this.getFilteredData(), e.target.value);
       }, 300);
     });
-},
-enableOfflineMode(error, message = 'Modo offline ativado.') {
+
+    document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
+  },
+  bindConnectivityWatchers() {
+    if (typeof window === 'undefined') return;
+    if (!this.handleOnlineListener) {
+      this.handleOnlineListener = () => this.handleConnectivityOnline();
+      window.addEventListener('online', this.handleOnlineListener);
+    }
+    if (!this.handleOfflineListener) {
+      this.handleOfflineListener = () => this.handleConnectivityOffline();
+      window.addEventListener('offline', this.handleOfflineListener);
+    }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      this.handleConnectivityOffline();
+    }
+  },
+  handleConnectivityOffline() {
+    const wasOffline = this.state.offlineMode;
+    this.state.offlineMode = true;
+    if (!wasOffline && this.hasInitializedUI && typeof this.toast === 'function') {
+      this.toast('Conexão perdida. Continuando offline.', false);
+    }
+    if (window.EditalManager && typeof EditalManager.handleConnectivityOffline === 'function') {
+      EditalManager.handleConnectivityOffline();
+    }
+  },
+  handleConnectivityOnline() {
+    const wasOffline = this.state.offlineMode;
+    this.state.offlineMode = false;
+    if (!this.state.db || !this.state.auth) {
+      this.initFirebase();
+    }
+    if (wasOffline && this.hasInitializedUI && typeof this.toast === 'function') {
+      this.toast('Conexão restabelecida. Sincronizando...', true);
+    }
+    if (window.EditalManager && typeof EditalManager.handleConnectivityOnline === 'function') {
+      EditalManager.handleConnectivityOnline();
+    }
+  },
+  enableOfflineMode(error, message = 'Modo offline ativado.') {
   if (this.state.offlineMode) return;
   console.warn('Ativando modo offline.', error);
   this.state.offlineMode = true;
@@ -3078,10 +3227,22 @@ ensureStudyTrackerData() {
       }
     }
   });
-  Object.values(tracker).forEach(entry => {
+  Object.entries(tracker).forEach(([name, entry]) => {
     if (!entry || typeof entry !== 'object') return;
     if (!Array.isArray(entry.topics)) entry.topics = [];
     entry.topics = entry.topics.map(topic => this.normalizeStudyTrackerTopic(topic));
+    const subject = Array.isArray(this.state.parameters.subjects)
+      ? this.state.parameters.subjects.find(s => s.name === name)
+      : null;
+    if (subject && Array.isArray(subject.subtopics)) {
+      const order = subject.subtopics.map(st => (typeof st === 'string' ? st : st?.name)).filter(Boolean);
+      const orderMap = new Map(order.map((subName, index) => [subName, index]));
+      entry.topics.sort((a, b) => {
+        const orderA = orderMap.get(a?.name || '') ?? Number.MAX_SAFE_INTEGER;
+        const orderB = orderMap.get(b?.name || '') ?? Number.MAX_SAFE_INTEGER;
+        return orderA - orderB;
+      });
+    }
   });
   if (!this.state.studyTracker.selectedSubject && subjectNames.length > 0) {
     this.state.studyTracker.selectedSubject = subjectNames[0];
@@ -3106,6 +3267,12 @@ syncStudyTrackerSubject(subjectName) {
     }
   });
   entry.topics = entry.topics.filter(topic => subtopicNames.includes(topic.name)).map(topic => this.normalizeStudyTrackerTopic(topic));
+  const orderMap = new Map(subtopicNames.map((name, index) => [name, index]));
+  entry.topics.sort((a, b) => {
+    const orderA = orderMap.get(a?.name || '') ?? Number.MAX_SAFE_INTEGER;
+    const orderB = orderMap.get(b?.name || '') ?? Number.MAX_SAFE_INTEGER;
+    return orderA - orderB;
+  });
   tracker[subjectName] = entry;
 },
 
@@ -3199,7 +3366,6 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
           return;
         }
         subject.subtopics.push(value);
-        subject.subtopics.sort((a, b) => a.localeCompare(b, 'pt-BR'));
         this.syncStudyTrackerSubject(subjectName);
         if (topicInput) topicInput.value = '';
         this.saveData(true, `Assunto "${value}" adicionado.`);
@@ -3278,6 +3444,7 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
         }
         const emptyStats = this.getEmptyTrackerStats();
         this.updateStudyTrackerStats(emptyStats, this.computeOverallStudyTrackerStats());
+        this.destroyStudyTrackerTopicSortable();
         return;
       }
 
@@ -3313,13 +3480,22 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
       subjectsList.appendChild(subjectFragment);
 
       const entry = this.getStudyTrackerEntry(selectedName);
-      const topics = Array.isArray(entry.topics) ? entry.topics.map(topic => this.normalizeStudyTrackerTopic(topic)) : [];
-      topics.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+      let topics = Array.isArray(entry.topics) ? entry.topics.map(topic => this.normalizeStudyTrackerTopic(topic)) : [];
+      const subject = subjects.find(s => s.name === selectedName);
+      if (subject && Array.isArray(subject.subtopics)) {
+        const order = subject.subtopics.map(st => (typeof st === 'string' ? st : st?.name)).filter(Boolean);
+        const orderSet = new Set(order);
+        const topicMap = new Map(topics.map(topic => [topic.name, topic]));
+        const orderedTopics = order.map(name => topicMap.get(name)).filter(Boolean);
+        const leftovers = topics.filter(topic => !orderSet.has(topic.name));
+        topics = [...orderedTopics, ...leftovers];
+      }
 
       if (topics.length === 0) {
         topicsContainer.innerHTML = '<p class="study-tracker-empty">Nenhum assunto cadastrado.</p>';
         const emptyStats = this.getEmptyTrackerStats(selectedName);
         this.updateStudyTrackerStats(emptyStats, this.computeOverallStudyTrackerStats());
+        this.destroyStudyTrackerTopicSortable();
         return;
       }
 
@@ -3350,7 +3526,7 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
 
         const row = document.createElement('div');
         row.className = `study-tracker-topic-row ${topic.status ? `status-${topic.status}` : ''}`;
-        row.dataset.topicId = topic.id;
+        row.dataset.topicId = String(topic.id);
 
         const topicCell = document.createElement('div');
         topicCell.className = 'study-tracker-topic-cell topic-main';
@@ -3365,6 +3541,12 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
           statusGroup.appendChild(dot);
         });
 
+        const dragHandle = document.createElement('button');
+        dragHandle.type = 'button';
+        dragHandle.className = 'study-tracker-drag-handle';
+        dragHandle.innerHTML = '<i class="fa-solid fa-grip-vertical"></i>';
+        dragHandle.setAttribute('aria-label', 'Reordenar assunto');
+
         const nameSpan = document.createElement('span');
         nameSpan.className = 'topic-name';
         nameSpan.textContent = topic.name;
@@ -3372,10 +3554,11 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.dataset.action = 'delete-topic';
-        removeBtn.dataset.topicId = topic.id;
+        removeBtn.dataset.topicId = String(topic.id);
         removeBtn.className = 'topic-remove';
         removeBtn.textContent = 'Excluir';
 
+        topicCell.appendChild(dragHandle);
         topicCell.appendChild(statusGroup);
         topicCell.appendChild(nameSpan);
         topicCell.appendChild(removeBtn);
@@ -3425,7 +3608,7 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
         const reviewBtn = document.createElement('button');
         reviewBtn.type = 'button';
         reviewBtn.dataset.action = 'toggle-review';
-        reviewBtn.dataset.topicId = topic.id;
+        reviewBtn.dataset.topicId = String(topic.id);
         reviewBtn.className = 'study-tracker-review-button' + (topic.needsReview ? ' active' : '');
         reviewBtn.innerHTML = `<span class='icon'>${topic.needsReview ? '✖' : '—'}</span><span class='label'>Revisar</span>`;
         reviewCell.appendChild(reviewBtn);
@@ -3435,7 +3618,7 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
         const reviewedBtn = document.createElement('button');
         reviewedBtn.type = 'button';
         reviewedBtn.dataset.action = 'toggle-reviewed';
-        reviewedBtn.dataset.topicId = topic.id;
+        reviewedBtn.dataset.topicId = String(topic.id);
         reviewedBtn.className = 'study-tracker-reviewed-button' + (topic.reviewed ? ' active' : '');
         reviewedBtn.innerHTML = `<span class='icon'>${topic.reviewed ? '✓' : '—'}</span>`;
         reviewedCell.appendChild(reviewedBtn);
@@ -3448,6 +3631,7 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
       });
 
       topicsContainer.appendChild(topicsFragment);
+      this.setupStudyTrackerTopicDragAndDrop();
 
       subjectStats.lastUpdated = lastUpdated;
       const totalTopics = subjectStats.totalTopics || 0;
@@ -3461,6 +3645,59 @@ findStudyTrackerTopic(subjectName, topicId) { const entry = this.getStudyTracker
 
       const overallStats = this.computeOverallStudyTrackerStats();
       this.updateStudyTrackerStats(subjectStats, overallStats);
+    },
+
+    destroyStudyTrackerTopicSortable() {
+      if (this.studyTrackerTopicSortable) {
+        this.studyTrackerTopicSortable.destroy();
+        this.studyTrackerTopicSortable = null;
+      }
+    },
+
+    setupStudyTrackerTopicDragAndDrop() {
+      if (typeof Sortable === 'undefined') return;
+      const container = document.getElementById('study-tracker-topics-container');
+      if (!container) return;
+      this.destroyStudyTrackerTopicSortable();
+      if (!container.querySelector('.study-tracker-topic-row')) return;
+      this.studyTrackerTopicSortable = Sortable.create(container, {
+        animation: 180,
+        handle: '.study-tracker-drag-handle',
+        draggable: '.study-tracker-topic-row',
+        ghostClass: 'dragging',
+        forceFallback: true,
+        fallbackOnBody: true,
+        fallbackTolerance: 12,
+        onEnd: () => this.persistStudyTrackerTopicOrder(),
+      });
+    },
+
+    persistStudyTrackerTopicOrder() {
+      const subjectName = this.state.studyTracker.selectedSubject;
+      if (!subjectName) return;
+      const container = document.getElementById('study-tracker-topics-container');
+      if (!container) return;
+      const orderIds = Array.from(container.querySelectorAll('.study-tracker-topic-row'))
+        .map(row => row.dataset.topicId)
+        .filter(id => !!id);
+      if (!orderIds.length) return;
+
+      const entry = this.getStudyTrackerEntry(subjectName);
+      if (!Array.isArray(entry.topics)) return;
+      const topicMap = new Map(entry.topics.map(topic => [String(topic.id), topic]));
+      entry.topics = orderIds.map(id => topicMap.get(id)).filter(Boolean);
+      this.state.parameters.studyTracker.subjects[subjectName] = entry;
+
+      const subject = this.state.parameters.subjects.find(s => s.name === subjectName);
+      if (subject) {
+        const originalMap = new Map((subject.subtopics || []).map(st => [typeof st === 'string' ? st : st?.name, st]));
+        const orderedNames = entry.topics.map(topic => topic.name);
+        subject.subtopics = orderedNames.map(name => originalMap.get(name) ?? name);
+      }
+
+      this.syncStudyTrackerSubject(subjectName);
+      this.saveData(true, 'Ordem dos assuntos atualizada.');
+      this.renderStudyTracker();
     },
 
     getEmptyTrackerStats(name = '') {
@@ -3782,7 +4019,27 @@ const update = () => { concursoInfo.nome = document.getElementById('concurso-nom
 fields.forEach(id => document.getElementById(id).addEventListener('change', update)); this.updateCountdown(); },
 updateCountdown() { const container = document.getElementById('concurso-countdown'); const provaDate = this.state.parameters.concursoInfo.prova; if (!provaDate) { container.innerHTML = ''; return; } const today = new Date(); today.setHours(0,0,0,0); const targetDate = new Date(provaDate); const userTimezoneOffset = targetDate.getTimezoneOffset() * 60000; const correctedTargetDate = new Date(targetDate.getTime() + userTimezoneOffset); const diffTime = correctedTargetDate - today; const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 if (diffDays > 0) { container.innerHTML = `Faltam <span class="text-2xl">${diffDays}</span> dias para a prova.`; } else if (diffDays === 0) { container.innerHTML = `É hoje! Boa prova!`; } else { container.innerHTML = `A prova já passou.`; } },
-toast(msg, ok=true){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('opacity-0','translate-y-2'); t.classList.toggle('bg-red-600', !ok); t.classList.toggle('bg-[color:var(--c1)]', ok); setTimeout(()=> t.classList.add('opacity-0','translate-y-2'), 2500); }, formatTime(seconds, format = 'hms') { if (isNaN(seconds) || seconds < 0) return '00h00m'; seconds = Math.round(seconds); const h = Math.floor(seconds / 3600); const m = Math.floor((seconds % 3600) / 60); const s = seconds % 60; const hh = String(h).padStart(2, '0'); const mm = String(m).padStart(2, '0'); const ss = String(s).padStart(2, '0'); if (format === 'hms') { return `${hh}h${mm}m`; } if (format === 'hms_seconds') { return `${hh}:${mm}:${ss}`; } if (format === 'ms') { return `${mm}:${ss}`; } return `${hh}h${mm}m`; }, bindGeneralActions() { document.getElementById('export-pdf-btn').addEventListener('click', ()=> this.exportPDF()); document.getElementById('save-all-btn').addEventListener('click', () => { this.saveData(true); }); }, bindBackup() { document.getElementById('export-backup-btn').addEventListener('click', () => this.createBackup('Manual', true)); document.getElementById('import-backup-btn').addEventListener('click', () => document.getElementById('backup-file-input').click()); document.getElementById('backup-file-input').addEventListener('change', (e) => this.importBackup(e)); document.getElementById('create-backup-now-btn').addEventListener('click', () => this.createBackup('Salvo Manualmente', false)); },
+toast(msg, ok=true){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('opacity-0','translate-y-2'); t.classList.toggle('bg-red-600', !ok); t.classList.toggle('bg-[color:var(--c1)]', ok); setTimeout(()=> t.classList.add('opacity-0','translate-y-2'), 2500); }, formatTime(seconds, format = 'hms') { if (isNaN(seconds) || seconds < 0) return '00h00m'; seconds = Math.round(seconds); const h = Math.floor(seconds / 3600); const m = Math.floor((seconds % 3600) / 60); const s = seconds % 60; const hh = String(h).padStart(2, '0'); const mm = String(m).padStart(2, '0'); const ss = String(s).padStart(2, '0'); if (format === 'hms') { return `${hh}h${mm}m`; } if (format === 'hms_seconds') { return `${hh}:${mm}:${ss}`; } if (format === 'ms') { return `${mm}:${ss}`; } return `${hh}h${mm}m`; },
+  bindGeneralActions() {
+    document.getElementById('export-pdf-btn').addEventListener('click', ()=> this.exportPDF());
+    document.getElementById('save-all-btn').addEventListener('click', () => { this.saveData(true); });
+  },
+  handleVisibilityChange() {
+    if (document.hidden) return;
+    if (this.state.pomodoro.isSessionActive || this.state.pomodoro.isRunning) {
+      this.recalculatePomodoroTime();
+      this.renderPomodoro();
+    }
+
+    const sw = this.state.stopwatch;
+    if (sw.isRunning) {
+      sw.elapsedTime = Date.now() - sw.startTime;
+      this.renderStopwatch();
+    } else if (sw.elapsedTime > 0) {
+      this.renderStopwatch();
+    }
+  },
+  bindBackup() { document.getElementById('export-backup-btn').addEventListener('click', () => this.createBackup('Manual', true)); document.getElementById('import-backup-btn').addEventListener('click', () => document.getElementById('backup-file-input').click()); document.getElementById('backup-file-input').addEventListener('change', (e) => this.importBackup(e)); document.getElementById('create-backup-now-btn').addEventListener('click', () => this.createBackup('Salvo Manualmente', false)); },
 createBackup(reason = 'Manual', download = true) { const now = Date.now(); if (now - this.state.lastBackupTime < 2000) { console.warn("Backup request too soon, ignoring."); return; } this.state.lastBackupTime = now; try { const timestamp = new Date(); const dataToBackup = { studyData: this.state.studyData, parameters: this.state.parameters, }; const jsonString = JSON.stringify(dataToBackup, null, 2); const newBackup = { id: timestamp.getTime(), date: timestamp.toISOString(), reason: reason, content: jsonString, };
 if (reason.startsWith('Automático')) { this.state.backups = this.state.backups.filter(b => !b.reason.startsWith('Automático')); }
 this.state.backups.push(newBackup); this.state.backups.sort((a, b) => new Date(b.date) - new Date(a.date)); this.toast(`Backup local '${reason}' criado com sucesso!`); localStorage.setItem('studyDashBackupsV30', JSON.stringify(this.state.backups)); this.renderBackupList(); if(download) { const blob = new Blob([jsonString], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; const dateStr = timestamp.toISOString().split('T')[0]; a.download = `backup-estudos-${dateStr}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
@@ -3946,20 +4203,19 @@ subjectEl.innerHTML = ` <div class="flex items-center justify-between subject-he
 if (openSubjects.has(subject.name)) { const subtopicsContainer = subjectEl.querySelector('.subtopics-container'); setTimeout(() => { if (subtopicsContainer) { subtopicsContainer.style.maxHeight = subtopicsContainer.scrollHeight + "px"; } }, 0); } }); },
 async initAudio() { if (this.state.audioInitialized || typeof Tone === 'undefined') return; try { await Tone.start(); this.state.synth = new Tone.Synth().toDestination(); this.state.audioInitialized = true; this.state.backgroundAudio.volume = new Tone.Volume(-20).toDestination(); console.log('Audio context started.'); } catch(e) { console.error("Could not start audio context:", e); } },
 playNotificationSound(timerType = 'pomodoro') { if (!this.state.audioInitialized || !this.state.synth) return; try { const soundSettings = timerType === 'pomodoro' ? this.state.pomodoro.settings : this.state.stopwatch.settings; const selectedSound = soundSettings.sound || 'notification'; const sequence = this.state.soundOptions[selectedSound]; const now = Tone.now(); sequence.forEach((note, i) => { this.state.synth.triggerAttackRelease(note, "8n", now + i * 0.2); }); } catch (e) { console.error("Error playing sound:", e); } },
-resetPomodoro(resetCycles=false){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning=false; p.isSessionActive=false; p.mode='work'; p.timeLeft = (p.settings.work*60); p.totalPauseTime = 0; p.pauseStartTime = null; p.currentTaskId = null; if(resetCycles){ p.cyclesCompleted = 0; p.pendingLogDuration = 0; } this.renderPomodoro(); this.renderTasks(); if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } }, savePomodoroSettings(){ const p = this.state.pomodoro; p.settings.work = parseInt(document.getElementById('pomodoro-work-duration').value, 10)||25; p.settings.shortBreak = parseInt(document.getElementById('pomodoro-short-break-duration').value, 10)||5; p.settings.longBreak = parseInt(document.getElementById('pomodoro-long-break-duration').value, 10)||15; p.settings.alertTime = parseInt(document.getElementById('pomodoro-alert-time').value, 10) || null; p.settings.sound = document.getElementById('pomodoro-sound-select').value; p.settings.autoStart = document.getElementById('pomodoro-auto-start').checked; this.saveData(); if(!p.isRunning){ if(p.mode==='work') p.timeLeft=p.settings.work*60; else if(p.mode==='short') p.timeLeft=p.settings.shortBreak*60; else if(p.mode==='long') p.timeLeft=p.settings.longBreak*60; this.renderPomodoro(); } }, togglePomodoro(){ this.initAudio(); const p = this.state.pomodoro; p.isRunning = !p.isRunning;
-if(p.isRunning){ if(p.pauseStartTime) { p.totalPauseTime += Date.now() - p.pauseStartTime; p.pauseStartTime = null; } if(!p.isSessionActive){ p.isSessionActive=true; p.cycleStart = Date.now(); p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4; p.sessionSubject = document.getElementById('pomodoro-subject').value; p.sessionSubtopic = document.getElementById('pomodoro-subtopic').value; } this.playNotificationSound('pomodoro'); p.intervalId = setInterval(()=> this.tickPomodoro(), 1000); }else{ clearInterval(p.intervalId); p.pauseStartTime = Date.now(); } this.renderPomodoro(); }, skipPomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; this.playNotificationSound('pomodoro'); if(p.isSessionActive && p.mode === 'work'){ this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa pulada!', ''); this.advancePomodoro(); } },
-logPomodoroNow(){ const p = this.state.pomodoro; if(!p.isSessionActive){ this.toast('Inicie uma sessão de Pomodoro para registrar.', false); return; } const now = Date.now(); if(p.pauseStartTime){ p.totalPauseTime += now - p.pauseStartTime; p.pauseStartTime = now; } const pauseSeconds = Math.floor(p.totalPauseTime / 1000); let effectiveSeconds = p.pendingLogDuration; if(p.mode === 'work'){ const cycleSeconds = p.settings.work * 60; const elapsed = Math.max(cycleSeconds - p.timeLeft, 0); effectiveSeconds += Math.min(elapsed, cycleSeconds); } if(effectiveSeconds <= 0){ this.toast('É necessário acumular algum tempo de foco antes de registrar.', false); return; } const totalDuration = effectiveSeconds + pauseSeconds; if(totalDuration < 60){ this.toast('A sessão precisa ter no mínimo 1 minuto de tempo total.', false); return; } clearInterval(p.intervalId); p.intervalId = null; p.isRunning = false; p.pauseStartTime = null; const subject = p.sessionSubject || document.getElementById('pomodoro-subject')?.value || 'Pomodoro'; const subtopic = p.sessionSubtopic || document.getElementById('pomodoro-subtopic')?.value || ''; this.playNotificationSound('pomodoro'); this.openSessionModal(totalDuration, subject, subtopic, pauseSeconds, effectiveSeconds); this.resetPomodoro(true); p.sessionSubject = subject; p.sessionSubtopic = subtopic; },
-tickPomodoro(){ const p = this.state.pomodoro; if (!p.isRunning) return;
-p.timeLeft--; const alertTimeInSeconds = p.settings.alertTime ? p.settings.alertTime * 60 : null; if(alertTimeInSeconds && p.timeLeft === alertTimeInSeconds) { this.playNotificationSound('pomodoro'); this.showNotificationModal('Atenção!', `Faltam ${p.settings.alertTime} minutos para acabar o ${p.mode === 'work' ? 'foco' : 'descanso'}.`); } if(p.timeLeft <= 0){ p.timeLeft = 0; this.renderPomodoro(); clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; this.playNotificationSound('pomodoro'); if (p.mode === 'work') { this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa finalizada!', 'Hora de voltar ao foco.'); this.advancePomodoro(); if(p.settings.autoStart){ setTimeout(() => this.togglePomodoro(), 500); } } return; } this.renderPomodoro(); }, handlePomodoroWorkEnd() { const p = this.state.pomodoro; const durationOfWorkCycle = p.settings.work * 60; p.pendingLogDuration += durationOfWorkCycle;
+ resetPomodoro(resetCycles=false){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.intervalId = null; p.isRunning=false; p.isSessionActive=false; p.mode='work'; p.timeLeft = (p.settings.work*60); p.totalPauseTime = 0; p.pauseStartTime = null; p.cycleStart = null; p.modePauseAccumulated = 0; p.currentTaskId = null; if(resetCycles){ p.cyclesCompleted = 0; p.pendingLogDuration = 0; } this.renderPomodoro(); this.renderTasks(); if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } }, savePomodoroSettings(){ const p = this.state.pomodoro; p.settings.work = parseInt(document.getElementById('pomodoro-work-duration').value, 10)||25; p.settings.shortBreak = parseInt(document.getElementById('pomodoro-short-break-duration').value, 10)||5; p.settings.longBreak = parseInt(document.getElementById('pomodoro-long-break-duration').value, 10)||15; p.settings.alertTime = parseInt(document.getElementById('pomodoro-alert-time').value, 10) || null; p.settings.sound = document.getElementById('pomodoro-sound-select').value; p.settings.autoStart = document.getElementById('pomodoro-auto-start').checked; this.saveData(); if(!p.isRunning){ if(p.mode==='work') p.timeLeft=p.settings.work*60; else if(p.mode==='short') p.timeLeft=p.settings.shortBreak*60; else if(p.mode==='long') p.timeLeft=p.settings.longBreak*60; this.renderPomodoro(); } }, togglePomodoro(){ this.initAudio(); const p = this.state.pomodoro; p.isRunning = !p.isRunning;
+if(p.isRunning){ const now = Date.now(); if(p.pauseStartTime){ const pauseDuration = now - p.pauseStartTime; p.totalPauseTime += pauseDuration; if(p.cycleStart){ p.cycleStart += pauseDuration; } else { p.cycleStart = now; } p.pauseStartTime = null; } if(!p.isSessionActive){ p.isSessionActive=true; p.cycleStart = now; p.totalCycles = parseInt(document.getElementById('pomodoro-cycles').value, 10) || 4; p.sessionSubject = document.getElementById('pomodoro-subject').value; p.sessionSubtopic = document.getElementById('pomodoro-subtopic').value; p.totalPauseTime = 0; } else if(!p.cycleStart){ p.cycleStart = now; } this.playNotificationSound('pomodoro'); this.recalculatePomodoroTime(); clearInterval(p.intervalId); p.intervalId = setInterval(()=> this.tickPomodoro(), 1000); }else{ clearInterval(p.intervalId); p.intervalId = null; this.recalculatePomodoroTime(); if(!p.pauseStartTime){ p.pauseStartTime = Date.now(); } } this.renderPomodoro(); }, skipPomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.intervalId = null; p.isRunning = false; if(p.pauseStartTime){ const pauseDuration = Date.now() - p.pauseStartTime; p.totalPauseTime += pauseDuration; if(p.cycleStart){ p.cycleStart += pauseDuration; } p.pauseStartTime = null; } this.recalculatePomodoroTime(); this.playNotificationSound('pomodoro'); if(p.isSessionActive && p.mode === 'work'){ this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa pulada!', ''); this.advancePomodoro(); } },
+logPomodoroNow(){ const p = this.state.pomodoro; if(!p.isSessionActive){ this.toast('Inicie uma sessão de Pomodoro para registrar.', false); return; } const now = Date.now(); if(p.pauseStartTime){ const pauseDuration = now - p.pauseStartTime; p.totalPauseTime += pauseDuration; if(p.cycleStart){ p.cycleStart += pauseDuration; } p.pauseStartTime = null; } const { elapsedSeconds } = this.recalculatePomodoroTime(); const pauseSeconds = Math.floor(p.totalPauseTime / 1000); let effectiveSeconds = p.pendingLogDuration; if(p.mode === 'work'){ const cycleSeconds = this.modeSeconds('work'); effectiveSeconds += Math.min(elapsedSeconds, cycleSeconds); } if(effectiveSeconds <= 0){ this.toast('É necessário acumular algum tempo de foco antes de registrar.', false); return; } const totalDuration = effectiveSeconds; if(totalDuration < 60){ this.toast('A sessão precisa ter no mínimo 1 minuto de tempo total.', false); return; } clearInterval(p.intervalId); p.intervalId = null; p.isRunning = false; p.pauseStartTime = null; const subject = p.sessionSubject || document.getElementById('pomodoro-subject')?.value || 'Pomodoro'; const subtopic = p.sessionSubtopic || document.getElementById('pomodoro-subtopic')?.value || ''; this.playNotificationSound('pomodoro'); this.openSessionModal(totalDuration, subject, subtopic, pauseSeconds, effectiveSeconds); this.resetPomodoro(true); p.sessionSubject = subject; p.sessionSubtopic = subtopic; },
+tickPomodoro(){ const p = this.state.pomodoro; if (!p.isRunning) return; const { remainingSeconds } = this.recalculatePomodoroTime(); const alertTimeInSeconds = p.settings.alertTime ? p.settings.alertTime * 60 : null; if(alertTimeInSeconds && remainingSeconds === alertTimeInSeconds) { this.playNotificationSound('pomodoro'); this.showNotificationModal('Atenção!', `Faltam ${p.settings.alertTime} minutos para acabar o ${p.mode === 'work' ? 'foco' : 'descanso'}.`); } if(remainingSeconds <= 0){ p.timeLeft = 0; this.renderPomodoro(); clearInterval(p.intervalId); p.intervalId = null; p.isRunning = false; p.pauseStartTime = null; this.playNotificationSound('pomodoro'); if (p.mode === 'work') { this.handlePomodoroWorkEnd(); } else { this.showNotificationModal('Pausa finalizada!', 'Hora de voltar ao foco.'); this.advancePomodoro(); if(p.settings.autoStart){ setTimeout(() => this.togglePomodoro(), 500); } } return; } this.renderPomodoro(); }, handlePomodoroWorkEnd() { const p = this.state.pomodoro; const { elapsedSeconds } = this.recalculatePomodoroTime(); const focusSeconds = Math.min(elapsedSeconds, this.modeSeconds('work')); p.pendingLogDuration += focusSeconds;
 if(p.currentTaskId) { const task = this.state.parameters.tasks.find(t => t.id === p.currentTaskId); if(task) { task.completedPomodoros = (task.completedPomodoros || 0) + 1; if(task.completedPomodoros >= task.estPomodoros && !task.isComplete) { this.toggleTaskComplete(task.id); this.toast(`Tarefa "${task.name}" concluída!`);
 const tasks = this.state.parameters.tasks; const currentIndex = tasks.findIndex(t => t.id === task.id); let nextTask = null;
 for (let i = currentIndex + 1; i < tasks.length; i++) { if (!tasks[i].isComplete) { nextTask = tasks[i]; break; } }
 if (!nextTask) { for (let i = 0; i < currentIndex; i++) { if (!tasks[i].isComplete) { nextTask = tasks[i]; break; } } }
 if (nextTask) { p.currentTaskId = nextTask.id; this.toast(`Próxima tarefa: ${nextTask.name}`); } else { p.currentTaskId = null; } } this.renderTasks(); this.saveData(); } } this.advancePomodoro();
-if(p.settings.autoStart && p.mode !== 'work'){ setTimeout(() => this.togglePomodoro(), 500); } }, advancePomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.isRunning = false; p.pauseStartTime = null; p.cycleStart = Date.now();
+if(p.settings.autoStart && p.mode !== 'work'){ setTimeout(() => this.togglePomodoro(), 500); } }, advancePomodoro(){ const p = this.state.pomodoro; clearInterval(p.intervalId); p.intervalId = null; p.isRunning = false; p.pauseStartTime = null; p.cycleStart = null;
 if(p.mode==='work'){ p.cyclesCompleted++; const isLongBreak = (p.cyclesCompleted > 0 && p.cyclesCompleted % p.totalCycles === 0); p.mode = isLongBreak ? 'long' : 'short'; if (isLongBreak && p.pendingLogDuration > 0) {
-const totalDurationInSeconds = p.pendingLogDuration + (p.totalPauseTime / 1000); const pauseDurationInSeconds = p.totalPauseTime / 1000; this.openSessionModal(totalDurationInSeconds, p.sessionSubject, p.sessionSubtopic, pauseDurationInSeconds, p.pendingLogDuration); p.pendingLogDuration = 0; p.totalPauseTime = 0; }
-} else { p.mode='work'; } p.timeLeft = this.modeSeconds(p.mode); this.renderPomodoro(); }, modeSeconds(mode){ const s = this.state.pomodoro.settings; if(mode==='work') return s.work*60; if(mode==='short') return s.shortBreak*60; if(mode==='long') return s.longBreak*60; return 0; }, renderPomodoro(){ const p = this.state.pomodoro; document.getElementById('pomodoro-timer-display').textContent = this.formatTime(p.timeLeft, 'ms'); if(p.isRunning || p.isSessionActive) { document.title = `${this.formatTime(p.timeLeft, 'ms')} - ${p.mode==='work' ? 'Foco' : 'Pausa'}`; } else if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } const pauseDisplay = document.getElementById('pomodoro-pause-display'); if (p.totalPauseTime > 0 || p.pauseStartTime) { let currentPause = p.totalPauseTime; if (p.pauseStartTime) currentPause += Date.now() - p.pauseStartTime; pauseDisplay.textContent = `Pausa total: ${this.formatTime(currentPause / 1000, 'hms_seconds')}`; } else { pauseDisplay.textContent = ''; }
+const effectiveDuration = Math.floor(p.pendingLogDuration); const pauseDurationInSeconds = Math.floor(p.totalPauseTime / 1000); const totalDurationInSeconds = effectiveDuration; this.openSessionModal(totalDurationInSeconds, p.sessionSubject, p.sessionSubtopic, pauseDurationInSeconds, effectiveDuration); p.pendingLogDuration = 0; p.totalPauseTime = 0; }
+} else { p.mode='work'; } p.timeLeft = this.modeSeconds(p.mode); this.renderPomodoro(); }, modeSeconds(mode){ const s = this.state.pomodoro.settings; if(mode==='work') return s.work*60; if(mode==='short') return s.shortBreak*60; if(mode==='long') return s.longBreak*60; return 0; }, recalculatePomodoroTime(){ const p = this.state.pomodoro; const durationSeconds = this.modeSeconds(p.mode); if(!p.cycleStart){ const base = typeof p.timeLeft === 'number' ? p.timeLeft : durationSeconds; const remaining = Math.max(0, Math.min(base, durationSeconds)); p.timeLeft = remaining; return { elapsedSeconds: durationSeconds - remaining, durationSeconds, remainingSeconds: remaining }; } const referenceTime = p.pauseStartTime || Date.now(); const elapsedMs = Math.max(0, referenceTime - p.cycleStart); const elapsedSeconds = Math.floor(elapsedMs / 1000); const remainingSeconds = Math.max(durationSeconds - elapsedSeconds, 0); p.timeLeft = remainingSeconds; return { elapsedSeconds, durationSeconds, remainingSeconds }; }, renderPomodoro(){ const p = this.state.pomodoro; document.getElementById('pomodoro-timer-display').textContent = this.formatTime(p.timeLeft, 'ms'); if(p.isRunning || p.isSessionActive) { document.title = `${this.formatTime(p.timeLeft, 'ms')} - ${p.mode==='work' ? 'Foco' : 'Pausa'}`; } else if (!this.state.stopwatch.isRunning) { document.title = 'Dashboard de Performance'; } const pauseDisplay = document.getElementById('pomodoro-pause-display'); if (p.totalPauseTime > 0 || p.pauseStartTime) { let currentPause = p.totalPauseTime; if (p.pauseStartTime) currentPause += Date.now() - p.pauseStartTime; pauseDisplay.textContent = `Pausa total: ${this.formatTime(currentPause / 1000, 'hms_seconds')}`; } else { pauseDisplay.textContent = ''; }
 let statusText = 'Pronto para começar'; if(p.isSessionActive) { if (p.mode === 'work') statusText = 'Foco'; else if (p.mode === 'short') statusText = 'Pausa Curta'; else if (p.mode === 'long') statusText = 'Pausa Longa'; } document.getElementById('pomodoro-status').textContent = statusText;
 if(p.isRunning){ document.getElementById('pomodoro-start-pause').textContent='Pausar'; const end = new Date(Date.now()+p.timeLeft*1000); const hh = String(end.getHours()).padStart(2,'0'); const mm2 = String(end.getMinutes()).padStart(2,'0'); document.getElementById('pomodoro-end-time').textContent = `Termina às ${hh}:${mm2}`; }else{ document.getElementById('pomodoro-start-pause').textContent= p.isSessionActive ? 'Retomar' : 'Iniciar'; document.getElementById('pomodoro-end-time').textContent = ''; }
 const dots = document.getElementById('pomodoro-cycle-dots'); dots.innerHTML=''; const total = p.totalCycles; for(let i=0; i<total; i++){ const d = document.createElement('div'); d.className = 'cycle-dot' + (i < p.cyclesCompleted ? ' done' : '') + (i === p.cyclesCompleted && p.mode === 'work' && p.isSessionActive ? ' active':''); dots.appendChild(d); }
